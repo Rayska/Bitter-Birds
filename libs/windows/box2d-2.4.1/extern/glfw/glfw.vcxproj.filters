@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\input.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\monitor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\vulkan.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\window.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_joystick.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_monitor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_time.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_thread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_window.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\wgl_context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\egl_context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\osmesa_context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\internal.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\mappings.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\include\GLFW\glfw3.h">
+      <Filter>include\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\include\GLFW\glfw3native.h">
+      <Filter>include\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_platform.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\win32_joystick.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\wgl_context.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\egl_context.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\src\osmesa_context.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\dev\aalto\cpp-course\angrybirds\libs\windows\box2d-2.4.1\extern\glfw\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{54656EB6-1CC9-32B8-8665-164CCE99B38E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\GLFW">
+      <UniqueIdentifier>{A0AE7AA5-7BA4-37B7-A2BC-CB357F9A7637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{A4ED6E28-4391-3511-B48E-D23467454C63}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
