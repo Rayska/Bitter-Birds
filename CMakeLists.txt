@@ -1,10 +1,11 @@
-
 cmake_minimum_required (VERSION 2.6)
-project (MyGame)
+
+project (AngryBirds)
+
 include_directories("src")
 
 # Set the name of the executable to be produced
-set(EXECUTABLE_NAME MyGame)
+set(EXECUTABLE_NAME AngryBirds)
 
 # Add all .cpp - files under src/ directory
 file(GLOB SOURCES src/*.cpp)
@@ -16,14 +17,23 @@ add_subdirectory(libs/windows/box2d-2.4.1)
 target_link_libraries(${PROJECT_NAME} box2d)
 
 # Set SFML_DIR
-set(SFML_DIR "libs/windows/SFML-2.6.0/lib/cmake/SFML")
+if(WIN32)
+    set(SFML_DIR "libs/windows/SFML-2.6.0/lib/cmake/SFML")
+endif()
+
+if(UNIX)
+    set(SFML_DIR "libs/linux/SFML-2.6.0/lib/cmake/SFML")
+endif()
 
 # Find any version 2.X of SFML
-find_package(SFML 2 REQUIRED network audio graphics window system)
+find_package(SFML 2 REQUIRED audio graphics window system)
+
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+    target_link_libraries(${EXECUTABLE_NAME} sfml-window sfml-graphics sfml-audio sfml-system)
 endif()
+
 
 # For installing targets (not mandatory)
 install (TARGETS ${EXECUTABLE_NAME} DESTINATION bin)

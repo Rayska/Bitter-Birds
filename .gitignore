@@ -44,3 +44,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#
+
+.vs/
+*.vcxproj*
+CMakeCache.txt
+CMakeFiles/
+Debug/
+MyGame.dir/
+MyGame.sln
+cmake_install.cmake
+x64/
