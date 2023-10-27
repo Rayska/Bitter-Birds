@@ -1,5 +1,0 @@
-# CMake generation dependency list for this directory.
-C:/Program Files/CMake/share/cmake-3.27/Modules/BasicConfigVersion-SameMajorVersion.cmake.in
-C:/Program Files/CMake/share/cmake-3.27/Modules/CMakePackageConfigHelpers.cmake
-C:/Program Files/CMake/share/cmake-3.27/Modules/WriteBasicConfigVersionFile.cmake
-C:/dev/aalto/cpp-course/angrybirds/libs/windows/box2d-2.4.1/src/CMakeLists.txt
