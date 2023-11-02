@@ -1,8 +1,63 @@
 [
 {
   "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/GUI.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/GUI.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/GUI.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/ReaderWriter.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/ReaderWriter.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/ReaderWriter.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/bird.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/bird.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/bird.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/enemy.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/enemy.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/enemy.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/entity.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/entity.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/entity.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/level.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/level.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/level.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/levelEditerScene.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/levelEditerScene.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/levelEditerScene.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
   "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/main.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/main.cpp",
   "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/main.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/menuScene.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/menuScene.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/menuScene.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/playScene.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/playScene.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/playScene.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/scene.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/scene.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/scene.cpp"
+},
+{
+  "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build",
+  "command": "/usr/bin/g++  -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src -I/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/libs/box2d-2.4.1/src/../include -g -o CMakeFiles/AngryBirds.dir/src/structure.cpp.o -c /home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/structure.cpp",
+  "file": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/src/structure.cpp"
 },
 {
   "directory": "/home/ray/CPP/angry-birds-tuan-cong-nguyen-5/build/libs/box2d-2.4.1/src",
