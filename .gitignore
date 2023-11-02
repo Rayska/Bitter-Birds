@@ -1,3 +1,9 @@
+# Onnin history
+.history
+
+#VSCode
+.vscode
+
 # Prerequisites
 *.d
 
@@ -55,6 +61,7 @@ MyGame.dir/
 MyGame.sln
 cmake_install.cmake
 x64/
+build
 
 # cmake generated files
 *Makefile
