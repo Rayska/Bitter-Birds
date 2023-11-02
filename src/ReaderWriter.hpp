@@ -37,15 +37,6 @@ class ReaderWriter {
         std::vector<std::string> fetchFiles() const;
 
     private:
-        /*
-        Takes a single line of text and construct an instance of Entity
-        */
-        Entity readEntity(std::string line) const;
-
-        /*
-        Takes a single line of text and construct an instance of the according Bird type
-        */
-        Bird readBird(std::string line) const;
         
         /*
         Extracts the first 3 characters from line and returns matching Header
@@ -68,8 +59,22 @@ class ReaderWriter {
         std::vector<std::string> readList(std::ifstream& is, Header h) const;
 
         /*
-        
+        Takes a single line of text and construct an instance of Entity
         */
-        
+        Entity readEntity(std::string line) const;
 
+        /*
+        Takes a single line of text and construct an instance of the according Bird type
+        */
+        Bird readBird(std::string line) const;
+
+        /*
+        Create Entity objects from a std::vector<std::string>, where each element contains all the needed information for the constructor
+        */
+        std::vector<Entity> formEntities(std::vector<std::string> entityStrings) const;
+
+        /*
+        Create Bird objects from a std::vector<std::string>, where each element contains all the needed information for the constructor
+        */
+        std::vector<Bird> formBirds(std::vector<std::string> birdStrings) const;
 };

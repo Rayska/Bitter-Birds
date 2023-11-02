@@ -14,19 +14,20 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
         std::string line;
         // Read the file line by line until EOF
         std::string name, backgroundPath, soundtrackPath;
-        std::vector<std::string> soundFXPaths, entityStrings, birdStrings;
+        std::vector<std::string> soundFX;
+        std::vector<Entity> entities;
+        std::vector<Bird> birds;
         while (std::getline(is, line)) {
             Header header = this->getHeader(line);
             switch (header) {
                 case Header::sst:
-                    soundFXPaths = this->readList(is, Header::sen);
+                    soundFX = this->readList(is, Header::sen); // Could be named soundFXPaths, but in order to be in line with level.hpp it will be like this for now
                     break;
                 case Header::est:
-                    entityStrings = this->readList(is, Header::een);
-                    
+                    entities = this->formEntities(this->readList(is, Header::een));
                     break;     
                 case Header::bst:
-                    birdStrings = this->readList(is, Header::ben);
+                    birds = this->formBirds(readList(is, Header::ben));
                     break;
                 default:
                     if (header != Header::unknown) {
@@ -46,6 +47,11 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
                     };
             }
         }
+        // Check whether any of the contructor variables are empty. If even one is empty, construction has failed.
+        if (!entities.empty() && !birds.empty() && !backgroundPath.empty() && !soundtrackPath.empty() && !soundFX.empty() && !name.empty()) {
+            return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name);
+        }
+        return std::nullopt;
     }
 }
 
@@ -68,6 +74,14 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
         r.push_back(line);
     }
     return r;
+}
+
+std::vector<Entity> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
+
+}
+
+std::vector<Bird> ReaderWriter::formBirds(std::vector<std::string> birdStrings) const {
+
 }
 
 Header ReaderWriter::getHeader(std::string line) const {
