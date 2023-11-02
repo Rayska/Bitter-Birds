@@ -44,3 +44,20 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# cmake generated files msvc
+.vs/
+*.vcxproj*
+CMakeCache.txt
+CMakeFiles/
+Debug/
+MyGame.dir/
+MyGame.sln
+cmake_install.cmake
+x64/
+
+# cmake generated files
+*Makefile
+*.cmake
+libs/windows/box2d-2.4.1/bin/
+AngryBirds
