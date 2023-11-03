@@ -7,40 +7,40 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
     if (fileName.substr(fileName.length() - 4) != ".txt") {
         fileName += ".txt";
     }
-    std::ifstream is("filename");
+    std::ifstream is(fileName);
     
     // Check that file has been opened successfully
     if (is.is_open()) {
         std::string line;
         // Read the file line by line until EOF
         std::string name, backgroundPath, soundtrackPath;
-        std::vector<std::string> soundFX;
+        std::vector<std::string> soundFX; // Could be named soundFXPaths, but in order to be in line with level.hpp it will be like this for now
         std::vector<Entity> entities;
-        std::vector<Bird> birds;
+        std::vector<std::shared_ptr<Bird>> birds;
         while (std::getline(is, line)) {
             Header header = this->getHeader(line);
             switch (header) {
-                case Header::sst:
-                    soundFX = this->readList(is, Header::sen); // Could be named soundFXPaths, but in order to be in line with level.hpp it will be like this for now
+                case Header::soundFXStart:
+                    soundFX = this->readList(is, Header::soundFXEnd); 
                     break;
-                case Header::est:
-                    entities = this->formEntities(this->readList(is, Header::een));
+                case Header::EntityStart:
+                    entities = this->formEntities(this->readList(is, Header::EntityEnd));
                     break;     
-                case Header::bst:
-                    birds = this->formBirds(readList(is, Header::ben));
+                case Header::BirdsStart:
+                    birds = this->formBirds(readList(is, Header::BirdsEnd));
                     break;
                 default:
                     if (header != Header::unknown) {
                         std::string content = this->getContent(line);
                         switch (header)
                         {
-                        case Header::nme:
+                        case Header::levelName:
                             name = content;
                             break;
-                        case Header::bgr:
+                        case Header::backgroundPath:
                             backgroundPath = content;
                             break;
-                        case Header::std:
+                        case Header::soundtrackPath:
                             soundtrackPath = content;
                             break;
                         };
@@ -56,8 +56,49 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
 }
 
 void ReaderWriter::writeFile(Level level, std::string fileName) const {
-    std::ofstream os("outfile");
+    // If fileName doesn't end in ".txt", adds ".txt" to the end
+    if (fileName.substr(fileName.length() - 4) != ".txt") {
+        fileName += ".txt";
+    }
+    std::ofstream os(fileName);
+    // Check that file has been opened successfully
+    if (os.is_open()) {
+        // Game version and newline to separate it from the rest of the data
+        os << "BitterBirds v." << versionNumber << std::endl;
+        os << std::endl;
 
+        // Vectors: SoundFX paths, Entities, and Birds
+
+        // SoundFX paths:
+        os << "SST" << std::endl;
+        for (auto it : level.getSoundFX()) {
+            os << it << std::endl;
+        }
+        os << "SEN" << std::endl;
+
+        // Entities:
+        os << "EST" << std::endl;
+        for (auto it : level.getEntities()) {
+            os << this->toStringEntity(it) << std::endl;
+        }
+        os << "EEN" << std::endl;
+
+        // Birds:
+        os << "BST" << std::endl;
+        for (auto it : level.getBirds()) {
+            os << this->toStringBird(it) << std::endl;
+        }
+        os << "BEN" << std::endl;
+
+        // Level name:
+        os << "NME" << level.getName() << std::endl;
+
+        // Background path:
+        os << "BGR" << level.getBackground() << std::endl;
+
+        // Soundtrack path:
+        os << "SDT" << level.getSoundtrack() << std::endl;
+    }
 }
 
 std::vector<std::string> ReaderWriter::fetchFiles() const {
@@ -68,7 +109,7 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
     std::vector<std::string> r;
     std::string line;
     while (std::getline(is, line)) {
-        if (line.length() < 5 && this->getHeader(line) == Header::sen) {
+        if (line.length() < 5 && this->getHeader(line) == h) {
             break;
         }
         r.push_back(line);
@@ -76,76 +117,68 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
     return r;
 }
 
-std::vector<Entity> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
+Entity ReaderWriter::formEntity(std::string line) const {
 
 }
 
-std::vector<Bird> ReaderWriter::formBirds(std::vector<std::string> birdStrings) const {
+Bird& ReaderWriter::formBird(std::string line) const {
+
+}
+
+std::vector<Entity> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
+    std::vector<Entity> entities;
+    for (auto it : entityStrings) {
+        entities.push_back(formEntity(it));
+    }
+    return entities;
+}
+
+std::vector<std::shared_ptr<Bird>> ReaderWriter::formBirds(std::vector<std::string> birdStrings) const {
+    std::vector<std::shared_ptr<Bird>> birds;
+    for (auto it : birdStrings) {
+        birds.push_back(std::make_shared<Bird>(formBird(it)));
+    }
+    return birds;
+}
+
+std::string ReaderWriter::toStringBird(Bird& bird) const {
+
+}
+
+std::string ReaderWriter::toStringEntity(Entity& entity) const {
 
 }
 
 Header ReaderWriter::getHeader(std::string line) const {
-    if (line == "NME") {
-        return Header::nme;
+    std::string headerString = line.substr(0, 3);
+    if (headerString == "NME") {
+        return Header::levelName;
     }
-    else if (line == "BGR") {
-        return Header::bgr;
+    else if (headerString == "BGR") {
+        return Header::backgroundPath;
     }
-    else if (line == "STD") {
-        return Header::std;
+    else if (headerString == "STD") {
+        return Header::soundtrackPath;
     }
-    else if (line == "SST") {
-        return Header::sst;
+    else if (headerString == "SST") {
+        return Header::soundFXStart;
     }
-    else if (line == "SEN") {
-        return Header::sen;
+    else if (headerString == "SEN") {
+        return Header::soundFXEnd;
     }
-    else if (line == "EST") {
-        return Header::est;
+    else if (headerString == "EST") {
+        return Header::EntityStart;
     }
-    else if (line == "EEN") {
-        return Header::een;
+    else if (headerString == "EEN") {
+        return Header::EntityEnd;
     }
-    else if (line == "BST") {
-        return Header::bst;
+    else if (headerString == "BST") {
+        return Header::BirdsStart;
     }
-    else if (line == "BEN") {
-        return Header::ben;
+    else if (headerString == "BEN") {
+        return Header::BirdsEnd;
     }
     else {
         return Header::unknown;
-    }
-}
-
-std::string ReaderWriter::formHeader(Header header) const {
-    if (header == Header::nme) {
-        return "NME";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else if (header == Header::bgr) {
-        return "BGR";
-    }
-    else {
-        return "UNKNOWN";
     }
 }

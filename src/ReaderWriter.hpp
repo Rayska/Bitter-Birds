@@ -3,11 +3,15 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <memory>
 #include "level.hpp"
 
+/*
+Allows us to use switch case with headers
+*/
 enum struct Header {
     // Refer to BitterBirdsFileFormat https://docs.google.com/document/d/1Y1-SJsiiOjuyTeWvKD0GDAmaJLkKQ5z4CW_AUsgPUxY/edit?usp=sharing
-    nme, bgr, std, sst, sen, est, een, bst, ben, unknown
+    levelName, backgroundPath, soundtrackPath, soundFXStart, soundFXEnd, EntityStart, EntityEnd, BirdsStart, BirdsEnd, unknown
 };
 
 /*
@@ -37,22 +41,8 @@ class ReaderWriter {
         std::vector<std::string> fetchFiles() const;
 
     private:
+        std::string versionNumber = "0";
         
-        /*
-        Extracts the first 3 characters from line and returns matching Header
-        */
-        Header getHeader(std::string line) const;
-
-        /*
-        Returns the std::string equivalent of header
-        */
-        std::string formHeader(Header header) const;
-
-        /*
-        Drops the first 3 characters / header and returns the content without header
-        */
-        std::string getContent(std::string line) const;
-
         /*
         Takes an ifstream and returns the soundpaths in a vector. Stops reading when a line contains "SEN"
         */
@@ -61,12 +51,12 @@ class ReaderWriter {
         /*
         Takes a single line of text and construct an instance of Entity
         */
-        Entity readEntity(std::string line) const;
+        Entity formEntity(std::string line) const;
 
         /*
         Takes a single line of text and construct an instance of the according Bird type
         */
-        Bird readBird(std::string line) const;
+        Bird& formBird(std::string line) const;
 
         /*
         Create Entity objects from a std::vector<std::string>, where each element contains all the needed information for the constructor
@@ -76,5 +66,26 @@ class ReaderWriter {
         /*
         Create Bird objects from a std::vector<std::string>, where each element contains all the needed information for the constructor
         */
-        std::vector<Bird> formBirds(std::vector<std::string> birdStrings) const;
+        std::vector<std::shared_ptr<Bird>> formBirds(std::vector<std::string> birdStrings) const;
+
+         /*
+        Forms a string that represents the Bird object's state
+        */
+        std::string toStringBird(Bird& bird) const;
+
+        /*
+        Forms a string that represents the Bird object's state
+        */
+        std::string toStringEntity(Entity& entity) const;
+
+        /*
+        Extracts the first 3 characters from line and returns matching Header
+        */
+        Header getHeader(std::string line) const;
+
+        /*
+        Drops the first 3 characters / header and returns the content without header
+        */
+        std::string getContent(std::string line) const;
+
 };
