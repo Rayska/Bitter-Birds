@@ -23,7 +23,7 @@
 *.pch
 
 # Libraries
-
+*libbox2d.a
 
 # Shared objects (inc. Windows DLLs)
 
