@@ -32,3 +32,41 @@ Working on initial project plan
 
 ### TODOs
 1. Complete the project plan
+
+# Meeting 8.11.2023 14:30
+
+**Participants**: 
+1. Luukas Karihtala
+2. Ray Sointula
+3. Daniel Granström
+
+## Summary of works
+
+Participated in plan review with our advisor.
+
+Daniel: Made some textures for game and started work on soundtrack.
+Luukas: Created GUI, Scene and MenuScene classes
+Ray: Created individual issues for tasks. Worked level ReaderWriter class.
+Onni: Worked on Level, Entity and Bird classes
+
+## Challenges
+
+Ray can't continue on readerwriter until other work gets done.
+Finding meeting times difficult (everyone is not available at the same times).
+
+## Actions
+
+Start documentation process with doxygen.
+Implement testing infrastructure and start writing tests for features.
+
+## Project status 
+
+Windowing works. 
+Simple button UI for main menu.
+Beginnings of ReadWriter class.
+Beginnings of level and entity classes.
+
+### TODOs
+1. Start working on issues described in gitlab.
+2. Tests
+3. Documentation
