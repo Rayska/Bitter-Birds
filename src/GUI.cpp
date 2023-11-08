@@ -1,6 +1,6 @@
 #include "GUI.hpp"
 
-#include "Scene.hpp"
+#include "scene.hpp"
 
 #include <iostream>
 
