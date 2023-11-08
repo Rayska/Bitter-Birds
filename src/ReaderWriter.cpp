@@ -9,12 +9,10 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
     }
     std::ifstream is(fileName);
     
-    // Check that file has been opened successfully
     if (is.is_open()) {
         std::string line;
-        // Read the file line by line until EOF
         std::string name, backgroundPath, soundtrackPath;
-        std::vector<std::string> soundFX; // Could be named soundFXPaths, but in order to be in line with level.hpp it will be like this for now
+        std::vector<std::string> soundFX;
         std::vector<Entity> entities;
         std::vector<std::shared_ptr<Bird>> birds;
         while (std::getline(is, line)) {
@@ -47,7 +45,6 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
                     };
             }
         }
-        // Check whether any of the contructor variables are empty. If even one is empty, construction has failed.
         if (!entities.empty() && !birds.empty() && !backgroundPath.empty() && !soundtrackPath.empty() && !soundFX.empty() && !name.empty()) {
             return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name);
         }
@@ -61,7 +58,6 @@ void ReaderWriter::writeFile(Level level, std::string fileName) const {
         fileName += ".txt";
     }
     std::ofstream os(fileName);
-    // Check that file has been opened successfully
     if (os.is_open()) {
         // Game version and newline to separate it from the rest of the data
         os << "BitterBirds v." << versionNumber << std::endl;
@@ -181,4 +177,8 @@ Header ReaderWriter::getHeader(std::string line) const {
     else {
         return Header::unknown;
     }
+}
+
+std::string ReaderWriter::getContent(std::string line) const {
+    return line.substr(4, line.size() - 4);
 }
