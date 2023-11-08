@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 2.6)
 project (AngryBirds)
 
 include_directories("src")
+include_directories("tests")
 
 # Set the name of the executable to be produced
 set(EXECUTABLE_NAME AngryBirds)
@@ -38,3 +39,24 @@ endif()
 
 # For installing targets (not mandatory)
 install (TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
+project(unittests)
+
+file(GLOB SOURCES2 src/*.cpp)
+list(REMOVE_ITEM SOURCES2 ${CMAKE_SOURCE_DIR}/src/main.cpp)
+file(GLOB SOURCES3 tests/*.cpp)
+
+message(x=${SOURCES2})
+
+add_executable(unittests
+    ${SOURCES2}
+    ${SOURCES3}
+)
+if(WIN32)
+    target_link_libraries(unittests ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+endif()
+if(UNIX)
+    target_link_libraries(unittests sfml-window sfml-graphics sfml-audio sfml-system)
+endif()
+
+# Find Box2D for unit tests
+target_link_libraries(unittests box2d)
