@@ -10,12 +10,13 @@
 * \brief Allows us to use switch case with headers
 */
 enum struct Header {
-    // Refer to BitterBirdsFileFormat https://docs.google.com/document/d/1Y1-SJsiiOjuyTeWvKD0GDAmaJLkKQ5z4CW_AUsgPUxY/edit?usp=sharing
     levelName, backgroundPath, soundtrackPath, soundFXStart, soundFXEnd, EntityStart, EntityEnd, BirdsStart, BirdsEnd, unknown
 };
 
 /**
 * \brief A class for loading/reading and saving/writing levels in forms of Level objects and .txt files
+*
+* 
 */
 class ReaderWriter {
     public:
