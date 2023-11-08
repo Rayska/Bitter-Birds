@@ -11,6 +11,6 @@ public:
 
     void update(float ts) override;
 private:
-    Image test_;
+    Image button_image_, bird_image_;
     float t;
 };

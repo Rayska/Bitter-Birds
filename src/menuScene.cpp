@@ -8,7 +8,8 @@
 MenuScene::MenuScene(GUI& gui) 
     : 
     Scene(gui), 
-    test_("res/test.png"), 
+    button_image_("res/button.png"), 
+    bird_image_("res/test_bird.png"), 
     t(0.f) {
 }
 
@@ -25,10 +26,9 @@ void MenuScene::update(float ts) {
     //     std::cout << "LMB pressed" << std::endl;
 
 
-    if(gui_.drawButton("test", 0.5f, 0.5f, 0.5f, 0.2f)){
+    if(gui_.drawButton("test", 0.5f, 0.5f, 0.5f, 0.2f, button_image_)){
         std::cout << "TEST BUTTON" << std::endl;
     }
 
-    // gui_.drawSprite(0.5f * (sin(t) + 1.f), 0.2f, 0.2f, 0.2f, 0, test_);
-    gui_.drawSprite(0.5f, 0.5f, 0.5f, 0.2f, 0, test_);
+    gui_.drawSprite(0.5f * (sin(t) + 1.f), 0.2f, 0.2f, 0.2f, 0, bird_image_);
 }

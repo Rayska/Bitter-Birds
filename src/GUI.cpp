@@ -8,8 +8,7 @@ GUI::GUI()
 	:
 	window_(sf::VideoMode(1280, 720), "Bitter Birds!"),
 	current_scene_(nullptr),
-	new_scene_(nullptr),
-	button_image_("res/button.png") {}
+	new_scene_(nullptr) {}
 
 GUI::~GUI() {
 	if(current_scene_)
@@ -66,9 +65,9 @@ void GUI::drawSprite(float x, float y, float w, float h, float angle, const Imag
 	window_.draw(sp);
 }
 
-bool GUI::drawButton(const std::string& text, float x, float y, float w, float h) {
+bool GUI::drawButton(const std::string& text, float x, float y, float w, float h, const Image& button_image) {
 	auto[cx, cy] = cursorPosition();
-	drawSprite(x, y, w, h, 0.f, button_image_);
+	drawSprite(x, y, w, h, 0.f, button_image);
 	return buttonState(sf::Mouse::Button::Left) && 
 		((cx > x - w * 0.5f) && (cx < x + w * 0.5f)) && 
 		((cy > y - h * 0.5f) && (cy < y + h * 0.5f)) ;
