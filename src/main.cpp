@@ -1,14 +1,15 @@
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
-
 #include <box2d/b2_math.h>
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_fixture.h>
 
+#include "GUI.hpp"
+#include "menuScene.hpp"
+
 int main() {
     // BOX2D testing
+    /*
     b2Vec2 gravity(0.0f, -10.0f);
     b2World world(gravity);
 
@@ -49,25 +50,13 @@ int main() {
         float angle = body->GetAngle();
         printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
     }
+    */
 
-    // SFML Testing
+    GUI app;
 
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    app.setScene<MenuScene>();
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
+    app.run();
+   
     return 0;
 }
