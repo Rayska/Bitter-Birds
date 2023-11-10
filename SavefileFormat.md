@@ -66,5 +66,8 @@ SDT<Path>
 
 ```
 Entity and Bird formats will be discussed in this file when they are done. 
+Bird format, N refers to birds type, N = 0, 1, 2, ...:
+
+N
 
 BGR and SDT contain paths which will be strings.

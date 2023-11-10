@@ -1,5 +1,6 @@
 #include "ReaderWriter.hpp"
 #include <fstream>
+#include <sstream>
 
 
 std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
@@ -114,11 +115,40 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
 }
 
 Entity ReaderWriter::formEntity(std::string line) const {
-
+    int healthPoints, typeOrHeight, width;
+    double initRotation, x, y;
+    std::istringstream ss(line);
+    ss >> healthPoints >> initRotation >> x >> y >> typeOrHeight >> width;
+    if (width < 0) {
+        return Enemy(healthPoints, initRotation, x, y, typeOrHeight);
+    }
+    else {
+        return Structure(healthPoints, initRotation, x, y, typeOrHeight, width);
+    }
+    //return Entity(movable, destructible, healthPoints, initRotation, x, y);
 }
 
 Bird& ReaderWriter::formBird(std::string line) const {
-
+    if (line.size() == 2) {
+        int type = std::stoi(line.substr(1, 1));
+        switch (type)
+        {
+        case 1:
+            /* code */
+            break;
+        case 2:
+            /* code */
+            break;
+        default:
+            static NormalBird normalBird;
+            return normalBird;
+        }
+    }
+    else {
+        throw std::length_error("Invalid BirdType size: " + line);
+        static NormalBird normalBird;
+        return normalBird;
+    }
 }
 
 std::vector<Entity> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
@@ -138,11 +168,32 @@ std::vector<std::shared_ptr<Bird>> ReaderWriter::formBirds(std::vector<std::stri
 }
 
 std::string ReaderWriter::toStringBird(Bird& bird) const {
+    if (typeid(bird) == typeid(NormalBird())) {
+        return "0";
+    }
+    else if (typeid(bird) == typeid(NormalBird())) {
 
+    }
+    else if (typeid(bird) == typeid(NormalBird())) {
+
+    }
 }
 
-std::string ReaderWriter::toStringEntity(Entity& entity) const {
-
+std::string ReaderWriter::toStringEntity(Entity& e) const {
+    std::stringstream line;
+    const std::type_info& type = typeid(e);
+    const std::type_info& typeEnemy = typeid(Enemy);
+    const std::type_info& typeStructure = typeid(Structure);
+    if (type == typeEnemy) {
+        line << e.getHealthPoints() << " " << e.getRotation() << " " << e.getX() << " " << e.getY(); //<< " " << e.
+    }
+    else if (type == typeStructure) {
+        line << e.getHealthPoints() << " " << e.getRotation() << " " << e.getX() << " " << e.getY() << " "; //<< e.getWidth();
+    }
+    else {
+        line << "Entity type not recognised";
+    }
+    return line.str();
 }
 
 Header ReaderWriter::getHeader(std::string line) const {
