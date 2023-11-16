@@ -59,6 +59,8 @@ public:
      */
     bool buttonState(sf::Mouse::Button btn) const;
 
+    void setViewport(float x, float y, float w, float h);
+
     /**
      * @brief Draw a rectangular sprite on screen
      * @param x
