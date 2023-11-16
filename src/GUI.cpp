@@ -56,7 +56,6 @@ bool GUI::buttonState(sf::Mouse::Button btn) const {
 
 void GUI::setViewport(float x, float y, float w, float h) {
 	auto wsize = window_.getSize();
-	// window_.setView(sf::View({x * wsize.x / 2, y * wsize.y / 2}, {w * wsize.x, h * wsize.y}));
 	window_.setView(sf::View({x * wsize.x, y * wsize.y}, {w * wsize.x, h * wsize.y}));
 }
 

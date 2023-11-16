@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "enemy.hpp"
+
 PlayScene::PlayScene(GUI &gui, const Level& level)
     :
     Scene(gui),
@@ -9,6 +11,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     world_(gravity_),
     cam_x(0.f), cam_y(-5.f), cam_scale_x(15.f), cam_scale_y(15.f),
     grass_image_("res/grass.png"),
+    enemy_bird_image_("res/enemy_bird.png"),
     bird_image_("res/test_bird.png")
 {
     b2BodyDef groundBodyDef;
@@ -25,6 +28,9 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(ent->getX(), ent->getY());
+        
+        bodyDef.userData.pointer = (uintptr_t)&enemy_bird_image_;
+
         b2Body* body = world_.CreateBody(&bodyDef);
 
         b2PolygonShape dynamicBox;
@@ -40,7 +46,12 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
 }
 
 PlayScene::~PlayScene()
-{}
+{
+    auto body = world_.GetBodyList();
+    while(body){
+        body = body->GetNext();
+    }
+}
 
 void PlayScene::update(float ts)
 {
@@ -88,7 +99,10 @@ void PlayScene::update(float ts)
     while(body){
         auto pos = body->GetPosition();
         auto ang = body->GetAngle();
-        gui_.drawSprite(pos.x, pos.y, 1, 1, ang, bird_image_);
+        Image* img = (Image*)body->GetUserData().pointer;
+        
+        if(img != nullptr)
+            gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
 
         body = body->GetNext();
     }
@@ -102,6 +116,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(pos.x, pos.y);
+
+    bodyDef.userData.pointer = (uintptr_t)&bird_image_;
 
     b2Body* body = world_.CreateBody(&bodyDef);
 

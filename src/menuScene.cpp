@@ -7,6 +7,8 @@
 
 #include "playScene.hpp"
 #include "level.hpp"
+#include "ground.hpp"
+#include "enemy.hpp"
 
 MenuScene::MenuScene(GUI& gui) 
     : 
@@ -28,13 +30,12 @@ void MenuScene::update(float ts) {
     // if(gui_.buttonState(sf::Mouse::Button::Left))
     //     std::cout << "LMB pressed" << std::endl;
 
-
-    gui_.setViewport(0, 0, 1.f, 1.f);
+    gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
     if(gui_.drawButton("test", 0.5f, 0.5f, 0.5f, 0.2f, button_image_)){
         std::cout << "TEST BUTTON" << std::endl;
         Level lvl({
-            std::make_shared<Entity>(true, true, 100, 0, 10, -10)
+            std::make_shared<Enemy>(100, 0.f, 10.f, 2.f, 0),
         }, {}, {}, {}, {}, "Level 1");
         gui_.setScene<PlayScene>(lvl);
     }
