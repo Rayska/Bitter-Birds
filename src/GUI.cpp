@@ -54,6 +54,11 @@ bool GUI::buttonState(sf::Mouse::Button btn) const {
     return sf::Mouse::isButtonPressed(btn);
 }
 
+void GUI::setViewport(float x, float y, float w, float h) {
+	auto wsize = window_.getSize();
+	window_.setView(sf::View({x * wsize.x, y * wsize.y}, {w * wsize.x, h * wsize.y}));
+}
+
 void GUI::drawSprite(float x, float y, float w, float h, float angle, const Image &img) {
 	sf::Sprite sp;
 	sp.setTexture(img.image_);
