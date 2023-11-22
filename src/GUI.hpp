@@ -3,9 +3,15 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <array>
+
 #include "image.hpp"
 
 class Scene;
+
+struct Color {
+    float r, g, b;
+};
 
 /**
  * @brief 
@@ -26,6 +32,8 @@ public:
      * @brief Start the application
      */
 	void run();
+
+    void close();
 
     /**
      * @brief Set the current Scene object to be replaced at start of next frame
@@ -58,6 +66,8 @@ public:
      * @return false Button is released
      */
     bool buttonState(sf::Mouse::Button btn) const;
+    bool buttonReleased(sf::Mouse::Button btn) const;
+    int scrollDelta() const;
 
     void setViewport(float x, float y, float w, float h);
 
@@ -71,6 +81,11 @@ public:
      * @param img 
      */
     void drawSprite(float x, float y, float w, float h, float angle, const Image& img);
+
+    void drawRect(float x, float y, float w, float h, float angle, Color color);
+
+    void drawText(float x, float y, float h, const std::string& text);
+
     /**
      * @brief Draw a button on screen. When mouse is hovered and pressed over button returns true
      * @param text 
@@ -82,11 +97,14 @@ public:
      * @return true Button is pressed
      * @return false 
      */
-    bool drawButton(const std::string& text, float x, float y, float w, float h, const Image& button_image);
+    bool drawButton(const std::string& text, float x, float y, float w, float h);
 private:
     void update(float ts);
 private:
     sf::RenderWindow window_;
     Scene* current_scene_;
     Scene* new_scene_;
+    sf::Font font_;
+    std::array<bool, (int)sf::Mouse::Button::ButtonCount> buttons_, prev_buttons_;
+    int scroll_y_, prev_scroll_y_;
 };
