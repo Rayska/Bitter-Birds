@@ -68,3 +68,7 @@ build
 *.cmake
 libs/windows/box2d-2.4.1/bin/
 AngryBirds
+html
+latex
+unittests
+bin/

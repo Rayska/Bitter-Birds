@@ -27,8 +27,7 @@ MenuScene::MenuScene(GUI& gui)
     };
 }
 
-MenuScene::~MenuScene() {
-}
+MenuScene::~MenuScene() {}
 
 void MenuScene::update(float ts) {
     t += ts;

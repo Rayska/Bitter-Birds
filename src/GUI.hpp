@@ -82,8 +82,25 @@ public:
      */
     void drawSprite(float x, float y, float w, float h, float angle, const Image& img);
 
+    /**
+     * @brief Draw a rectangle with a color
+     * @param x 
+     * @param y 
+     * @param w 
+     * @param h 
+     * @param angle 
+     * @param color 
+     */
     void drawRect(float x, float y, float w, float h, float angle, Color color);
 
+    /**
+     * @brief Draw text to screen 
+     * 
+     * @param x xpos
+     * @param y ypos
+     * @param h text scale
+     * @param text text string
+     */
     void drawText(float x, float y, float h, const std::string& text);
 
     /**
@@ -94,8 +111,8 @@ public:
      * @param w 
      * @param h 
      * @param button_image 
-     * @return true Button is pressed
-     * @return false 
+     * @return true Button is released
+     * @return false otherwise
      */
     bool drawButton(const std::string& text, float x, float y, float w, float h);
 private:
