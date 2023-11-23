@@ -7,6 +7,10 @@ public:
     Enemy(int healthPoints, double initRotation, double x, double y, int type):
     type_(type), Entity(true, true, healthPoints, initRotation, x, y) {}
 
+    entityType getType() const override {
+        return entityType::enemy;
+    }
+
     double getDiameter() const {
         switch (type_) {
             case 0:

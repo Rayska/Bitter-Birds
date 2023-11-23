@@ -7,6 +7,10 @@ public:
     Structure(int healthPoints, double initRotation, double x, double y, int height, int width):
     width_(width), height_(height), Entity(true, true, healthPoints, initRotation, x, y) {}
 
+    entityType getType() const override {
+        return entityType::structure;
+    }
+
     double getWidth() const {
         return width_;
     }

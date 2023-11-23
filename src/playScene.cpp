@@ -4,6 +4,8 @@
 
 #include "enemy.hpp"
 
+#include <cxxabi.h>
+
 PlayScene::PlayScene(GUI &gui, const Level& level)
     :
     Scene(gui),
@@ -12,27 +14,47 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     cam_x(0.f), cam_y(-5.f), cam_scale_x(15.f), cam_scale_y(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
-    bird_image_("res/test_bird.png")
+    bird_image_("res/test_bird.png"),
+    state(gameState::playing)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
-
+    groundBodyDef.userData.pointer = (uintptr_t)new userDataStruct{&grass_image_};
     b2Body* groundBody = world_.CreateBody(&groundBodyDef);
+    
 
     b2PolygonShape groundBox;
     groundBox.SetAsBox(50.0f, .5f);
 
     groundBody->CreateFixture(&groundBox, 0.0f);
+    
 
     for(auto& ent : level.getEntities()){
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(ent->getX(), ent->getY());
+
+        entityType type = (*ent).getType();
+        switch (type)
+        {
+        case entityType::structure:
+            
+            break;
+        case entityType::ground:
+
+            break;
+        case entityType::enemy:
+            bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
+                &enemy_bird_image_,
+                ent};
+            break;
+        default:
+            std::cout << "Default case reached, Could not match entity type: " << ent.get() << std::endl;
+            break;
+        }
         
-        bodyDef.userData.pointer = (uintptr_t)&enemy_bird_image_;
-
         b2Body* body = world_.CreateBody(&bodyDef);
-
+        
         b2PolygonShape dynamicBox;
         dynamicBox.SetAsBox(.5f, .5f);
 
@@ -72,7 +94,6 @@ void PlayScene::update(float ts)
     if(gui_.keyState(sf::Keyboard::S)){
         cam_y += 2.f * ts;
     }
-
     if(gui_.buttonState(sf::Mouse::Button::Left)){
         if(!drag_start_){
             auto[cx, cy] = gui_.cursorPosition();
@@ -90,6 +111,23 @@ void PlayScene::update(float ts)
             drag_start_ = {};
         }
     }
+    // Win/Lose condition
+    auto entity = world_.GetBodyList();
+    int enemyCount = 0;
+    while (entity) {
+        userDataStruct* data = (userDataStruct*)entity->GetUserData().pointer;
+        if (data != nullptr && data->entity && (*data->entity).getType() == entityType::enemy) {
+            enemyCount++;
+        }
+        entity = entity->GetNext();
+    }
+    if (enemyCount == 0) {
+        state = gameState::won;
+    }
+    else {
+        // if birds left, stage = gameState::playing;
+        // else stage = gameState::lost;
+    }
 
     // Render
     gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
@@ -99,11 +137,13 @@ void PlayScene::update(float ts)
     while(body){
         auto pos = body->GetPosition();
         auto ang = body->GetAngle();
-        Image* img = (Image*)body->GetUserData().pointer;
-        
-        if(img != nullptr)
-            gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
-
+        userDataStruct* userData = (userDataStruct*)body->GetUserData().pointer;
+        if(userData) {
+            Image* img = userData->image;
+            if(img != nullptr) {
+                gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
+            }
+        }
         body = body->GetNext();
     }
 
@@ -117,7 +157,9 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(pos.x, pos.y);
 
-    bodyDef.userData.pointer = (uintptr_t)&bird_image_;
+    bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
+            &bird_image_
+            };
 
     b2Body* body = world_.CreateBody(&bodyDef);
 

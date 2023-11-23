@@ -1,11 +1,21 @@
 #pragma once
 
+enum struct entityType {
+    structure,
+    enemy,
+    ground,
+    bedrock,
+    bird
+};
+
 class Entity {
 public:
     Entity(bool movable, bool destructible, int healthPoints,
     double initRotation, double x, double y) : 
     movable_(movable), destructible_(destructible), healthPoints_(healthPoints),
     initRotation_(initRotation), x_(x), y_(y) {}
+
+    virtual entityType getType() const = 0;
 
     bool isMovable() const {
         return movable_;
