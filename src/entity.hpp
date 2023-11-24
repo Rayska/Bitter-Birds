@@ -1,10 +1,9 @@
 #pragma once
 
-enum struct entityType {
+enum struct bodyType {
     structure,
     enemy,
     ground,
-    bedrock,
     bird
 };
 
@@ -15,7 +14,7 @@ public:
     movable_(movable), destructible_(destructible), healthPoints_(healthPoints),
     initRotation_(initRotation), x_(x), y_(y) {}
 
-    virtual entityType getType() const = 0;
+    virtual bodyType getType() const = 0;
 
     bool isMovable() const {
         return movable_;

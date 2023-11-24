@@ -2,7 +2,7 @@
 
 class Bird {
 public:
-    virtual double getDiameter() = 0;
+    virtual double getDiameter() const = 0;
 
 private:
 };

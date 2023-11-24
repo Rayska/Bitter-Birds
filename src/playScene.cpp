@@ -4,8 +4,6 @@
 
 #include "enemy.hpp"
 
-#include <cxxabi.h>
-
 PlayScene::PlayScene(GUI &gui, const Level& level)
     :
     Scene(gui),
@@ -34,18 +32,19 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(ent->getX(), ent->getY());
 
-        entityType type = (*ent).getType();
+        bodyType type = (*ent).getType();
         switch (type)
         {
-        case entityType::structure:
+        case bodyType::structure:
             
             break;
-        case entityType::ground:
+        case bodyType::ground:
 
             break;
-        case entityType::enemy:
+        case bodyType::enemy:
             bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                 &enemy_bird_image_,
+                bodyType::enemy,
                 ent};
             break;
         default:
@@ -112,21 +111,38 @@ void PlayScene::update(float ts)
         }
     }
     // Win/Lose condition
-    auto entity = world_.GetBodyList();
+    auto worldBody = world_.GetBodyList();
     int enemyCount = 0;
-    while (entity) {
-        userDataStruct* data = (userDataStruct*)entity->GetUserData().pointer;
-        if (data != nullptr && data->entity && (*data->entity).getType() == entityType::enemy) {
-            enemyCount++;
+    int birdCount = 0;
+    while (worldBody) {
+        userDataStruct* data = (userDataStruct*)worldBody->GetUserData().pointer;
+        if (data) {
+            switch (data->type)
+            {
+            case bodyType::enemy:
+                if (data->entity) {
+                    enemyCount++;
+                }
+                break;
+            case bodyType::bird:
+                if (data->bird) {
+                    birdCount++;
+                }
+                break;
+            default:
+                break;
+            }
+            worldBody = worldBody->GetNext();
         }
-        entity = entity->GetNext();
     }
     if (enemyCount == 0) {
         state = gameState::won;
     }
+    else if (birdCount > 0) {
+        state == gameState::playing;
+    }
     else {
-        // if birds left, stage = gameState::playing;
-        // else stage = gameState::lost;
+        state == gameState::lost;
     }
 
     // Render
@@ -158,7 +174,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
     bodyDef.position.Set(pos.x, pos.y);
 
     bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
-            &bird_image_
+            &bird_image_,
+            bodyType::bird
             };
 
     b2Body* body = world_.CreateBody(&bodyDef);

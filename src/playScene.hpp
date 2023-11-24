@@ -23,8 +23,9 @@ enum struct gameState {
 
 struct userDataStruct {
     Image*                      image;
+    bodyType                    type;
     std::shared_ptr<Entity>     entity;
-    
+    std::shared_ptr<Bird>       bird;
 };
 
 class PlayScene : public Scene {
