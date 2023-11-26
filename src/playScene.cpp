@@ -192,20 +192,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         std::shared_ptr<Bird> bird = birds_.front();
         birds_.erase(birds_.begin());
 
-        Image* image;
-
-        if (auto normalBird = std::dynamic_pointer_cast<NormalBird>(bird)) {
-            image = normalBird->getImage();
-        }
-        else if (auto specialBird1 = std::dynamic_pointer_cast<SpecialBird1>(bird)) {
-            image = specialBird1->getImage();
-        }
-        else if (auto specialBird2 = std::dynamic_pointer_cast<SpecialBird2>(bird)) {
-            image = specialBird2->getImage();
-        }
-
         bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
-        image,
+        bird->getImage(),
         bodyType::bird,
         NULL,
         bird
@@ -236,12 +224,25 @@ b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
 
 int PlayScene::get_bird_count() const
 {
-    return 5;
+    return birds_.size();
 }
 
 std::string PlayScene::get_current_bird_type() const
 {
-    return "Red bird";
+    if (!birds_.empty()) {
+        switch (birds_.front()->getBirdType())
+        {
+        case birdType::normal:
+            return "Red bird";
+        case birdType::special1:
+            return "Yellow bird";
+        case birdType::special2:
+            return "Blue bird";
+        default:
+            return "Unknown bird";
+        }
+    }
+    return "None";
 }
 
 int PlayScene::get_score() const
