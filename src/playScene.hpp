@@ -12,6 +12,7 @@
 #include <box2d/b2_body.h>
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_fixture.h>
+#include <box2d/b2_contact.h>
 
 class PlayScene : public Scene {
 public:
@@ -19,9 +20,13 @@ public:
     ~PlayScene();
 
     void update(float ts) override;
-
+private:
     void launch_bird(b2Vec2 pos, b2Vec2 vel);
     b2Vec2 screen_to_world(b2Vec2 pos);
+
+    int get_bird_count() const;
+    std::string get_current_bird_type() const;
+    int get_score() const;
 private:
     b2Vec2 gravity_;
     b2World world_;

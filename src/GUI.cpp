@@ -8,7 +8,8 @@ GUI::GUI()
 	:
 	window_(sf::VideoMode(1280, 720), "Bitter Birds!"),
 	current_scene_(nullptr),
-	new_scene_(nullptr) {
+	new_scene_(nullptr),
+	prev_scroll_y_(0) {
 	font_.loadFromFile("res/DancingScript-Regular.ttf");
 	scroll_y_ = 0;
 
@@ -32,7 +33,7 @@ void GUI::run() {
         while (window_.pollEvent(event))
         {
 			if(event.type == sf::Event::MouseWheelScrolled){
-				scroll_y_ += event.mouseWheelScroll.delta;
+				scroll_y_ += (int)event.mouseWheelScroll.delta;
 			}
             if (event.type == sf::Event::Closed)
                 window_.close();
@@ -101,7 +102,7 @@ void GUI::drawSprite(float x, float y, float w, float h, float angle, const Imag
 
 void GUI::drawRect(float x, float y, float w, float h, float angle, Color color) {
 	sf::RectangleShape sp;
-	sp.setFillColor({(int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255)});
+	sp.setFillColor({(sf::Uint8)(color.r * 255), (sf::Uint8)(color.g * 255), (sf::Uint8)(color.b * 255)});
 
 	auto size = window_.getSize();
 	sp.setPosition((x - w * 0.5f) * size.x, (1.f - y - h * 0.5f) * size.y);
@@ -110,13 +111,31 @@ void GUI::drawRect(float x, float y, float w, float h, float angle, Color color)
 	window_.draw(sp);
 }
 
-void GUI::drawText(float x, float y, float h, const std::string& text) {
+void GUI::drawText(float x, float y, float h, const std::string& text, Alignment align) {
 	sf::Text txt(sf::String(text.c_str()), font_);
 	auto size = window_.getSize();
 	txt.setPosition({x * size.x, (1.f - y) * size.y});
 	txt.setScale({h, h});
-	sf::FloatRect rc = txt.getLocalBounds();
-	txt.setOrigin(rc.width / 2, rc.height / 2);
+	switch(align){
+		case Alignment::Center:
+		{
+			sf::FloatRect rc = txt.getLocalBounds();
+			txt.setOrigin(rc.width / 2, rc.height / 2);
+			break;
+		}
+		case Alignment::RightCenter:
+		{
+			sf::FloatRect rc = txt.getLocalBounds();
+			txt.setOrigin(rc.width, rc.height / 2);
+			break;
+		}
+		case Alignment::LeftCenter:
+		{
+			sf::FloatRect rc = txt.getLocalBounds();
+			txt.setOrigin(0, rc.height / 2);
+			break;
+		}
+	}
 	window_.draw(txt);
 }
 
