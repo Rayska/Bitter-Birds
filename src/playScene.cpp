@@ -13,7 +13,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
     bird_image_("res/test_bird.png"),
-    state(gameState::playing)
+    state_(gameState::playing)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -23,13 +23,11 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                                                                     NULL};
     b2Body* groundBody = world_.CreateBody(&groundBodyDef);
     
-
     b2PolygonShape groundBox;
     groundBox.SetAsBox(50.0f, .5f);
 
     groundBody->CreateFixture(&groundBox, 0.0f);
     
-
     for(auto& ent : level.getEntities()){
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
@@ -48,7 +46,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
             bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                 &enemy_bird_image_,
                 bodyType::enemy,
-                ent};
+                ent,
+                NULL};
             break;
         default:
             std::cout << "Default case reached, Could not match entity type: " << ent.get() << std::endl;
@@ -67,6 +66,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
 
         body->CreateFixture(&fixtureDef);
     }
+    birds_ = level.getBirds();
 }
 
 PlayScene::~PlayScene()
@@ -139,13 +139,13 @@ void PlayScene::update(float ts)
         }
     }
     if (enemyCount == 0) {
-        state = gameState::won;
+        state_ = gameState::won;
     }
     else if (birdCount > 0) {
-        state == gameState::playing;
+        state_ == gameState::playing;
     }
     else {
-        state == gameState::lost;
+        state_ == gameState::lost;
     }
 
     // Render
@@ -172,30 +172,50 @@ void PlayScene::update(float ts)
 }
 
 void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(pos.x, pos.y);
+    if (!birds_.empty()) {
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position.Set(pos.x, pos.y);
 
-    bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
-            &bird_image_,
-            bodyType::bird,
-            NULL,
-            NULL
-            };
+        std::shared_ptr<Bird> bird = birds_.front();
+        birds_.erase(birds_.begin());
 
-    b2Body* body = world_.CreateBody(&bodyDef);
+        Image* image;
 
-    b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(.5f, .5f);
+        if (auto normalBird = std::dynamic_pointer_cast<NormalBird>(bird)) {
+            image = normalBird->getImage();
+        }
+        else if (auto specialBird1 = std::dynamic_pointer_cast<SpecialBird1>(bird)) {
+            image = specialBird1->getImage();
+        }
+        else if (auto specialBird2 = std::dynamic_pointer_cast<SpecialBird2>(bird)) {
+            image = specialBird2->getImage();
+        }
 
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &dynamicBox;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
+        bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
+        image,
+        bodyType::bird,
+        NULL,
+        bird
+        };
 
-    body->CreateFixture(&fixtureDef);
+        b2Body* body = world_.CreateBody(&bodyDef);
 
-    body->SetLinearVelocity({velocity.x, velocity.y});
+        b2PolygonShape dynamicBox;
+        dynamicBox.SetAsBox(.5f, .5f);
+
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &dynamicBox;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.3f;
+
+        body->CreateFixture(&fixtureDef);
+
+        body->SetLinearVelocity({velocity.x, velocity.y});
+    }
+    else {
+        std::cout << "No more birds left!" << std::endl;
+    }
 }
 
 b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){

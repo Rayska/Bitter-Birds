@@ -43,5 +43,6 @@ private:
     Image grass_image_, enemy_bird_image_, bird_image_;
     std::optional<b2Vec2> drag_start_;
     float cam_x, cam_y, cam_scale_x, cam_scale_y;
-    gameState state;
+    gameState state_;
+    std::vector<std::shared_ptr<Bird>> birds_;
 };
