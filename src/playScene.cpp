@@ -114,41 +114,7 @@ void PlayScene::update(float ts)
             drag_start_ = {};
         }
     }
-    // Win/Lose condition
-    auto worldBody = world_.GetBodyList();
-    int enemyCount = 0;
-    int birdCount = 0;
-    while (worldBody) {
-        userDataStruct* data = (userDataStruct*)worldBody->GetUserData().pointer;
-        if (data) {
-            switch (data->type)
-            {
-            case bodyType::enemy:
-                if (data->entity) {
-                    enemyCount++;
-                }
-                break;
-            case bodyType::bird:
-                if (data->bird) {
-                    birdCount++;
-                }
-                break;
-            default:
-                break;
-            }
-            worldBody = worldBody->GetNext();
-        }
-    }
-    if (enemyCount == 0) {
-        state_ = gameState::won;
-    }
-    else if (birdCount > 0) {
-        state_ == gameState::playing;
-    }
-    else {
-        state_ == gameState::lost;
-        //loseSequence();
-    }
+
 
     // Rendering
     {
@@ -179,6 +145,43 @@ void PlayScene::update(float ts)
         gui_.drawText(0.05f, .95f, 1.f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
         gui_.drawText(0.05f, .85f, 1.f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
         gui_.drawText(0.95f, .95f, 1.f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
+
+        // Win/Lose condition
+        auto worldBody = world_.GetBodyList();
+        int enemyCount = 0;
+        int birdCount = 0;
+        while (worldBody) {
+            userDataStruct* data = (userDataStruct*)worldBody->GetUserData().pointer;
+            if (data) {
+                switch (data->type)
+                {
+                case bodyType::enemy:
+                    if (data->entity) {
+                        enemyCount++;
+                    }
+                    break;
+                case bodyType::bird:
+                    if (data->bird) {
+                        birdCount++;
+                    }
+                    break;
+                default:
+                    break;
+                }
+                worldBody = worldBody->GetNext();
+            }
+        }
+        birdCount += birds_.size();
+        if (enemyCount == 0) {
+            state_ = gameState::won;
+        }
+        else if (birdCount > 0) {
+            state_ == gameState::playing;
+        }
+        else {
+            state_ == gameState::lost;
+            loseSequence();
+        }
     }
 }
 
