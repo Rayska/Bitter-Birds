@@ -21,6 +21,12 @@ GUI::~GUI() {
 		delete current_scene_;
 	if(new_scene_)
 		delete new_scene_;
+	for (auto i = 0; i < buffers_.size(); i++) {
+		delete buffers_[i];
+	}
+	for (auto& [k, v] : sounds_) {
+		delete v;
+	}
 }
 
 void GUI::run() {
@@ -145,4 +151,13 @@ void GUI::update(float ts)
 
 	if(current_scene_)
 		current_scene_->update(ts);
+}
+
+void GUI::playSound(std::string path){
+      if(sounds_.find(path) == sounds_.end()) {
+        buffers_.push_back(new sf::SoundBuffer());
+        buffers_[buffers_.size() - 1] -> loadFromFile(path);
+        sounds_[path] = new sf::Sound(*buffers_[buffers_.size() - 1]);
+      }
+    sounds_[path] -> play();
 }
