@@ -13,6 +13,10 @@ public:
         shape_.Set(points.data(), points.size());
     }
 
+    bodyType getType() const override {
+        return bodyType::ground;
+    }
+
     b2PolygonShape getShape() const {
         return shape_;
     }
