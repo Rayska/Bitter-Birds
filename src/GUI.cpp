@@ -111,7 +111,7 @@ void GUI::drawRect(float x, float y, float w, float h, float angle, Color color)
 	window_.draw(sp);
 }
 
-void GUI::drawText(float x, float y, float h, const std::string& text, Alignment align) {
+void GUI::drawText(float x, float y, float h, const std::string& text, Alignment align, sf::Color color) {
 	sf::Text txt(sf::String(text.c_str()), font_);
 	auto size = window_.getSize();
 	txt.setPosition({x * size.x, (1.f - y) * size.y});
@@ -136,6 +136,8 @@ void GUI::drawText(float x, float y, float h, const std::string& text, Alignment
 			break;
 		}
 	}
+	sf::Color colour(color.r, color.g, color.b);
+	txt.setColor(colour);
 	window_.draw(txt);
 }
 

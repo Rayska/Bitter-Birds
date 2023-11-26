@@ -147,13 +147,13 @@ void PlayScene::update(float ts)
     }
     else {
         state_ == gameState::lost;
+        //loseSequence();
     }
 
     // Rendering
     {
         // Render world
         gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
-
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
         while(body){
@@ -168,7 +168,6 @@ void PlayScene::update(float ts)
             }
             body = body->GetNext();
         }
-
         // Draw ground as 100 sequential grass squares
         for(int i = -50; i < 50; i++){
             gui_.drawSprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
@@ -248,4 +247,12 @@ std::string PlayScene::get_current_bird_type() const
 int PlayScene::get_score() const
 {
     return 1000;
+}
+
+void PlayScene::loseSequence() 
+{
+    sf::Clock clock;
+    sf::Color color(255,0,0);
+    gui_.drawText(0.5,0.5,10, "Game Over", Alignment::Center, color);
+
 }
