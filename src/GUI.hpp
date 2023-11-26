@@ -13,6 +13,12 @@ struct Color {
     float r, g, b;
 };
 
+enum struct Alignment {
+    LeftCenter,
+    Center,
+    RightCenter
+};
+
 /**
  * @brief 
  * GUI Class to create window and run the game
@@ -94,14 +100,14 @@ public:
     void drawRect(float x, float y, float w, float h, float angle, Color color);
 
     /**
-     * @brief Draw text to screen 
+     * @brief Draw text to screen with text centering
      * 
      * @param x xpos
      * @param y ypos
      * @param h text scale
      * @param text text string
      */
-    void drawText(float x, float y, float h, const std::string& text);
+    void drawText(float x, float y, float h, const std::string& text, Alignment align = Alignment::Center);
 
     /**
      * @brief Draw a button on screen. When mouse is hovered and pressed over button returns true

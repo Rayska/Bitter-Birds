@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "menuScene.hpp"
 #include "enemy.hpp"
 
 PlayScene::PlayScene(GUI &gui, const Level& level)
@@ -16,6 +17,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
+    groundBodyDef.userData.pointer = 0;
 
     b2Body* groundBody = world_.CreateBody(&groundBodyDef);
 
@@ -91,24 +93,35 @@ void PlayScene::update(float ts)
         }
     }
 
-    // Render
-    gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
+    // Rendering
+    {
+        // Render world
+        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
 
-    // Entities
-    auto body = world_.GetBodyList();
-    while(body){
-        auto pos = body->GetPosition();
-        auto ang = body->GetAngle();
-        Image* img = (Image*)body->GetUserData().pointer;
+        // Draw entities by iterating over body list in b2World
+        auto body = world_.GetBodyList();
+        while(body){
+            auto pos = body->GetPosition();
+            auto ang = body->GetAngle();
+            Image* img = (Image*)body->GetUserData().pointer;
+            
+            if(img != nullptr)
+                gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
+
+            body = body->GetNext();
+        }
+
+        // Draw ground as 100 sequential grass squares
+        for(int i = -50; i < 50; i++){
+            gui_.drawSprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
+        }
+
+        // UI 
+        gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
         
-        if(img != nullptr)
-            gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
-
-        body = body->GetNext();
-    }
-
-    for(int i = -50; i < 50; i++){
-        gui_.drawSprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
+        gui_.drawText(0.05f, .95f, 1.f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
+        gui_.drawText(0.05f, .85f, 1.f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
+        gui_.drawText(0.95f, .95f, 1.f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
     }
 }
 
@@ -136,4 +149,19 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 
 b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
     return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x + cam_x, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y - cam_y};
+}
+
+int PlayScene::get_bird_count() const
+{
+    return 5;
+}
+
+std::string PlayScene::get_current_bird_type() const
+{
+    return "Red bird";
+}
+
+int PlayScene::get_score() const
+{
+    return 1000;
 }
