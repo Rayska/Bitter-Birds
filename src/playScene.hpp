@@ -4,6 +4,8 @@
 #include "scene.hpp"
 #include "image.hpp"
 #include "level.hpp"
+#include "structure.hpp"
+#include "ground.hpp"
 
 #include <optional>
 
@@ -13,6 +15,19 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
+
+enum struct gameState {
+    won,
+    lost,
+    playing
+};
+
+struct userDataStruct {
+    Image*                      image;
+    bodyType                    type;
+    std::shared_ptr<Entity>     entity;
+    std::shared_ptr<Bird>       bird;
+};
 
 class PlayScene : public Scene {
 public:
@@ -33,4 +48,6 @@ private:
     Image grass_image_, enemy_bird_image_, bird_image_;
     std::optional<b2Vec2> drag_start_;
     float cam_x, cam_y, cam_scale_x, cam_scale_y;
+    gameState state_;
+    std::vector<std::shared_ptr<Bird>> birds_;
 };
