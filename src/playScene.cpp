@@ -17,7 +17,10 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
-    groundBodyDef.userData.pointer = (uintptr_t)new userDataStruct{&grass_image_};
+    groundBodyDef.userData.pointer = (uintptr_t)new userDataStruct{&grass_image_,
+                                                                    bodyType::ground,
+                                                                    NULL,
+                                                                    NULL};
     b2Body* groundBody = world_.CreateBody(&groundBodyDef);
     
 
@@ -175,7 +178,9 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 
     bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
             &bird_image_,
-            bodyType::bird
+            bodyType::bird,
+            NULL,
+            NULL
             };
 
     b2Body* body = world_.CreateBody(&bodyDef);
