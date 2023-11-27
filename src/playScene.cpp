@@ -14,6 +14,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
     bird_image_("res/test_bird.png"),
+    strcture_image_("res/wood.png"),
     state_(gameState::playing)
 {
     b2BodyDef groundBodyDef;
@@ -31,34 +32,49 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     
     for(auto& ent : level.getEntities()){
         b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(ent->getX(), ent->getY());
+
+        b2PolygonShape dynamicBox;
 
         bodyType type = (*ent).getType();
         switch (type)
         {
         case bodyType::structure:
+            {
+                bodyDef.type = b2_staticBody;
+                bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
+                    &strcture_image_,
+                    bodyType::structure,
+                    ent,
+                    NULL
+                };
+                auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
+                dynamicBox.SetAsBox(.5f * ent_structure->getWidth(), .5f * ent_structure->getHeight());
+                bodyDef.angle = ent_structure->getRotation();
+                break;
+            }
+        case bodyType::ground:
             
             break;
-        case bodyType::ground:
-
-            break;
         case bodyType::enemy:
-            bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
-                &enemy_bird_image_,
-                bodyType::enemy,
-                ent,
-                NULL};
-            break;
+            {
+                bodyDef.type = b2_dynamicBody;
+                bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
+                    &enemy_bird_image_,
+                    bodyType::enemy,
+                    ent,
+                    NULL
+                };
+                dynamicBox.SetAsBox(.5f, .5f);
+                break;
+            }
         default:
-            std::cout << "Default case reached, Could not match entity type: " << ent.get() << std::endl;
-            break;
+            {
+                break;
+            }
         }
-        
+
         b2Body* body = world_.CreateBody(&bodyDef);
-        
-        b2PolygonShape dynamicBox;
-        dynamicBox.SetAsBox(.5f, .5f);
 
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &dynamicBox;
@@ -80,6 +96,10 @@ PlayScene::~PlayScene()
 
 void PlayScene::update(float ts)
 {
+    if(gui_.keyState(sf::Keyboard::Escape)){
+        gui_.setScene<MenuScene>();
+    }    
+    
     // Update
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
@@ -137,8 +157,8 @@ void PlayScene::update(float ts)
             default:
                 break;
             }
-            worldBody = worldBody->GetNext();
         }
+        worldBody = worldBody->GetNext();
     }
     birdCount += birds_.size();
     if (enemyCount == 0) {
@@ -161,12 +181,18 @@ void PlayScene::update(float ts)
         auto body = world_.GetBodyList();
         while(body){
             auto pos = body->GetPosition();
-            auto ang = body->GetAngle();
+            auto ang = body->GetAngle() * -57.2957795; // convert to degrees
             userDataStruct* userData = (userDataStruct*)body->GetUserData().pointer;
             if(userData) {
                 Image* img = userData->image;
                 if(img != nullptr) {
-                    gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
+                    auto ent_structure = std::dynamic_pointer_cast<Structure>(userData->entity);
+                    if(userData->type == bodyType::structure && ent_structure){
+                        gui_.drawSprite(pos.x, pos.y, ent_structure->getWidth(), ent_structure->getHeight(), ang, *img);
+                    }
+                    else{
+                        gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
+                    }
                 }
             }
             body = body->GetNext();

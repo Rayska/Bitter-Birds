@@ -1,7 +1,11 @@
 #include "image.hpp"
 
+#include <iostream>
+
 Image::Image(const std::string &path) {
-    image_.loadFromFile(path.c_str());
+    if(!image_.loadFromFile(path.c_str())){
+        std::cout << "Failed to load image '" << path << "'" << std::endl;
+    }
 }
 
 //Image::~Image() {}

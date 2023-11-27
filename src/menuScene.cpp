@@ -68,6 +68,8 @@ void MenuScene::update(float ts) {
                 if(gui_.drawButton(level.name, 0.5f, y + menu_scroll_y_, 0.4f, 0.1f)){
                     Level lvl({
                         std::make_shared<Enemy>(100, 0.f, 10.f, 2.f, 0),
+                        std::make_shared<Structure>(100, 0, 7.f, 3.f, 0.1f, 1.f),
+                        std::make_shared<Structure>(100, 45.f, 7.f, 5.f, 0.1f, 1.f),
                     }, {birds_example}, {}, {}, {}, "Level 1");
                     gui_.setScene<PlayScene>(lvl);
                 }
