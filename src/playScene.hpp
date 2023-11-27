@@ -39,6 +39,7 @@ private:
     void launch_bird(b2Vec2 pos, b2Vec2 vel);
     b2Vec2 screen_to_world(b2Vec2 pos);
     void loseSequence();
+    void winSequence();
 
     int get_bird_count() const;
     std::string get_current_bird_type() const;

@@ -143,6 +143,7 @@ void PlayScene::update(float ts)
     birdCount += birds_.size();
     if (enemyCount == 0) {
         state_ = gameState::won;
+        winSequence();
     }
     else if (birdCount > 0) {
         state_ == gameState::playing;
@@ -253,8 +254,12 @@ int PlayScene::get_score() const
 
 void PlayScene::loseSequence() 
 {
-    sf::Clock clock;
     sf::Color color(255,0,0);
     gui_.drawText(0.5,0.65,10, "Game Over", Alignment::Center, color);
+}
 
+void PlayScene::winSequence()
+{
+    sf::Color color(0,255,0);
+    gui_.drawText(0.5,0.65,10, "Victory", Alignment::Center, color);
 }
