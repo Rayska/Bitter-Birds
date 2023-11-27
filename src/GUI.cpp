@@ -137,7 +137,7 @@ void GUI::drawText(float x, float y, float h, const std::string& text, Alignment
 		}
 	}
 	sf::Color colour(color.r, color.g, color.b);
-	txt.setColor(colour);
+	txt.setFillColor(colour);
 	window_.draw(txt);
 }
 
