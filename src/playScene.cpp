@@ -191,7 +191,7 @@ void PlayScene::update(float ts)
     // Rendering
     {
         // Render world
-        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
+        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y * gui_.getAspectRatio());
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
         while(body){
@@ -224,12 +224,18 @@ void PlayScene::update(float ts)
             gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, explosion_image_);
         }
 
+        static float t = 0.f;
+        t += ts;
+        gui_.drawSprite(5.f, 5.f, 1.f, 1.f, 90.f * t, strcture_image_);
+
         // UI 
         gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
         
-        gui_.drawText(0.05f, .95f, 1.f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
-        gui_.drawText(0.05f, .85f, 1.f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
-        gui_.drawText(0.95f, .95f, 1.f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
+        gui_.drawText(0.05f, .95f, .1f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
+        gui_.drawText(0.05f, .85f, .1f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
+        gui_.drawText(0.95f, .95f, .1f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
+
+        
     }
 }
 
