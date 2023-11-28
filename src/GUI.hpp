@@ -107,7 +107,7 @@ public:
      * @param h text scale
      * @param text text string
      */
-    void drawText(float x, float y, float h, const std::string& text, Alignment align = Alignment::Center);
+    void drawText(float x, float y, float h, const std::string& text, Alignment align = Alignment::Center, sf::Color color = sf::Color::White);
 
     /**
      * @brief Draw a button on screen. When mouse is hovered and pressed over button returns true

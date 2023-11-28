@@ -115,6 +115,7 @@ void PlayScene::update(float ts)
             drag_start_ = {};
         }
     }
+
     // Win/Lose condition
     auto worldBody = world_.GetBodyList();
     int enemyCount = 0;
@@ -140,14 +141,17 @@ void PlayScene::update(float ts)
             worldBody = worldBody->GetNext();
         }
     }
+    birdCount += birds_.size();
     if (enemyCount == 0) {
         state_ = gameState::won;
+        winSequence();
     }
     else if (birdCount > 0) {
         state_ == gameState::playing;
     }
     else {
         state_ == gameState::lost;
+        loseSequence();
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
@@ -168,7 +172,6 @@ void PlayScene::update(float ts)
     {
         // Render world
         gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
-
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
         while(body){
@@ -183,7 +186,6 @@ void PlayScene::update(float ts)
             }
             body = body->GetNext();
         }
-
         // Draw ground as 100 sequential grass squares
         for(int i = -50; i < 50; i++){
             gui_.drawSprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
@@ -246,16 +248,16 @@ b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
 
 void PlayScene::spawn_explosion(b2Vec2 pos){
     explosions_.push_back(ExplosionData{ 
-        .position = {pos.x + 0.1f, pos.y + 0.2f},
-        .time = 0
+        {pos.x + 0.1f, pos.y + 0.2f},
+        0.f
     });
     explosions_.push_back(ExplosionData{ 
-        .position = {pos.x - 0.2f, pos.y + 0.2f},
-        .time = 0
+        {pos.x - 0.2f, pos.y + 0.2f},
+        0.f
     });
     explosions_.push_back(ExplosionData{ 
-        .position = {pos.x - 0.1f, pos.y - 0.1f},
-        .time = 0
+        {pos.x - 0.1f, pos.y - 0.1f},
+        0.f
     });
 }
 
@@ -285,4 +287,16 @@ std::string PlayScene::get_current_bird_type() const
 int PlayScene::get_score() const
 {
     return 1000;
+}
+
+void PlayScene::loseSequence() 
+{
+    sf::Color color(255,0,0);
+    gui_.drawText(0.5,0.65,10, "Game Over", Alignment::Center, color);
+}
+
+void PlayScene::winSequence()
+{
+    sf::Color color(0,255,0);
+    gui_.drawText(0.5,0.65,10, "Victory", Alignment::Center, color);
 }
