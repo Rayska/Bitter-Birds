@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <array>
+#include <iostream>
 
 #include "image.hpp"
 
@@ -49,6 +50,7 @@ public:
      */
     template<typename SceneType, typename...Params>
     void setScene(Params...params){
+        std::cout << "Set new scene" << std::endl;
         new_scene_ = new SceneType(*this, params...);
     }
 

@@ -10,7 +10,13 @@ GUI::GUI()
 	current_scene_(nullptr),
 	new_scene_(nullptr),
 	prev_scroll_y_(0) {
-	font_.loadFromFile("res/DancingScript-Regular.ttf");
+
+	std::cout << "Created window." << std::endl;
+
+	if(!font_.loadFromFile("res/DancingScript-Regular.ttf")){
+		std::cout << "Failed to load font" << std::endl;
+	}
+
 	scroll_y_ = 0;
 
 	buttons_.fill(false);
@@ -93,10 +99,13 @@ void GUI::drawSprite(float x, float y, float w, float h, float angle, const Imag
 	sf::Sprite sp;
 	sp.setTexture(img.image_);
 	auto size = window_.getSize();
-	sp.setPosition((x - w * 0.5f) * size.x, (1.f - y - h * 0.5f) * size.y);
+	sp.setPosition((x ) * size.x, (1.f - y ) * size.y);
 	auto imgSize = img.image_.getSize();
 	sp.setScale(w * size.x / imgSize.x, h * size.y / imgSize.y);
 	sp.setRotation(angle);
+	
+	sf::FloatRect rc = sp.getLocalBounds();
+	sp.setOrigin(rc.width / 2, rc.height / 2);
 	window_.draw(sp);
 }
 
@@ -159,6 +168,7 @@ bool GUI::drawButton(const std::string& text, float x, float y, float w, float h
 void GUI::update(float ts)
 {
     if(new_scene_ != nullptr){
+		std::cout << "Switching scenes now." << std::endl;
 		delete current_scene_;
 		current_scene_ = new_scene_;
 		new_scene_ = nullptr;
