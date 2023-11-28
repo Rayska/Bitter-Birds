@@ -99,7 +99,7 @@ void GUI::drawSprite(float x, float y, float w, float h, float angle, const Imag
 	sf::Sprite sp;
 	sp.setTexture(img.image_);
 	auto size = window_.getSize();
-	sp.setPosition((x - w * 0.5f) * size.x, (1.f - y - h * 0.5f) * size.y);
+	sp.setPosition((x ) * size.x, (1.f - y ) * size.y);
 	auto imgSize = img.image_.getSize();
 	sp.setScale(w * size.x / imgSize.x, h * size.y / imgSize.y);
 	sp.setRotation(angle);

@@ -27,7 +27,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     b2Body* groundBody = world_.CreateBody(&groundBodyDef);
     
     b2PolygonShape groundBox;
-    groundBox.SetAsBox(50.0f, .5f);
+    groundBox.SetAsBox(50.0f, 0.5f);
 
     groundBody->CreateFixture(&groundBox, 0.0f);
     
@@ -42,7 +42,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         {
         case bodyType::structure:
             {
-                bodyDef.type = b2_staticBody;
+                bodyDef.type = b2_dynamicBody;
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &strcture_image_,
                     bodyType::structure,
