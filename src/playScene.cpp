@@ -164,14 +164,12 @@ void PlayScene::update(float ts)
     birdCount += birds_.size();
     if (enemyCount == 0) {
         state_ = gameState::won;
-        winSequence();
     }
     else if (birdCount > 0) {
         state_ == gameState::playing;
     }
     else {
         state_ == gameState::lost;
-        loseSequence();
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
@@ -191,7 +189,7 @@ void PlayScene::update(float ts)
     // Rendering
     {
         // Render world
-        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y);
+        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y * gui_.getAspectRatio());
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
         while(body){
@@ -224,12 +222,33 @@ void PlayScene::update(float ts)
             gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, explosion_image_);
         }
 
+        static float t = 0.f;
+        t += ts;
+        gui_.drawSprite(5.f, 5.f, 1.f, 1.f, 90.f * t, strcture_image_);
+
         // UI 
         gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
-        
-        gui_.drawText(0.05f, .95f, 1.f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
-        gui_.drawText(0.05f, .85f, 1.f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
-        gui_.drawText(0.95f, .95f, 1.f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
+
+        // Draw ui based on state
+        switch(state_){
+            case gameState::won:
+            {
+                winSequence();
+                break;
+            }
+            case gameState::lost:
+            {
+                loseSequence();
+                break;
+            }
+            case gameState::playing:
+            {
+                gui_.drawText(0.05f, .95f, .1f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
+                gui_.drawText(0.05f, .85f, .1f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
+                gui_.drawText(0.95f, .95f, .1f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
+                break;
+            }
+        }
     }
 }
 
@@ -318,11 +337,11 @@ int PlayScene::get_score() const
 void PlayScene::loseSequence() 
 {
     sf::Color color(255,0,0);
-    gui_.drawText(0.5,0.65,10, "Game Over", Alignment::Center, color);
+    gui_.drawText(0.5,0.5,0.4f, "Game Over", Alignment::Center, color);
 }
 
 void PlayScene::winSequence()
 {
     sf::Color color(0,255,0);
-    gui_.drawText(0.5,0.65,10, "Victory", Alignment::Center, color);
+    gui_.drawText(0.5,0.5,0.4f, "Victory", Alignment::Center, color);
 }

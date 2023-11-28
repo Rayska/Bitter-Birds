@@ -77,6 +77,7 @@ public:
     bool buttonReleased(sf::Mouse::Button btn) const;
     int scrollDelta() const;
 
+    float getAspectRatio() const;
     void setViewport(float x, float y, float w, float h);
 
     /**
