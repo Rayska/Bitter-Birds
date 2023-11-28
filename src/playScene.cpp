@@ -222,10 +222,6 @@ void PlayScene::update(float ts)
             gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, explosion_image_);
         }
 
-        static float t = 0.f;
-        t += ts;
-        gui_.drawSprite(5.f, 5.f, 1.f, 1.f, 90.f * t, strcture_image_);
-
         // UI 
         gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
