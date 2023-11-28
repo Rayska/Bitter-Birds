@@ -15,6 +15,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     enemy_bird_image_("res/enemy_bird.png"),
     bird_image_("res/test_bird.png"),
     strcture_image_("res/wood.png"),
+    explosion_image_("res/explosion.png"),
     state_(gameState::playing)
 {
     b2BodyDef groundBodyDef;
@@ -173,6 +174,20 @@ void PlayScene::update(float ts)
         loseSequence();
     }
 
+    if(gui_.buttonReleased(sf::Mouse::Button::Right)){
+        auto[x,y] = gui_.cursorPosition();
+        spawn_explosion(screen_to_world({x,y}));
+    }
+
+    // Update explosions
+    for(auto& expl : explosions_){
+        expl.time += ts;
+    }
+    auto to_rem = std::remove_if(explosions_.begin(), explosions_.end(), [](auto& expl){
+        return expl.time > 1.f / 5.f;
+    });
+    explosions_.erase(to_rem, explosions_.end());
+
     // Rendering
     {
         // Render world
@@ -200,6 +215,13 @@ void PlayScene::update(float ts)
         // Draw ground as 100 sequential grass squares
         for(int i = -50; i < 50; i++){
             gui_.drawSprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
+        }
+
+        // Draw explosions
+        for(auto& expl : explosions_){
+            float t = 5.f * expl.time;
+            float scale = -5.f * t * t * (t - 1.f);
+            gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, explosion_image_);
         }
 
         // UI 
@@ -248,6 +270,21 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 
 b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
     return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x + cam_x, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y - cam_y};
+}
+
+void PlayScene::spawn_explosion(b2Vec2 pos){
+    explosions_.push_back(ExplosionData{ 
+        {pos.x + 0.1f, pos.y + 0.2f},
+        0.f
+    });
+    explosions_.push_back(ExplosionData{ 
+        {pos.x - 0.2f, pos.y + 0.2f},
+        0.f
+    });
+    explosions_.push_back(ExplosionData{ 
+        {pos.x - 0.1f, pos.y - 0.1f},
+        0.f
+    });
 }
 
 int PlayScene::get_bird_count() const
