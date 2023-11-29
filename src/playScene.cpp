@@ -152,7 +152,12 @@ void PlayScene::update(float ts)
                 break;
             case bodyType::bird:
                 if (data->bird) {
-                    birdCount++;
+                    if (data->bird->getTime().asSeconds() > 10) {
+                        world_.DestroyBody(worldBody);
+                    }
+                    else {
+                        birdCount++;
+                    }
                 }
                 break;
             default:
@@ -166,10 +171,10 @@ void PlayScene::update(float ts)
         state_ = gameState::won;
     }
     else if (birdCount > 0) {
-        state_ == gameState::playing;
+        state_ = gameState::playing;
     }
     else {
-        state_ == gameState::lost;
+        state_ = gameState::lost;
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
@@ -226,6 +231,7 @@ void PlayScene::update(float ts)
         gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
         // Draw ui based on state
+        
         switch(state_){
             case gameState::won:
             {
@@ -263,6 +269,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         NULL,
         bird
         };
+
+        bird->resetTime();
 
         b2Body* body = world_.CreateBody(&bodyDef);
 
@@ -333,11 +341,11 @@ int PlayScene::get_score() const
 void PlayScene::loseSequence() 
 {
     sf::Color color(255,0,0);
-    gui_.drawText(0.5,0.5,0.4f, "Game Over", Alignment::Center, color);
+    gui_.drawText(0.5,0.65,1, "Game Over", Alignment::Center, color);
 }
 
 void PlayScene::winSequence()
 {
     sf::Color color(0,255,0);
-    gui_.drawText(0.5,0.5,0.4f, "Victory", Alignment::Center, color);
+    gui_.drawText(0.5,0.65,1, "Victory", Alignment::Center, color);
 }
