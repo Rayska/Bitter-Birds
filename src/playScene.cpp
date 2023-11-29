@@ -171,10 +171,10 @@ void PlayScene::update(float ts)
         state_ = gameState::won;
     }
     else if (birdCount > 0) {
-        state_ == gameState::playing;
+        state_ = gameState::playing;
     }
     else {
-        state_ == gameState::lost;
+        state_ = gameState::lost;
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
@@ -235,6 +235,7 @@ void PlayScene::update(float ts)
         gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
         // Draw ui based on state
+        
         switch(state_){
             case gameState::won:
             {
