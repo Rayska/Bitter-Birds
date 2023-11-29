@@ -24,8 +24,17 @@ public:
         return image_;
     }
 
+    void resetTime() {
+        spawnTime.restart();
+    }
+
+    sf::Time getTime() const {
+        return spawnTime.getElapsedTime();
+    }
+
 protected:
     Image*  image_;
+    sf::Clock spawnTime;
 };
 
 class NormalBird: public Bird {
