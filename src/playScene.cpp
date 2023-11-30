@@ -301,7 +301,7 @@ void PlayScene::update(float ts)
 }
 
 void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
-    if (!birds_.empty()) {
+    if (!birds_.empty() && state_ == gameState::playing) {
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(pos.x, pos.y);
@@ -332,6 +332,9 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         body->CreateFixture(&fixtureDef);
 
         body->SetLinearVelocity({velocity.x, velocity.y});
+    }
+    else if (state_ != gameState::playing) {
+        std::cout << "Game is no longer in progress!" << std::endl;        
     }
     else {
         std::cout << "No more birds left!" << std::endl;
