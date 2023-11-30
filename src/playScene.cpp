@@ -16,6 +16,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     bird_image_("res/test_bird.png"),
     strcture_image_("res/wood.png"),
     explosion_image_("res/explosion.png"),
+    cloud_image_("res/cloud.png"),
     state_(gameState::playing)
 {
     b2BodyDef groundBodyDef;
@@ -47,7 +48,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                     &strcture_image_,
                     bodyType::structure,
                     ent,
-                    NULL
+                    NULL,
+                    0
                 };
                 auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
                 dynamicBox.SetAsBox(.5f * ent_structure->getWidth(), .5f * ent_structure->getHeight());
@@ -64,7 +66,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                     &enemy_bird_image_,
                     bodyType::enemy,
                     ent,
-                    NULL
+                    NULL,
+                    1000
                 };
                 dynamicBox.SetAsBox(.5f, .5f);
                 break;
@@ -136,6 +139,47 @@ void PlayScene::update(float ts)
         }
     }
 
+    {
+        std::vector<b2Body*> to_delete;
+
+        auto currentBody = world_.GetBodyList();
+        while(currentBody) {
+            auto currentContact = currentBody->GetContactList();
+            while(currentContact) {
+                auto other = currentContact->other;
+
+                userDataStruct* curData = (userDataStruct*)currentBody->GetUserData().pointer;
+                userDataStruct* otherData = (userDataStruct*)other->GetUserData().pointer;
+
+                if(curData && curData->type == bodyType::enemy && otherData->type == bodyType::bird) {
+                    curData->hp -= 10;
+
+                    if(curData->hp < 0){
+                        to_delete.push_back(currentBody);
+                    }
+                }
+                if(otherData && otherData->type == bodyType::enemy && otherData->type == bodyType::bird) {
+                    otherData->hp -= 10;
+
+                    if(otherData->hp < 0){
+                        to_delete.push_back(other);
+                    }
+                }
+
+
+                currentContact = currentContact->next;
+            }
+
+            currentBody = currentBody->GetNext();
+        }
+
+        for(auto& td : to_delete){
+            world_.DestroyBody(td);
+        }
+    }
+
+
+
     // Win/Lose condition
     auto worldBody = world_.GetBodyList();
     int enemyCount = 0;
@@ -154,6 +198,7 @@ void PlayScene::update(float ts)
                 if (data->bird) {
                     if (data->bird->getTime().asSeconds() > 10) {
                         world_.DestroyBody(worldBody);
+                        spawn_explosion(worldBody->GetPosition(), explosionType::cloud);
                     }
                     else {
                         birdCount++;
@@ -179,7 +224,7 @@ void PlayScene::update(float ts)
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
         auto[x,y] = gui_.cursorPosition();
-        spawn_explosion(screen_to_world({x,y}));
+        spawn_explosion(screen_to_world({x,y}), explosionType::fireball);
     }
 
     // Update explosions
@@ -224,7 +269,8 @@ void PlayScene::update(float ts)
         for(auto& expl : explosions_){
             float t = 5.f * expl.time;
             float scale = -5.f * t * t * (t - 1.f);
-            gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, explosion_image_);
+            auto& img = expl.type == explosionType::cloud ?  cloud_image_ : explosion_image_;
+            gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
         }
 
         // UI 
@@ -267,7 +313,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         bird->getImage(),
         bodyType::bird,
         NULL,
-        bird
+        bird,
+        0
         };
 
         bird->resetTime();
@@ -295,18 +342,18 @@ b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
     return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x + cam_x, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y - cam_y};
 }
 
-void PlayScene::spawn_explosion(b2Vec2 pos){
+void PlayScene::spawn_explosion(b2Vec2 pos, explosionType type){
     explosions_.push_back(ExplosionData{ 
         {pos.x + 0.1f, pos.y + 0.2f},
-        0.f
+        0.f, type
     });
     explosions_.push_back(ExplosionData{ 
         {pos.x - 0.2f, pos.y + 0.2f},
-        0.f
+        0.f, type
     });
     explosions_.push_back(ExplosionData{ 
         {pos.x - 0.1f, pos.y - 0.1f},
-        0.f
+        0.f, type
     });
 }
 
