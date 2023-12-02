@@ -8,6 +8,7 @@
 PlayScene::PlayScene(GUI &gui, const Level& level)
     :
     Scene(gui),
+    level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
     cam_x(0.f), cam_y(-5.f), cam_scale_x(15.f), cam_scale_y(15.f),
@@ -418,14 +419,23 @@ int PlayScene::get_score() const
     return 1000;
 }
 
-void PlayScene::loseSequence() 
-{
-    if (!endSoundCalled_) {
-        endSoundCalled_ = true;
-        gui_.playSound("res/sounds/lose_sound.wav");
-    }
-    sf::Color color(255,0,0);
-    gui_.drawText(0.5,0.65,1, "Game Over", Alignment::Center, color);
+
+
+struct ScoreBoardEntry {
+    std::string name;
+    int score;
+};
+
+
+void PlayScene::retry_level() {
+    gui_.setScene<PlayScene>(level_);
+}
+
+void PlayScene::exit_to_menu() {
+    gui_.setScene<MenuScene>();
+}
+
+void PlayScene::next_level() {
 }
 
 void PlayScene::winSequence()
@@ -435,5 +445,48 @@ void PlayScene::winSequence()
         gui_.playSound("res/sounds/win_sound.wav");
     }
     sf::Color color(0,255,0);
-    gui_.drawText(0.5,0.65,1, "Victory", Alignment::Center, color);
+    gui_.drawText(0.5f, 0.8f, 0.2f, "Victory", Alignment::Center, color);
+
+    std::vector<ScoreBoardEntry> scores{
+        { "Abc", 1000 },
+        { "Def", 700 },
+        { "Ghi", 600 },
+        { "Jkl", 550 }
+    };
+
+    gui_.drawText(0.5f, 0.7f, 0.15f, "Scoreboard", Alignment::Center);
+    for(int i = 0; (i < 5) && (i < scores.size()); i++){
+        auto& e = scores[i];
+        gui_.drawText(0.2f, 0.6f - i * 0.07f, 0.1f, std::to_string(i + 1), Alignment::LeftCenter);
+        gui_.drawText(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center);
+        gui_.drawText(0.8f, 0.6f - i * 0.07f, 0.1f, std::to_string(e.score), Alignment::RightCenter);
+    }
+
+    if(gui_.drawButton("Retry", 0.2f, 0.2f, 0.2f, 0.1f)){
+        retry_level();
+    }
+    if(gui_.drawButton("Menu", 0.5f, 0.2f, 0.2f, 0.1f)){
+        exit_to_menu();
+    }
+    if(gui_.drawButton("Next", 0.8f, 0.2f, 0.2f, 0.1f)){
+        next_level();
+    }
+}
+
+void PlayScene::loseSequence() 
+{
+    if (!endSoundCalled_) {
+        endSoundCalled_ = true;
+        gui_.playSound("res/sounds/lose_sound.wav");
+    }
+
+    sf::Color color(255,0,0);
+    gui_.drawText(0.5f,0.6f,0.2f, "Game Over", Alignment::Center, color);
+
+    if(gui_.drawButton("Retry", 0.4f, 0.4f, 0.2f, 0.1f)){
+        retry_level();
+    }
+    if(gui_.drawButton("Menu", 0.6f, 0.4f, 0.2f, 0.1f)){
+        exit_to_menu();
+    }
 }

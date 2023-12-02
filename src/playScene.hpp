@@ -57,7 +57,12 @@ private:
     int get_bird_count() const;
     std::string get_current_bird_type() const;
     int get_score() const;
+
+    void retry_level();
+    void exit_to_menu();
+    void next_level();
 private:
+    Level level_;
     b2Vec2 gravity_;
     b2World world_;
     Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_;
