@@ -117,7 +117,7 @@ void PlayScene::update(float ts)
 {
     if(gui_.keyState(sf::Keyboard::Escape)){
         gui_.setScene<MenuScene>();
-    }    
+    }
     
     // Update
     int32 velocityIterations = 6;
@@ -274,7 +274,7 @@ void PlayScene::update(float ts)
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
-        if (mostRecentBird) {
+        if (mostRecentBird && !mostRecentAbilityUsed) {
             userDataStruct* userData = (userDataStruct*)mostRecentBird->GetUserData().pointer;
 
             switch (userData->bird->getBirdType())
@@ -301,7 +301,6 @@ void PlayScene::update(float ts)
                     body = body->GetNext();
                 }
                 destroyBird(mostRecentBird);
-                mostRecentAbilityUsed = true;
                 break;
             }
             default:
