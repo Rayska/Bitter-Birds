@@ -17,6 +17,8 @@
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
 
+#include <box2d/b2_timer.h>
+
 enum struct gameState {
     won,
     lost,
@@ -54,6 +56,7 @@ private:
     void spawn_explosion(b2Vec2 pos, explosionType type);
     void loseSequence();
     void winSequence();
+    void destroyBird(b2Body* birdBody);
 
     int get_bird_count() const;
     std::string get_current_bird_type() const;
@@ -67,5 +70,8 @@ private:
     gameState state_;
     std::vector<std::shared_ptr<Bird>> birds_;
     std::vector<ExplosionData> explosions_;
+    b2Body* mostRecentBird;
+    bool mostRecentAbilityUsed;
     bool endSoundCalled_;
+    b2Timer* timer;
 };
