@@ -13,8 +13,11 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
+
+#include <box2d/b2_timer.h>
 
 enum struct gameState {
     won,
@@ -53,6 +56,7 @@ private:
     void spawn_explosion(b2Vec2 pos, explosionType type);
     void loseSequence();
     void winSequence();
+    void destroyBird(b2Body* birdBody);
 
     int get_bird_count() const;
     std::string get_current_bird_type() const;
@@ -65,11 +69,14 @@ private:
     Level level_;
     b2Vec2 gravity_;
     b2World world_;
-    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_;
+    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
     std::optional<b2Vec2> drag_start_;
     float cam_x, cam_y, cam_scale_x, cam_scale_y;
     gameState state_;
     std::vector<std::shared_ptr<Bird>> birds_;
     std::vector<ExplosionData> explosions_;
+    b2Body* mostRecentBird_;
+    bool mostRecentAbilityUsed_;
     bool endSoundCalled_;
+    b2Timer* timer_;
 };
