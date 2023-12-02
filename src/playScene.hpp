@@ -54,6 +54,7 @@ private:
     void spawn_explosion(b2Vec2 pos, explosionType type);
     void loseSequence();
     void winSequence();
+    void destroyBird(b2Body* birdBody);
 
     int get_bird_count() const;
     std::string get_current_bird_type() const;

@@ -49,14 +49,12 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
             {
                 bodyDef.type = b2_dynamicBody;
                 auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
-                auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &strcture_image_,
                     bodyType::structure,
                     ent,
                     NULL,
                     ent_structure->getHealthPoints(),
-                    ent_structure->getHealthPoints()
                 };
                 
                 dynamicBox.SetAsBox(.5f * ent_structure->getWidth(), .5f * ent_structure->getHeight());
@@ -241,10 +239,8 @@ void PlayScene::update(float ts)
                 break;
             case bodyType::bird:
                 if (data->bird) {
-                    if (data->bird->getTime().asSeconds() > 10) {
-                        world_.DestroyBody(worldBody);
-                        gui_.playSound("res/sounds/bird_death.wav");
-                        spawn_explosion(worldBody->GetPosition(), explosionType::cloud);
+                    if (data->bird->getTime().asSeconds() > 5) {
+                        destroyBird(worldBody);
                     }
                     else {
                         birdCount++;
@@ -281,9 +277,22 @@ void PlayScene::update(float ts)
                 break;
             }
             case birdType::special2 :{
-                
-            
-
+                auto body = world_.GetBodyList();
+                b2Vec2 birdPos = mostRecentBird->GetPosition();
+                spawn_explosion(birdPos, explosionType::fireball);
+                while (body) {
+                    b2Vec2 pos = body->GetPosition();
+                    float distance = abs((birdPos - pos).Length());
+                    if (distance < 3) {
+                        b2Vec2 force = (pos - birdPos);
+                        force.Normalize();
+                        force *= (3 - distance) * 2;
+                        body->ApplyLinearImpulseToCenter(force, true);
+                    }
+                    body = body->GetNext();
+                }
+                destroyBird(mostRecentBird);
+                mostRecentAbilityUsed = true;
                 break;
             }
             default:
@@ -341,8 +350,6 @@ void PlayScene::update(float ts)
             float scale = -5.f * t * t * (t - 1.f);
             auto& img = expl.type == explosionType::cloud ?  cloud_image_ : explosion_image_;
             gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
-            auto& img = expl.type == explosionType::cloud ?  cloud_image_ : explosion_image_;
-            gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
         }
 
         // UI 
@@ -373,7 +380,6 @@ void PlayScene::update(float ts)
 }
 
 void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
-    if (!birds_.empty() && state_ == gameState::playing) {
     if (!birds_.empty() && state_ == gameState::playing) {
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
@@ -458,6 +464,12 @@ std::string PlayScene::get_current_bird_type() const
         }
     }
     return "None";
+}
+
+void PlayScene::destroyBird(b2Body* birdBody) {
+    world_.DestroyBody(birdBody);
+    gui_.playSound("res/sounds/bird_death.wav");
+    spawn_explosion(birdBody->GetPosition(), explosionType::cloud);
 }
 
 int PlayScene::get_score() const
