@@ -79,6 +79,7 @@ void MenuScene::update(float ts) {
                         std::make_shared<Structure>(100, 0, 8.f, 8.f, 0.2f, 3.f), // top
                         std::make_shared<Enemy>(100, 0.f, 8.f, 1.f, 0)
                     }, {birds_example}, {}, {}, {}, "Level 1");
+                    gui_.playSound("res/sounds/click_sound.wav");
                     gui_.setScene<PlayScene>(lvl);
                 }
                 y -= 0.2f;

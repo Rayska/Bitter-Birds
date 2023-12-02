@@ -188,11 +188,12 @@ void GUI::update(float ts)
 		current_scene_->update(ts);
 }
 
-void GUI::playSound(std::string path){
+void GUI::playSound(std::string path, int vol) {
       if(sounds_.find(path) == sounds_.end()) {
         buffers_.push_back(new sf::SoundBuffer());
         buffers_[buffers_.size() - 1] -> loadFromFile(path);
         sounds_[path] = new sf::Sound(*buffers_[buffers_.size() - 1]);
+		sounds_[path]->setVolume(vol);
       }
     sounds_[path] -> play();
 }

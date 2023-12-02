@@ -125,7 +125,7 @@ public:
      */
     bool drawButton(const std::string& text, float x, float y, float w, float h);
 
-    void playSound(std::string);
+    void playSound(std::string path, int vol = 100);
 private:
     void update(float ts);
 private:
