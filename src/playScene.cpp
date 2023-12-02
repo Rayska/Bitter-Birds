@@ -18,7 +18,6 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     explosion_image_("res/explosion.png"),
     cloud_image_("res/cloud.png"),
     sling_image_("res/slingshot.png"),
-    state_(gameState::playing)
     state_(gameState::playing),
     endSoundCalled_(false)
 {
