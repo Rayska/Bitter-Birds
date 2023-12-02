@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <array>
+#include <iostream>
 
 #include "image.hpp"
 
@@ -11,6 +12,12 @@ class Scene;
 
 struct Color {
     float r, g, b;
+};
+
+enum struct Alignment {
+    LeftCenter,
+    Center,
+    RightCenter
 };
 
 /**
@@ -43,6 +50,7 @@ public:
      */
     template<typename SceneType, typename...Params>
     void setScene(Params...params){
+        std::cout << "Set new scene" << std::endl;
         new_scene_ = new SceneType(*this, params...);
     }
 
@@ -69,6 +77,7 @@ public:
     bool buttonReleased(sf::Mouse::Button btn) const;
     int scrollDelta() const;
 
+    float getAspectRatio() const;
     void setViewport(float x, float y, float w, float h);
 
     /**
@@ -94,14 +103,14 @@ public:
     void drawRect(float x, float y, float w, float h, float angle, Color color);
 
     /**
-     * @brief Draw text to screen 
+     * @brief Draw text to screen with text centering
      * 
      * @param x xpos
      * @param y ypos
      * @param h text scale
      * @param text text string
      */
-    void drawText(float x, float y, float h, const std::string& text);
+    void drawText(float x, float y, float h, const std::string& text, Alignment align = Alignment::Center, sf::Color color = sf::Color::White);
 
     /**
      * @brief Draw a button on screen. When mouse is hovered and pressed over button returns true

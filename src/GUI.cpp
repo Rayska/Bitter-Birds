@@ -8,8 +8,15 @@ GUI::GUI()
 	:
 	window_(sf::VideoMode(1280, 720), "Bitter Birds!"),
 	current_scene_(nullptr),
-	new_scene_(nullptr) {
-	font_.loadFromFile("res/DancingScript-Regular.ttf");
+	new_scene_(nullptr),
+	prev_scroll_y_(0) {
+
+	std::cout << "Created window." << std::endl;
+
+	if(!font_.loadFromFile("res/DancingScript-Regular.ttf")){
+		std::cout << "Failed to load font" << std::endl;
+	}
+
 	scroll_y_ = 0;
 
 	buttons_.fill(false);
@@ -38,7 +45,7 @@ void GUI::run() {
         while (window_.pollEvent(event))
         {
 			if(event.type == sf::Event::MouseWheelScrolled){
-				scroll_y_ += event.mouseWheelScroll.delta;
+				scroll_y_ += (int)event.mouseWheelScroll.delta;
 			}
             if (event.type == sf::Event::Closed)
                 window_.close();
@@ -88,41 +95,68 @@ bool GUI::buttonReleased(sf::Mouse::Button btn) const {
 int GUI::scrollDelta() const {
 	return scroll_y_ - prev_scroll_y_;
 }
+    
+float GUI::getAspectRatio() const {
+	auto wsize = window_.getSize();
+	return wsize.x / wsize.y;
+}
 
 void GUI::setViewport(float x, float y, float w, float h) {
 	auto wsize = window_.getSize();
-	window_.setView(sf::View({x * wsize.x, y * wsize.y}, {w * wsize.x, h * wsize.y}));
+	window_.setView(sf::View({x, y}, {w, h}));
 }
 
 void GUI::drawSprite(float x, float y, float w, float h, float angle, const Image &img) {
 	sf::Sprite sp;
 	sp.setTexture(img.image_);
 	auto size = window_.getSize();
-	sp.setPosition((x - w * 0.5f) * size.x, (1.f - y - h * 0.5f) * size.y);
 	auto imgSize = img.image_.getSize();
-	sp.setScale(w * size.x / imgSize.x, h * size.y / imgSize.y);
 	sp.setRotation(angle);
+	sp.setScale(w / imgSize.x, h / imgSize.y);
+	sp.setPosition(x, (1.f - y ));
+	sf::FloatRect rc = sp.getLocalBounds();
+	sp.setOrigin(rc.width / 2, rc.height / 2);
 	window_.draw(sp);
 }
 
 void GUI::drawRect(float x, float y, float w, float h, float angle, Color color) {
 	sf::RectangleShape sp;
-	sp.setFillColor({(int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255)});
+	sp.setFillColor({(sf::Uint8)(color.r * 255), (sf::Uint8)(color.g * 255), (sf::Uint8)(color.b * 255)});
 
 	auto size = window_.getSize();
-	sp.setPosition((x - w * 0.5f) * size.x, (1.f - y - h * 0.5f) * size.y);
-	sp.setSize({w * size.x, h * size.y});
+	sp.setPosition((x - w * 0.5f), (1.f - y - h * 0.5f));
+	sp.setSize({w, h});
 
 	window_.draw(sp);
 }
 
-void GUI::drawText(float x, float y, float h, const std::string& text) {
+void GUI::drawText(float x, float y, float h, const std::string& text, Alignment align, sf::Color color) {
 	sf::Text txt(sf::String(text.c_str()), font_);
-	auto size = window_.getSize();
-	txt.setPosition({x * size.x, (1.f - y) * size.y});
-	txt.setScale({h, h});
-	sf::FloatRect rc = txt.getLocalBounds();
-	txt.setOrigin(rc.width / 2, rc.height / 2);
+	// auto size = window_.getSize();
+	txt.setPosition({x, 1.f - y});
+	txt.setScale({h * 0.01f, h * 0.01f});
+	switch(align){
+		case Alignment::Center:
+		{
+			sf::FloatRect rc = txt.getLocalBounds();
+			txt.setOrigin(rc.width / 2, rc.height / 2);
+			break;
+		}
+		case Alignment::RightCenter:
+		{
+			sf::FloatRect rc = txt.getLocalBounds();
+			txt.setOrigin(rc.width, rc.height / 2);
+			break;
+		}
+		case Alignment::LeftCenter:
+		{
+			sf::FloatRect rc = txt.getLocalBounds();
+			txt.setOrigin(0, rc.height / 2);
+			break;
+		}
+	}
+	sf::Color colour(color.r, color.g, color.b);
+	txt.setFillColor(colour);
 	window_.draw(txt);
 }
 
@@ -136,7 +170,7 @@ bool GUI::drawButton(const std::string& text, float x, float y, float w, float h
 		((cy > y - h * 0.5f) && (cy < y + h * 0.5f));
 
 	drawRect(x, y, w * 0.95, h * 0.95, 0.f, isHovered ? hoverColor : defaultColor);
-	drawText(x, y, h * 5.f, text);
+	drawText(x, y, h, text);
 
 	return buttonReleased(sf::Mouse::Button::Left) && isHovered;
 }
@@ -144,6 +178,7 @@ bool GUI::drawButton(const std::string& text, float x, float y, float w, float h
 void GUI::update(float ts)
 {
     if(new_scene_ != nullptr){
+		std::cout << "Switching scenes now." << std::endl;
 		delete current_scene_;
 		current_scene_ = new_scene_;
 		new_scene_ = nullptr;
