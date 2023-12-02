@@ -55,6 +55,11 @@ void GUI::run() {
 			else if(event.type == sf::Event::MouseButtonReleased){
 				buttons_[event.mouseButton.button] = false;
 			}
+			else if(event.type == sf::Event::TextEntered){
+				if(current_scene_){
+					current_scene_->on_input((char)event.text.unicode);
+				}
+			}
             else if (event.type == sf::Event::Closed)
                 window_.close();
         }

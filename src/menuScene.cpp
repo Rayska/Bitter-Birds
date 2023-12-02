@@ -13,13 +13,14 @@
 
 
 
-MenuScene::MenuScene(GUI& gui) 
+MenuScene::MenuScene(GUI& gui, std::string current_player) 
     : 
     Scene(gui), 
     button_image_("res/button.png"), 
     bird_image_("res/test_bird.png"), 
     t(0.f),
     menu_state_(MenuState::MainMenu),
+    current_player_(current_player),
     menu_scroll_y_(0.f) {
     levels_ = {
         { "World 1" },
@@ -35,7 +36,6 @@ MenuScene::~MenuScene() {}
 void MenuScene::update(float ts) {
     t += ts;
     gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
-
 
     switch(menu_state_){
         case MenuState::MainMenu:
@@ -78,9 +78,14 @@ void MenuScene::update(float ts) {
                         std::make_shared<Structure>(100, 0, 9.f, 5.f, 2.f, 0.2f), // right wall
                         std::make_shared<Structure>(100, 0, 8.f, 8.f, 0.2f, 3.f), // top
                         std::make_shared<Enemy>(100, 0.f, 8.f, 1.f, 0)
-                    }, {birds_example}, {}, {}, {}, "Level 1");
+                    }, {birds_example}, {}, {}, {}, "Level 1", {
+                        {"Player 1", 1000},
+                        {"Player 2", 900},
+                        {"Player 3", 800},
+                        {"Player 4", 700}
+                    });
                     gui_.playSound("res/sounds/click_sound.wav");
-                    gui_.setScene<PlayScene>(lvl);
+                    gui_.setScene<PlayScene>(lvl, current_player_);
                 }
                 y -= 0.2f;
             }

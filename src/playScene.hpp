@@ -46,7 +46,7 @@ struct ExplosionData {
 
 class PlayScene : public Scene {
 public:
-    PlayScene(GUI& gui, const Level& level);
+    PlayScene(GUI& gui, const Level& level, std::string current_player);
     ~PlayScene();
 
     void update(float ts) override;
@@ -66,6 +66,7 @@ private:
     void exit_to_menu();
     void next_level();
 private:
+    std::string current_player_;
     Level level_;
     b2Vec2 gravity_;
     b2World world_;
@@ -79,4 +80,6 @@ private:
     bool mostRecentAbilityUsed_;
     bool endSoundCalled_;
     b2Timer* timer_;
+    bool added_score_;
+    int most_recent_score_;
 };

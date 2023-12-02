@@ -1,12 +1,10 @@
-
-
 #include "GUI.hpp"
-#include "menuScene.hpp"
+#include "nameEntryScene.hpp"
 
 int main() {
     GUI app;
 
-    app.setScene<MenuScene>();
+    app.setScene<NameEntryScene>();
 
     app.run();
     return 0;
