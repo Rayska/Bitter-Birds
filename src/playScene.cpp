@@ -44,14 +44,15 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         case bodyType::structure:
             {
                 bodyDef.type = b2_dynamicBody;
+                auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &strcture_image_,
                     bodyType::structure,
                     ent,
                     NULL,
-                    0
+                    ent_structure->getHealthPoints()
                 };
-                auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
+                
                 dynamicBox.SetAsBox(.5f * ent_structure->getWidth(), .5f * ent_structure->getHeight());
                 bodyDef.angle = ent_structure->getRotation();
                 break;
@@ -62,12 +63,13 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         case bodyType::enemy:
             {
                 bodyDef.type = b2_dynamicBody;
+                auto ent_enemy = std::dynamic_pointer_cast<Enemy>(ent);
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &enemy_bird_image_,
                     bodyType::enemy,
                     ent,
                     NULL,
-                    1000
+                    ent_enemy->getHealthPoints()
                 };
                 dynamicBox.SetAsBox(.5f, .5f);
                 break;
@@ -145,27 +147,46 @@ void PlayScene::update(float ts)
         auto currentBody = world_.GetBodyList();
         while(currentBody) {
             auto currentContact = currentBody->GetContactList();
+            bool deleted = false;
             while(currentContact) {
                 auto other = currentContact->other;
 
                 userDataStruct* curData = (userDataStruct*)currentBody->GetUserData().pointer;
                 userDataStruct* otherData = (userDataStruct*)other->GetUserData().pointer;
 
-                if(curData && curData->type == bodyType::enemy && otherData->type == bodyType::bird) {
-                    curData->hp -= 10;
+                if(curData && (curData->type == bodyType::enemy || curData->type == bodyType::structure) && otherData && otherData->type != bodyType::ground) {
+                    auto manifold = currentContact -> contact -> GetManifold();
+                    if (curData->type == bodyType::enemy) {
+                        for (int i = 0; i < manifold->pointCount; ++i) {
+                            b2ManifoldPoint point = manifold->points[i];
 
-                    if(curData->hp < 0){
-                        to_delete.push_back(currentBody);
+                            float normalImpulse = point.normalImpulse * 25;
+                            //std::cout << normalImpulse << std::endl;
+
+                            curData->hp -= int(normalImpulse);
+                            
+                        }
+
+                        if(!deleted && curData->hp < 0){
+                            deleted = true;
+                            to_delete.push_back(currentBody);
+                        }
+                    } else if (curData->type == bodyType::structure) {
+                        for (int i = 0; i < manifold->pointCount; ++i) {
+                            b2ManifoldPoint point = manifold->points[i];
+
+                            float normalImpulse = point.normalImpulse * 8;
+
+                            curData->hp -= int(normalImpulse);
+                            
+                        }
+
+                        if(!deleted && curData->hp < 0){
+                            deleted = true;
+                            to_delete.push_back(currentBody);
+                        }
                     }
                 }
-                if(otherData && otherData->type == bodyType::enemy && otherData->type == bodyType::bird) {
-                    otherData->hp -= 10;
-
-                    if(otherData->hp < 0){
-                        to_delete.push_back(other);
-                    }
-                }
-
 
                 currentContact = currentContact->next;
             }
