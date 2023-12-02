@@ -27,7 +27,6 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                                                                     NULL,
                                                                     NULL};
     b2Body* groundBody = world_.CreateBody(&groundBodyDef);
-    
     b2PolygonShape groundBox;
     groundBox.SetAsBox(50.0f, 0.5f);
 
@@ -136,7 +135,7 @@ void PlayScene::update(float ts)
             auto vel = *drag_start_ - screen_to_world({cx, cy});
             vel.Normalize();
             auto p = screen_to_world({cx, cy});
-            std::cout << p.x << " " << p.y << std::endl;
+            // std::cout << p.x << " " << p.y << std::endl;
             launch_bird(screen_to_world({cx, cy}), {vel.x * 10.f, vel.y * 10.f});
             drag_start_ = {};
         }
@@ -364,7 +363,7 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         body->SetLinearVelocity({velocity.x, velocity.y});
     }
     else if (state_ != gameState::playing) {
-        std::cout << "Game is no longer in progress!" << std::endl;        
+        std::cout << "Game is no longer in progress!" << std::endl;
     }
     else {
         std::cout << "No more birds left!" << std::endl;

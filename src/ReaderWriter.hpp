@@ -43,11 +43,11 @@ class ReaderWriter {
         void writeFile(Level level, std::string fileName) const;
 
         /**
-        * @brief Returns a vector of available savefiles' names
+        * @brief Returns a list of levels that can be loaded
         * 
         /// @todo: Implementation, define a path for savefiles
         */
-        std::vector<std::string> fetchFiles() const;
+        std::vector<std::string> getLevels() const;
 
     private:
         std::string versionNumber = "0";

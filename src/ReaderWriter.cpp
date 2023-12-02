@@ -1,16 +1,30 @@
 #include "ReaderWriter.hpp"
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
+std::vector<std::string> split_string(std::string str, char delim = ' '){
+    std::vector<std::string> result;
+
+    std::string tmp;
+    for(char c : str){
+        if(c == delim){
+            result.push_back(tmp);
+            tmp = "";
+        }
+        else{
+            tmp.push_back(c);
+        }
+    }
+    result.push_back(tmp);
+
+    return result;
+}
 
 std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
-    // If fileName doesn't end in ".txt", adds ".txt" to the end
-    if (fileName.substr(fileName.length() - 4) != ".txt") {
-        fileName += ".txt";
-    }
     std::ifstream is(fileName);
     
-    if (is.is_open()) {
+    if (is) {
         std::string line;
         std::string name, backgroundPath, soundtrackPath;
         std::vector<std::string> soundFX;
@@ -20,35 +34,42 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
             Header header = this->getHeader(line);
             switch (header) {
                 case Header::soundFXStart:
+                {
                     soundFX = this->readList(is, Header::soundFXEnd); 
                     break;
+                }
                 case Header::EntityStart:
+                {
                     entities = this->formEntities(this->readList(is, Header::EntityEnd));
                     break;     
+                }
                 case Header::BirdsStart:
+                {
                     birds = this->formBirds(readList(is, Header::BirdsEnd));
                     break;
+                }
                 default:
+                {
                     if (header != Header::unknown) {
                         std::string content = this->getContent(line);
                         switch (header)
                         {
-                        case Header::levelName:
-                            name = content;
-                            break;
-                        case Header::backgroundPath:
-                            backgroundPath = content;
-                            break;
-                        case Header::soundtrackPath:
-                            soundtrackPath = content;
-                            break;
+                            case Header::levelName:
+                                name = content;
+                                break;
+                            case Header::backgroundPath:
+                                backgroundPath = content;
+                                break;
+                            case Header::soundtrackPath:
+                                soundtrackPath = content;
+                                break;
                         };
                     };
+                    break;
+                }
             }
         }
-        if (!entities.empty() && !birds.empty() && !backgroundPath.empty() && !soundtrackPath.empty() && !soundFX.empty() && !name.empty()) {
-            return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name);
-        }
+        return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name);
     }
     return {};
 }
@@ -98,8 +119,15 @@ void ReaderWriter::writeFile(Level level, std::string fileName) const {
     }
 }
 
-std::vector<std::string> ReaderWriter::fetchFiles() const {
-    return {};
+std::vector<std::string> ReaderWriter::getLevels() const {
+    std::string levels_path = "levels";
+    std::vector<std::string> levels;
+
+    for(const auto& entry : std::filesystem::directory_iterator(levels_path)){
+        levels.push_back(entry.path().string());
+    }
+
+    return levels;
 }
 
 std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) const {
@@ -114,35 +142,43 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
     return r;
 }
 
+
 std::shared_ptr<Entity> ReaderWriter::formEntity(std::string line) const {
-    int healthPoints, typeOrHeight, width;
-    double initRotation, x, y;
-    std::istringstream ss(line);
-    ss >> healthPoints >> initRotation >> x >> y >> typeOrHeight >> width;
-    if (width < 0) {
-        return std::make_shared<Enemy>(healthPoints, initRotation, x, y, typeOrHeight);
+    auto parts = split_string(line);
+
+    if(parts[0] == "STRUCTURE"){
+        return std::make_shared<Structure>(
+            ::atoi(parts[1].c_str()), 
+            ::atof(parts[2].c_str()), 
+            ::atof(parts[3].c_str()),
+            ::atof(parts[4].c_str()), 
+            ::atof(parts[5].c_str()), 
+            ::atof(parts[6].c_str())
+        );
     }
-    else {
-        return std::make_shared<Structure>(healthPoints, initRotation, x, y, typeOrHeight, width);
+    else if(parts[0] == "ENEMY") {
+        return std::make_shared<Enemy>(
+            ::atoi(parts[1].c_str()), 
+            ::atof(parts[2].c_str()), 
+            ::atof(parts[3].c_str()), 
+            ::atof(parts[4].c_str()), 
+            ::atoi(parts[5].c_str())
+        );
     }
-    return nullptr;
-    //return Entity(movable, destructible, healthPoints, initRotation, x, y);
+    else{
+        return nullptr;
+    }
 }
 
 std::shared_ptr<Bird> ReaderWriter::formBird(std::string line) const {
-    if (line.size() == 2) {
-        int type = std::stoi(line.substr(1, 1));
-        switch (type)
-        {
-        case 1:
-            /* code */
-            break;
-        case 2:
-            /* code */
-            break;
-        default:
-            return nullptr;
-        }
+    if(line == "NORMAL"){
+        return std::make_shared<NormalBird>();
+    }
+    else if(line == "SPECIAL1"){
+        return std::make_shared<SpecialBird1>();
+    }
+    else if(line == "SPECIAL2"){
+        return std::make_shared<SpecialBird2>();
     }
     return nullptr;
 }
