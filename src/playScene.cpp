@@ -54,7 +54,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                     bodyType::structure,
                     ent,
                     NULL,
-                    ent_structure->getHealthPoints()
+                    ent_structure->getHealthPoints(),
                 };
                 
                 dynamicBox.SetAsBox(.5f * ent_structure->getWidth(), .5f * ent_structure->getHeight());
@@ -105,7 +105,11 @@ PlayScene::~PlayScene()
 {
     auto body = world_.GetBodyList();
     while(body){
+        delete (userDataStruct*)body->GetUserData().pointer;
         body = body->GetNext();
+    }
+    if (timer) {
+        delete timer;
     }
 }
 
@@ -239,10 +243,8 @@ void PlayScene::update(float ts)
                 break;
             case bodyType::bird:
                 if (data->bird) {
-                    if (data->bird->getTime().asSeconds() > 10) {
-                        world_.DestroyBody(worldBody);
-                        gui_.playSound("res/sounds/bird_death.wav");
-                        spawn_explosion(worldBody->GetPosition(), explosionType::cloud);
+                    if (data->bird->getTime().asSeconds() > 5) {
+                        destroyBird(worldBody);
                     }
                     else {
                         birdCount++;
@@ -263,12 +265,50 @@ void PlayScene::update(float ts)
         state_ = gameState::playing;
     }
     else {
-        state_ = gameState::lost;
+        if (!timer) {
+            timer = new b2Timer();
+        }
+        if (timer->GetMilliseconds() > 5000) {
+            state_ = gameState::lost;
+        }
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
-        auto[x,y] = gui_.cursorPosition();
-        spawn_explosion(screen_to_world({x,y}), explosionType::fireball);
+        if (mostRecentBird) {
+            userDataStruct* userData = (userDataStruct*)mostRecentBird->GetUserData().pointer;
+
+            switch (userData->bird->getBirdType())
+            {
+            case birdType::special1: {
+                b2Vec2 vec = mostRecentBird->GetLinearVelocity();
+                vec.Normalize();
+                mostRecentBird->SetLinearVelocity(22.f * vec);
+                break;
+            }
+            case birdType::special2 :{
+                auto body = world_.GetBodyList();
+                b2Vec2 birdPos = mostRecentBird->GetPosition();
+                spawn_explosion(birdPos, explosionType::fireball);
+                while (body) {
+                    b2Vec2 pos = body->GetPosition();
+                    float distance = abs((birdPos - pos).Length());
+                    if (distance < 3) {
+                        b2Vec2 force = (pos - birdPos);
+                        force.Normalize();
+                        force *= (3 - distance) * 2;
+                        body->ApplyLinearImpulseToCenter(force, true);
+                    }
+                    body = body->GetNext();
+                }
+                destroyBird(mostRecentBird);
+                mostRecentAbilityUsed = true;
+                break;
+            }
+            default:
+                break;
+            }
+            mostRecentAbilityUsed = true;
+        }
     }
 
     // Update explosions
@@ -333,7 +373,7 @@ void PlayScene::update(float ts)
                 break;
             }
             case gameState::lost:
-            {
+            { 
                 loseSequence();
                 break;
             }
@@ -366,9 +406,10 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         };
 
         bird->resetTime();
-
+        
         b2Body* body = world_.CreateBody(&bodyDef);
-
+        mostRecentBird = body;
+        mostRecentAbilityUsed = false;
         b2CircleShape circle;
         circle.m_radius = 0.5f;
 
@@ -432,6 +473,12 @@ std::string PlayScene::get_current_bird_type() const
         }
     }
     return "None";
+}
+
+void PlayScene::destroyBird(b2Body* birdBody) {
+    world_.DestroyBody(birdBody);
+    gui_.playSound("res/sounds/bird_death.wav");
+    spawn_explosion(birdBody->GetPosition(), explosionType::cloud);
 }
 
 int PlayScene::get_score() const
