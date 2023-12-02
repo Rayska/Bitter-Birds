@@ -10,27 +10,19 @@ enum struct birdType {
 
 class Bird {
 public:
-    Bird(Image* image): image_(image) {}
+    Bird(Image* image);
 
     virtual double getDiameter() const = 0;
 
-    ~Bird() {
-        delete image_;
-    }
+    ~Bird();
 
     virtual birdType getBirdType() const = 0;
 
-    Image* getImage() const {
-        return image_;
-    }
+    Image* getImage() const;
 
-    void resetTime() {
-        spawnTime.restart();
-    }
+    void resetTime();
 
-    sf::Time getTime() const {
-        return spawnTime.getElapsedTime();
-    }
+    sf::Time getTime() const;
 
 protected:
     Image*  image_;
@@ -39,41 +31,25 @@ protected:
 
 class NormalBird: public Bird {
 public:
-    NormalBird(): Bird(new Image("res/test_bird.png")) {}
+    NormalBird();
 
-    birdType getBirdType() const {
-        return birdType::normal;
-    }
-
-    double getDiameter() const {
-        return 10;
-    }
-
+    birdType getBirdType() const override;
+    double getDiameter() const override;
 private:
 };
 
 class SpecialBird1: public Bird {
 public:
-    SpecialBird1(): Bird(new Image("res/test_specialbird1.png")) {}
+    SpecialBird1();
 
-    birdType getBirdType() const {
-        return birdType::special1;
-    }
-
-    double getDiameter() const {
-        return 10;
-    }
+    birdType getBirdType() const override;
+    double getDiameter() const override;
 };
 
 class SpecialBird2: public Bird {
 public:
-    SpecialBird2(): Bird(new Image("res/test_specialbird2.png")) {}
+    SpecialBird2();
 
-    birdType getBirdType() const {
-        return birdType::special2;
-    }
-
-    double getDiameter() const {
-        return 10;
-    }
+    birdType getBirdType() const override;
+    double getDiameter() const override;
 };
