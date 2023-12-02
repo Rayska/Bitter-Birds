@@ -13,14 +13,15 @@
 
 
 
-MenuScene::MenuScene(GUI& gui) 
+MenuScene::MenuScene(GUI& gui, std::string current_player) 
     : 
     Scene(gui), 
     button_image_("res/button.png"), 
     bird_image_("res/test_bird.png"), 
     t(0.f),
     menu_state_(MenuState::MainMenu),
-    menu_scroll_y_(0.f) 
+    current_player_(current_player),
+    menu_scroll_y_(0.f)
 {}
 
 MenuScene::~MenuScene() {}
@@ -62,7 +63,7 @@ void MenuScene::update(float ts) {
                     gui_.playSound("res/sounds/click_sound.wav");
                     auto loaded_level = reader_writer_.readFile(level);
                     if(loaded_level){
-                        gui_.setScene<PlayScene>(*loaded_level);
+                        gui_.setScene<PlayScene>(*loaded_level, current_player_);
                     }
                     else{
                         std::cout << "Unable to load level." << std::endl;

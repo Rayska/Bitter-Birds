@@ -5,9 +5,11 @@
 #include "menuScene.hpp"
 #include "enemy.hpp"
 
-PlayScene::PlayScene(GUI &gui, const Level& level)
+PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     :
     Scene(gui),
+    current_player_(current_player),
+    level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
     cam_x(0.f), cam_y(-5.f), cam_scale_x(15.f), cam_scale_y(15.f),
@@ -20,7 +22,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     sling_image_("res/slingshot.png"),
     state_(gameState::playing),
     endSoundCalled_(false),
-    timer_(nullptr)
+    timer_(nullptr),
+    added_score_(false)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -118,7 +121,7 @@ PlayScene::~PlayScene()
 void PlayScene::update(float ts)
 {
     if(gui_.keyState(sf::Keyboard::Escape)){
-        gui_.setScene<MenuScene>();
+        gui_.setScene<MenuScene>(current_player_);
     }
     
     // Update
@@ -487,22 +490,76 @@ int PlayScene::get_score() const
     return 1000;
 }
 
+
+void PlayScene::retry_level() {
+    gui_.setScene<PlayScene>(level_, current_player_);
+}
+
+void PlayScene::exit_to_menu() {
+    gui_.setScene<MenuScene>(current_player_);
+}
+
+void PlayScene::next_level() {
+}
+
+void PlayScene::winSequence()
+{   
+    if(!added_score_){
+        int score = get_score();
+        most_recent_score_ = score;
+        level_.addScore(current_player_, score);
+        added_score_ = true;
+    }
+
+    if (!endSoundCalled_) {
+        endSoundCalled_ = true;
+        gui_.playSound("res/sounds/win_sound.wav");
+    }
+    sf::Color color(0,255,0);
+    gui_.drawText(0.5f, 0.8f, 0.2f, "Victory", Alignment::Center, color);
+
+    std::vector<ScoreBoardEntry> scores = level_.getScores();
+
+    gui_.drawText(0.5f, 0.7f, 0.15f, "Scoreboard", Alignment::Center);
+    bool first_matching_highlighted = false;
+    for(int i = 0; (i < 5) && (i < scores.size()); i++){
+        auto& e = scores[i];
+        gui_.drawText(0.2f, 0.6f - i * 0.07f, 0.1f, std::to_string(i + 1), Alignment::LeftCenter);
+        if(e.name == current_player_ && e.score == most_recent_score_ && !first_matching_highlighted) {
+            gui_.drawText(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center, sf::Color(50, 255, 50));
+            first_matching_highlighted = true;
+        }
+        else{
+            gui_.drawText(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center);
+        }
+        gui_.drawText(0.8f, 0.6f - i * 0.07f, 0.1f, std::to_string(e.score), Alignment::RightCenter);
+    }
+
+    if(gui_.drawButton("Retry", 0.2f, 0.2f, 0.2f, 0.1f)){
+        retry_level();
+    }
+    if(gui_.drawButton("Menu", 0.5f, 0.2f, 0.2f, 0.1f)){
+        exit_to_menu();
+    }
+    if(gui_.drawButton("Next", 0.8f, 0.2f, 0.2f, 0.1f)){
+        next_level();
+    }
+}
+
 void PlayScene::loseSequence() 
 {
     if (!endSoundCalled_) {
         endSoundCalled_ = true;
         gui_.playSound("res/sounds/lose_sound.wav");
     }
-    sf::Color color(255,0,0);
-    gui_.drawText(0.5,0.65,1, "Game Over", Alignment::Center, color);
-}
 
-void PlayScene::winSequence()
-{
-    if (!endSoundCalled_) {
-        endSoundCalled_ = true;
-        gui_.playSound("res/sounds/win_sound.wav");
+    sf::Color color(255,0,0);
+    gui_.drawText(0.5f,0.6f,0.2f, "Game Over", Alignment::Center, color);
+
+    if(gui_.drawButton("Retry", 0.4f, 0.4f, 0.2f, 0.1f)){
+        retry_level();
     }
-    sf::Color color(0,255,0);
-    gui_.drawText(0.5,0.65,1, "Victory", Alignment::Center, color);
+    if(gui_.drawButton("Menu", 0.6f, 0.4f, 0.2f, 0.1f)){
+        exit_to_menu();
+    }
 }

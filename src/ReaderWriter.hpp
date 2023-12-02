@@ -3,6 +3,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <memory>
 #include "level.hpp"
 #include "enemy.hpp"

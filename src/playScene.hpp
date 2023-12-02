@@ -46,7 +46,7 @@ struct ExplosionData {
 
 class PlayScene : public Scene {
 public:
-    PlayScene(GUI& gui, const Level& level);
+    PlayScene(GUI& gui, const Level& level, std::string current_player);
     ~PlayScene();
 
     void update(float ts) override;
@@ -61,7 +61,13 @@ private:
     int get_bird_count() const;
     std::string get_current_bird_type() const;
     int get_score() const;
+
+    void retry_level();
+    void exit_to_menu();
+    void next_level();
 private:
+    std::string current_player_;
+    Level level_;
     b2Vec2 gravity_;
     b2World world_;
     Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
@@ -74,4 +80,6 @@ private:
     bool mostRecentAbilityUsed_;
     bool endSoundCalled_;
     b2Timer* timer_;
+    bool added_score_;
+    int most_recent_score_;
 };

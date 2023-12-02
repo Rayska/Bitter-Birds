@@ -12,7 +12,7 @@ enum struct MenuState {
 
 class MenuScene : public Scene {
 public:
-    MenuScene(GUI& gui);
+    MenuScene(GUI& gui, std::string current_player);
     ~MenuScene();
 
     void update(float ts) override;
@@ -22,4 +22,5 @@ private:
     Image button_image_, bird_image_;
     float t;
     float target_menu_scroll_y_, menu_scroll_y_;
+    std::string current_player_;
 };

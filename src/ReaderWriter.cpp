@@ -69,7 +69,7 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
                 }
             }
         }
-        return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name);
+        return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name, {});
     }
     return {};
 }
