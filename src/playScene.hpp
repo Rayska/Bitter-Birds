@@ -79,6 +79,7 @@ private:
     b2Body* mostRecentBird_;
     bool mostRecentAbilityUsed_;
     bool endSoundCalled_;
+    bool stopFollow_;
     b2Timer* timer_;
     bool added_score_;
     int most_recent_score_;

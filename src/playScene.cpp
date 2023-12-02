@@ -12,7 +12,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
-    cam_x(0.f), cam_y(-5.f), cam_scale_x(15.f), cam_scale_y(15.f),
+    cam_x(0.f), cam_y(-6.f), cam_scale_x(15.f), cam_scale_y(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
     bird_image_("res/test_bird.png"),
@@ -23,8 +23,10 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     state_(gameState::playing),
     endSoundCalled_(false),
     timer_(nullptr),
-    added_score_(false)
-{
+    added_score_(false),
+    mostRecentBird_(nullptr),
+    stopFollow_(false)
+    {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
     groundBodyDef.userData.pointer = (uintptr_t)new userDataStruct{&grass_image_,
@@ -130,16 +132,10 @@ void PlayScene::update(float ts)
     world_.Step(ts, velocityIterations, positionIterations);
 
     if(gui_.keyState(sf::Keyboard::A)){
-        cam_x -= 2.f * ts;
+        cam_x -= 5.f * ts;
     }
     if(gui_.keyState(sf::Keyboard::D)){
-        cam_x += 2.f * ts;
-    }
-    if(gui_.keyState(sf::Keyboard::W)){
-        cam_y -= 2.f * ts;
-    }
-    if(gui_.keyState(sf::Keyboard::S)){
-        cam_y += 2.f * ts;
+        cam_x += 5.f * ts;
     }
     if(gui_.buttonState(sf::Mouse::Button::Left)){
         if(!drag_start_){
@@ -147,6 +143,8 @@ void PlayScene::update(float ts)
             auto p = screen_to_world({cx, cy});
             if (p.x <= -4.5 && p.x >= -5.5 && p.y <= 2 && p.y >= 1) {
                 drag_start_ = screen_to_world({cx, cy});
+            } else {
+                stopFollow_ = true;
             }
         }
     }
@@ -324,6 +322,11 @@ void PlayScene::update(float ts)
     });
     explosions_.erase(to_rem, explosions_.end());
 
+    // Camera follows bird if bird still exists
+    if (mostRecentBird_ && !stopFollow_) {
+        cam_x = mostRecentBird_->GetPosition().x;
+    }
+
     // Rendering
     {
         // Render world
@@ -409,6 +412,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         0
         };
 
+        stopFollow_ = false;
+
         bird->resetTime();
         
         b2Body* body = world_.CreateBody(&bodyDef);
@@ -483,6 +488,9 @@ void PlayScene::destroyBird(b2Body* birdBody) {
     world_.DestroyBody(birdBody);
     gui_.playSound("res/sounds/bird_death.wav");
     spawn_explosion(birdBody->GetPosition(), explosionType::cloud);
+    if (mostRecentBird_ == birdBody) {
+        mostRecentBird_ = nullptr;
+    }
 }
 
 int PlayScene::get_score() const
