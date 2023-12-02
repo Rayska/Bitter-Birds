@@ -105,7 +105,11 @@ PlayScene::~PlayScene()
 {
     auto body = world_.GetBodyList();
     while(body){
+        delete (userDataStruct*)body->GetUserData().pointer;
         body = body->GetNext();
+    }
+    if (timer) {
+        delete timer;
     }
 }
 
@@ -261,7 +265,12 @@ void PlayScene::update(float ts)
         state_ = gameState::playing;
     }
     else {
-        state_ = gameState::lost;
+        if (!timer) {
+            timer = new b2Timer();
+        }
+        if (timer->GetMilliseconds() > 5000) {
+            state_ = gameState::lost;
+        }
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
@@ -364,7 +373,7 @@ void PlayScene::update(float ts)
                 break;
             }
             case gameState::lost:
-            {
+            { 
                 loseSequence();
                 break;
             }

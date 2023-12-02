@@ -17,6 +17,8 @@
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
 
+#include <box2d/b2_timer.h>
+
 enum struct gameState {
     won,
     lost,
@@ -71,4 +73,5 @@ private:
     b2Body* mostRecentBird;
     bool mostRecentAbilityUsed;
     bool endSoundCalled_;
+    b2Timer* timer;
 };
