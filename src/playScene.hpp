@@ -70,8 +70,8 @@ private:
     gameState state_;
     std::vector<std::shared_ptr<Bird>> birds_;
     std::vector<ExplosionData> explosions_;
-    b2Body* mostRecentBird;
-    bool mostRecentAbilityUsed;
+    b2Body* mostRecentBird_;
+    bool mostRecentAbilityUsed_;
     bool endSoundCalled_;
-    b2Timer* timer;
+    b2Timer* timer_;
 };

@@ -19,7 +19,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     cloud_image_("res/cloud.png"),
     sling_image_("res/slingshot.png"),
     state_(gameState::playing),
-    endSoundCalled_(false)
+    endSoundCalled_(false),
+    timer_(nullptr)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -108,8 +109,9 @@ PlayScene::~PlayScene()
         delete (userDataStruct*)body->GetUserData().pointer;
         body = body->GetNext();
     }
-    if (timer) {
-        delete timer;
+    if (timer_) {
+        delete timer_;
+        timer_ = nullptr;
     }
 }
 
@@ -265,29 +267,29 @@ void PlayScene::update(float ts)
         state_ = gameState::playing;
     }
     else {
-        if (!timer) {
-            timer = new b2Timer();
+        if (!timer_) {
+            timer_ = new b2Timer();
         }
-        if (timer->GetMilliseconds() > 5000) {
+        if (timer_->GetMilliseconds() > 5000) {
             state_ = gameState::lost;
         }
     }
 
     if(gui_.buttonReleased(sf::Mouse::Button::Right)){
-        if (mostRecentBird && !mostRecentAbilityUsed) {
-            userDataStruct* userData = (userDataStruct*)mostRecentBird->GetUserData().pointer;
+        if (mostRecentBird_ && !mostRecentAbilityUsed_) {
+            userDataStruct* userData = (userDataStruct*)mostRecentBird_->GetUserData().pointer;
 
             switch (userData->bird->getBirdType())
             {
             case birdType::special1: {
-                b2Vec2 vec = mostRecentBird->GetLinearVelocity();
+                b2Vec2 vec = mostRecentBird_->GetLinearVelocity();
                 vec.Normalize();
-                mostRecentBird->SetLinearVelocity(22.f * vec);
+                mostRecentBird_->SetLinearVelocity(22.f * vec);
                 break;
             }
             case birdType::special2 :{
                 auto body = world_.GetBodyList();
-                b2Vec2 birdPos = mostRecentBird->GetPosition();
+                b2Vec2 birdPos = mostRecentBird_->GetPosition();
                 spawn_explosion(birdPos, explosionType::fireball);
                 while (body) {
                     b2Vec2 pos = body->GetPosition();
@@ -300,13 +302,13 @@ void PlayScene::update(float ts)
                     }
                     body = body->GetNext();
                 }
-                destroyBird(mostRecentBird);
+                destroyBird(mostRecentBird_);
                 break;
             }
             default:
                 break;
             }
-            mostRecentAbilityUsed = true;
+            mostRecentAbilityUsed_ = true;
         }
     }
 
@@ -407,8 +409,8 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         bird->resetTime();
         
         b2Body* body = world_.CreateBody(&bodyDef);
-        mostRecentBird = body;
-        mostRecentAbilityUsed = false;
+        mostRecentBird_ = body;
+        mostRecentAbilityUsed_ = false;
         b2CircleShape circle;
         circle.m_radius = 0.5f;
 
