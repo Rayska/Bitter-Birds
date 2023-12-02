@@ -17,6 +17,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     strcture_image_("res/wood.png"),
     explosion_image_("res/explosion.png"),
     cloud_image_("res/cloud.png"),
+    sling_image_("res/slingshot.png"),
     state_(gameState::playing)
 {
     b2BodyDef groundBodyDef;
@@ -133,17 +134,23 @@ void PlayScene::update(float ts)
     if(gui_.buttonState(sf::Mouse::Button::Left)){
         if(!drag_start_){
             auto[cx, cy] = gui_.cursorPosition();
-            drag_start_ = screen_to_world({cx, cy});
+            auto p = screen_to_world({cx, cy});
+            if (p.x <= -4.5 && p.x >= -5.5 && p.y <= 2 && p.y >= 1) {
+                drag_start_ = screen_to_world({cx, cy});
+            }
         }
     }
     else{
         if(drag_start_){
             auto[cx, cy] = gui_.cursorPosition();
             auto vel = *drag_start_ - screen_to_world({cx, cy});
-            vel.Normalize();
+            vel*=0.5;
+            if (vel.Length() >= 1) {
+                vel.Normalize();
+            }
             auto p = screen_to_world({cx, cy});
             std::cout << p.x << " " << p.y << std::endl;
-            launch_bird(screen_to_world({cx, cy}), {vel.x * 10.f, vel.y * 10.f});
+            launch_bird(b2Vec2(-5, 2), {vel.x * 10.f, vel.y * 10.f});
             drag_start_ = {};
         }
     }
@@ -168,7 +175,6 @@ void PlayScene::update(float ts)
                             b2ManifoldPoint point = manifold->points[i];
 
                             float normalImpulse = point.normalImpulse * 25;
-                            //std::cout << normalImpulse << std::endl;
 
                             curData->hp -= int(normalImpulse);
                             
@@ -269,6 +275,10 @@ void PlayScene::update(float ts)
     {
         // Render world
         gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y * gui_.getAspectRatio());
+
+        // Draw slingshot
+        gui_.drawSprite(-5, 1.5, 2.f, 2.f, 0.f, sling_image_);
+
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
         while(body){
