@@ -16,7 +16,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     bird_image_("res/test_bird.png"),
     strcture_image_("res/wood.png"),
     explosion_image_("res/explosion.png"),
-    state_(gameState::playing)
+    state_(gameState::playing),
+    endSoundCalled_(false)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -235,11 +236,19 @@ void PlayScene::update(float ts)
         switch(state_){
             case gameState::won:
             {
+                if (!endSoundCalled_) {
+                    endSoundCalled_ = true;
+                    gui_.playSound("res/sounds/win_sound.wav");
+                }
                 winSequence();
                 break;
             }
             case gameState::lost:
             {
+                if (!endSoundCalled_) {
+                    endSoundCalled_ = true;
+                    gui_.playSound("res/sounds/lose_sound.wav");
+                }
                 loseSequence();
                 break;
             }
