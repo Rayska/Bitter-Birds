@@ -13,6 +13,7 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
 
@@ -60,7 +61,7 @@ private:
 private:
     b2Vec2 gravity_;
     b2World world_;
-    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_;
+    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
     std::optional<b2Vec2> drag_start_;
     float cam_x, cam_y, cam_scale_x, cam_scale_y;
     gameState state_;
