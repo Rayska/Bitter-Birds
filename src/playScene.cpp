@@ -142,6 +142,7 @@ void PlayScene::update(float ts)
             auto[cx, cy] = gui_.cursorPosition();
             auto p = screen_to_world({cx, cy});
             if (p.x <= -4.5 && p.x >= -5.5 && p.y <= 2 && p.y >= 1) {
+                gui_.playSound("res/sounds/slingshot_stretch.wav");
                 drag_start_ = screen_to_world({cx, cy});
             } else {
                 stopFollow_ = true;
@@ -150,6 +151,7 @@ void PlayScene::update(float ts)
     }
     else{
         if(drag_start_){
+            gui_.playSound("res/sounds/slingshot_release.wav");
             auto[cx, cy] = gui_.cursorPosition();
             auto vel = *drag_start_ - screen_to_world({cx, cy});
             vel*=0.5;
