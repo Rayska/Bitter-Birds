@@ -70,3 +70,29 @@ Beginnings of level and entity classes.
 1. Start working on issues described in gitlab.
 2. Tests
 3. Documentation
+
+# Meeting 20.11.2023 14:55
+
+**Participants**: 
+1. Luukas Karihtala
+2. Ray Sointula
+3. Daniel Granström
+4. Onni Komulainen
+
+## Summary of works
+Luukas has implemented some PlayScene features
+
+
+## Challenges
+Scheduling and communication has been challenging/lacking. 
+
+## Actions
+1. Increase work effort 
+2. Make progress in class structures
+3. Plan work-session(s)
+4. Finish ReaderWriter
+
+## Project status 
+Start of playScene, mainMenu and physics.
+### TODOs
+1. Continue work on GitLab issues.

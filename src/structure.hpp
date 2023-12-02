@@ -1,21 +1,33 @@
 #pragma once
 
+#include <iostream>
+
 #include "entity.hpp"
 
 class Structure: public Entity {
 public:
-    Structure(int healthPoints, double initRotation, double x, double y, int height, int width):
-    width_(width), height_(height), Entity(true, true, healthPoints, initRotation, x, y) {}
+    Structure(int healthPoints, double initRotation, double x, double y, double height, double width)
+        :
+        Entity(true, true, healthPoints, initRotation, x, y),
+        width_(width), 
+        height_(height)
+    {
+        std::cout << initRotation << std::endl;
+    }
+
+    bodyType getType() const override {
+        return bodyType::structure;
+    }
 
     double getWidth() const {
         return width_;
     }
 
     double getHeight() const {
-        return width_;
+        return height_;
     }
 
 private:
-    int height_;
-    int width_;
+    double height_;
+    double width_;
 };
