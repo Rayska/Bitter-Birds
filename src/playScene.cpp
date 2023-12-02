@@ -202,6 +202,7 @@ void PlayScene::update(float ts)
         }
 
         for(auto& td : to_delete){
+            spawn_explosion(td->GetPosition(), explosionType::fireball);
             world_.DestroyBody(td);
         }
     }
