@@ -67,4 +67,5 @@ private:
     gameState state_;
     std::vector<std::shared_ptr<Bird>> birds_;
     std::vector<ExplosionData> explosions_;
+    bool endSoundCalled_;
 };
