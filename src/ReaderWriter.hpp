@@ -64,20 +64,20 @@ class ReaderWriter {
         * 
         * @todo Implementation, requires implementation of Entity class, it's derived classes, and a format design
         */
-        Entity formEntity(std::string line) const;
+        std::shared_ptr<Entity> formEntity(std::string line) const;
 
         /**
         * @brief Takes a single line of text and construct an instance of the matching Bird type
         * 
         * @todo Implementation, requires implementation of Bird class, it's derived classes, and a format design
         */
-        Bird& formBird(std::string line) const;
+        std::shared_ptr<Bird> formBird(std::string line) const;
 
         /**
         * @brief Create Entity objects from a std::vector<std::string>, where each element contains all the needed information for the constructor
         *
         */
-        std::vector<Entity> formEntities(std::vector<std::string> entityStrings) const;
+        std::vector<std::shared_ptr<Entity>> formEntities(std::vector<std::string> entityStrings) const;
 
         /**
         * @brief Create Bird objects from a std::vector<std::string>, where each element contains all the needed information for the constructor
@@ -90,14 +90,14 @@ class ReaderWriter {
         * 
         * @todo Implementation, requires implementation of Bird class, it's derived classes, and a format design
         */
-        std::string toStringBird(Bird& bird) const;
+        std::string toStringBird(std::shared_ptr<Bird> bird) const;
 
         /**
         * @brief Forms a string that represents the Bird object's state
         * 
         * @todo Implementation, requires implementation of Entity class, it's derived classes, and a format design
         */
-        std::string toStringEntity(Entity& e) const;
+        std::string toStringEntity(std::shared_ptr<Entity> e) const;
 
         /**
         * @brief Extracts the first 3 characters from line and returns matching Header

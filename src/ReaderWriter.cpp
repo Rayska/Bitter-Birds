@@ -14,7 +14,7 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
         std::string line;
         std::string name, backgroundPath, soundtrackPath;
         std::vector<std::string> soundFX;
-        std::vector<Entity> entities;
+        std::vector<std::shared_ptr<Entity>> entities;
         std::vector<std::shared_ptr<Bird>> birds;
         while (std::getline(is, line)) {
             Header header = this->getHeader(line);
@@ -49,8 +49,8 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
         if (!entities.empty() && !birds.empty() && !backgroundPath.empty() && !soundtrackPath.empty() && !soundFX.empty() && !name.empty()) {
             return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name);
         }
-        return std::nullopt;
     }
+    return {};
 }
 
 void ReaderWriter::writeFile(Level level, std::string fileName) const {
@@ -99,7 +99,7 @@ void ReaderWriter::writeFile(Level level, std::string fileName) const {
 }
 
 std::vector<std::string> ReaderWriter::fetchFiles() const {
-
+    return {};
 }
 
 std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) const {
@@ -114,21 +114,22 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
     return r;
 }
 
-Entity ReaderWriter::formEntity(std::string line) const {
+std::shared_ptr<Entity> ReaderWriter::formEntity(std::string line) const {
     int healthPoints, typeOrHeight, width;
     double initRotation, x, y;
     std::istringstream ss(line);
     ss >> healthPoints >> initRotation >> x >> y >> typeOrHeight >> width;
     if (width < 0) {
-        return Enemy(healthPoints, initRotation, x, y, typeOrHeight);
+        return std::make_shared<Enemy>(healthPoints, initRotation, x, y, typeOrHeight);
     }
     else {
-        return Structure(healthPoints, initRotation, x, y, typeOrHeight, width);
+        return std::make_shared<Structure>(healthPoints, initRotation, x, y, typeOrHeight, width);
     }
+    return nullptr;
     //return Entity(movable, destructible, healthPoints, initRotation, x, y);
 }
 
-Bird& ReaderWriter::formBird(std::string line) const {
+std::shared_ptr<Bird> ReaderWriter::formBird(std::string line) const {
     if (line.size() == 2) {
         int type = std::stoi(line.substr(1, 1));
         switch (type)
@@ -140,19 +141,14 @@ Bird& ReaderWriter::formBird(std::string line) const {
             /* code */
             break;
         default:
-            static NormalBird normalBird;
-            return normalBird;
+            return nullptr;
         }
     }
-    else {
-        throw std::length_error("Invalid BirdType size: " + line);
-        static NormalBird normalBird;
-        return normalBird;
-    }
+    return nullptr;
 }
 
-std::vector<Entity> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
-    std::vector<Entity> entities;
+std::vector<std::shared_ptr<Entity>> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
+    std::vector<std::shared_ptr<Entity>> entities;
     for (auto it : entityStrings) {
         entities.push_back(formEntity(it));
     }
@@ -162,33 +158,34 @@ std::vector<Entity> ReaderWriter::formEntities(std::vector<std::string> entitySt
 std::vector<std::shared_ptr<Bird>> ReaderWriter::formBirds(std::vector<std::string> birdStrings) const {
     std::vector<std::shared_ptr<Bird>> birds;
     for (auto it : birdStrings) {
-        birds.push_back(std::make_shared<Bird>(formBird(it)));
+        birds.push_back(formBird(it));
     }
     return birds;
 }
 
-std::string ReaderWriter::toStringBird(Bird& bird) const {
+std::string ReaderWriter::toStringBird(std::shared_ptr<Bird> bird) const {
     if (typeid(bird) == typeid(NormalBird())) {
         return "0";
     }
     else if (typeid(bird) == typeid(NormalBird())) {
-
+        return "";
     }
     else if (typeid(bird) == typeid(NormalBird())) {
-
+        return "";
     }
+    return "";
 }
 
-std::string ReaderWriter::toStringEntity(Entity& e) const {
+std::string ReaderWriter::toStringEntity(std::shared_ptr<Entity> e) const {
     std::stringstream line;
     const std::type_info& type = typeid(e);
     const std::type_info& typeEnemy = typeid(Enemy);
     const std::type_info& typeStructure = typeid(Structure);
     if (type == typeEnemy) {
-        line << e.getHealthPoints() << " " << e.getRotation() << " " << e.getX() << " " << e.getY(); //<< " " << e.
+        line << e->getHealthPoints() << " " << e->getRotation() << " " << e->getX() << " " << e->getY(); //<< " " << e.
     }
     else if (type == typeStructure) {
-        line << e.getHealthPoints() << " " << e.getRotation() << " " << e.getX() << " " << e.getY() << " "; //<< e.getWidth();
+        line << e->getHealthPoints() << " " << e->getRotation() << " " << e->getX() << " " << e->getY() << " "; //<< e.getWidth();
     }
     else {
         line << "Entity type not recognised";
