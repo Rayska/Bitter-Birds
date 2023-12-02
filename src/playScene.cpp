@@ -17,8 +17,9 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     strcture_image_("res/wood.png"),
     explosion_image_("res/explosion.png"),
     cloud_image_("res/cloud.png"),
+    sling_image_("res/slingshot.png"),
     state_(gameState::playing),
-    mostRecentAbilityUsed(false)
+    endSoundCalled_(false)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -37,6 +38,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         b2BodyDef bodyDef;
         bodyDef.position.Set(ent->getX(), ent->getY());
 
+        bool isCircle = false;
+        b2CircleShape circle;
         b2PolygonShape dynamicBox;
 
         bodyType type = (*ent).getType();
@@ -46,11 +49,13 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
             {
                 bodyDef.type = b2_dynamicBody;
                 auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
+                auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &strcture_image_,
                     bodyType::structure,
                     ent,
                     NULL,
+                    ent_structure->getHealthPoints(),
                     ent_structure->getHealthPoints()
                 };
                 
@@ -64,6 +69,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         case bodyType::enemy:
             {
                 bodyDef.type = b2_dynamicBody;
+                isCircle = true;
                 auto ent_enemy = std::dynamic_pointer_cast<Enemy>(ent);
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &enemy_bird_image_,
@@ -72,7 +78,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                     NULL,
                     ent_enemy->getHealthPoints()
                 };
-                dynamicBox.SetAsBox(.5f, .5f);
+                circle.m_radius = 0.5f;
                 break;
             }
         default:
@@ -84,7 +90,11 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         b2Body* body = world_.CreateBody(&bodyDef);
 
         b2FixtureDef fixtureDef;
-        fixtureDef.shape = &dynamicBox;
+        if (isCircle) {
+            fixtureDef.shape = &circle;
+        } else {
+            fixtureDef.shape = &dynamicBox;
+        }
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 0.3f;
 
@@ -127,17 +137,23 @@ void PlayScene::update(float ts)
     if(gui_.buttonState(sf::Mouse::Button::Left)){
         if(!drag_start_){
             auto[cx, cy] = gui_.cursorPosition();
-            drag_start_ = screen_to_world({cx, cy});
+            auto p = screen_to_world({cx, cy});
+            if (p.x <= -4.5 && p.x >= -5.5 && p.y <= 2 && p.y >= 1) {
+                drag_start_ = screen_to_world({cx, cy});
+            }
         }
     }
     else{
         if(drag_start_){
             auto[cx, cy] = gui_.cursorPosition();
             auto vel = *drag_start_ - screen_to_world({cx, cy});
-            vel.Normalize();
+            vel*=0.5;
+            if (vel.Length() >= 1) {
+                vel.Normalize();
+            }
             auto p = screen_to_world({cx, cy});
             std::cout << p.x << " " << p.y << std::endl;
-            launch_bird(screen_to_world({cx, cy}), {vel.x * 10.f, vel.y * 10.f});
+            launch_bird(b2Vec2(-5, 2), {vel.x * 10.f, vel.y * 10.f});
             drag_start_ = {};
         }
     }
@@ -162,7 +178,6 @@ void PlayScene::update(float ts)
                             b2ManifoldPoint point = manifold->points[i];
 
                             float normalImpulse = point.normalImpulse * 25;
-                            //std::cout << normalImpulse << std::endl;
 
                             curData->hp -= int(normalImpulse);
                             
@@ -196,6 +211,14 @@ void PlayScene::update(float ts)
         }
 
         for(auto& td : to_delete){
+            spawn_explosion(td->GetPosition(), explosionType::fireball);
+            userDataStruct* data = (userDataStruct*)td->GetUserData().pointer;
+            if (data->type==bodyType::structure) {
+                 gui_.playSound("res/sounds/wood_smash_sound.wav", 50);
+            } else if (data->type==bodyType::enemy) {
+                 gui_.playSound("res/sounds/enemy_kill.wav", 50);
+            }
+
             world_.DestroyBody(td);
         }
     }
@@ -220,6 +243,7 @@ void PlayScene::update(float ts)
                 if (data->bird) {
                     if (data->bird->getTime().asSeconds() > 10) {
                         world_.DestroyBody(worldBody);
+                        gui_.playSound("res/sounds/bird_death.wav");
                         spawn_explosion(worldBody->GetPosition(), explosionType::cloud);
                     }
                     else {
@@ -282,6 +306,10 @@ void PlayScene::update(float ts)
     {
         // Render world
         gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y * gui_.getAspectRatio());
+
+        // Draw slingshot
+        gui_.drawSprite(-5, 1.5, 2.f, 2.f, 0.f, sling_image_);
+
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
         while(body){
@@ -311,6 +339,8 @@ void PlayScene::update(float ts)
         for(auto& expl : explosions_){
             float t = 5.f * expl.time;
             float scale = -5.f * t * t * (t - 1.f);
+            auto& img = expl.type == explosionType::cloud ?  cloud_image_ : explosion_image_;
+            gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
             auto& img = expl.type == explosionType::cloud ?  cloud_image_ : explosion_image_;
             gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
         }
@@ -344,6 +374,7 @@ void PlayScene::update(float ts)
 
 void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
     if (!birds_.empty() && state_ == gameState::playing) {
+    if (!birds_.empty() && state_ == gameState::playing) {
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(pos.x, pos.y);
@@ -364,11 +395,14 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         b2Body* body = world_.CreateBody(&bodyDef);
         mostRecentBird = body;
         mostRecentAbilityUsed = false;
-        b2PolygonShape dynamicBox;
-        dynamicBox.SetAsBox(.5f, .5f);
+        b2CircleShape circle;
+        circle.m_radius = 0.5f;
+
+        /*b2PolygonShape dynamicBox;
+        dynamicBox.SetAsBox(.5f, .5f);*/
 
         b2FixtureDef fixtureDef;
-        fixtureDef.shape = &dynamicBox;
+        fixtureDef.shape = &circle;
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 0.3f;
 
@@ -433,12 +467,20 @@ int PlayScene::get_score() const
 
 void PlayScene::loseSequence() 
 {
+    if (!endSoundCalled_) {
+        endSoundCalled_ = true;
+        gui_.playSound("res/sounds/lose_sound.wav");
+    }
     sf::Color color(255,0,0);
     gui_.drawText(0.5,0.65,1, "Game Over", Alignment::Center, color);
 }
 
 void PlayScene::winSequence()
 {
+    if (!endSoundCalled_) {
+        endSoundCalled_ = true;
+        gui_.playSound("res/sounds/win_sound.wav");
+    }
     sf::Color color(0,255,0);
     gui_.drawText(0.5,0.65,1, "Victory", Alignment::Center, color);
 }

@@ -4,11 +4,14 @@
 #include <math.h>
 #include <unordered_map>
 #include <functional>
+#include <SFML/Audio.hpp>
 
 #include "playScene.hpp"
 #include "level.hpp"
 #include "ground.hpp"
 #include "enemy.hpp"
+
+
 
 MenuScene::MenuScene(GUI& gui) 
     : 
@@ -31,7 +34,6 @@ MenuScene::~MenuScene() {}
 
 void MenuScene::update(float ts) {
     t += ts;
-
     gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
 
@@ -39,11 +41,13 @@ void MenuScene::update(float ts) {
         case MenuState::MainMenu:
         {
             if(gui_.drawButton("Play", 0.5f, 0.6f, 0.5f, 0.2f)){
+                gui_.playSound("res/sounds/click_sound.wav");
                 menu_state_ = MenuState::LevelSelector;
                 target_menu_scroll_y_ = 0.f;
             }
 
             if(gui_.drawButton("Exit", 0.5f, 0.3f, 0.5f, 0.2f)){
+                gui_.playSound("res/sounds/click_sound.wav");
                 gui_.close();
             }
 
@@ -75,12 +79,14 @@ void MenuScene::update(float ts) {
                         std::make_shared<Structure>(100, 0, 8.f, 8.f, 0.2f, 3.f), // top
                         std::make_shared<Enemy>(100, 0.f, 8.f, 1.f, 0)
                     }, {birds_example}, {}, {}, {}, "Level 1");
+                    gui_.playSound("res/sounds/click_sound.wav");
                     gui_.setScene<PlayScene>(lvl);
                 }
                 y -= 0.2f;
             }
 
             if(gui_.drawButton("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
+                gui_.playSound("res/sounds/click_sound.wav");
                 menu_state_ = MenuState::MainMenu;
             }
             break;
