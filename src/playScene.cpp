@@ -36,6 +36,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         b2BodyDef bodyDef;
         bodyDef.position.Set(ent->getX(), ent->getY());
 
+        bool isCircle = false;
+        b2CircleShape circle;
         b2PolygonShape dynamicBox;
 
         bodyType type = (*ent).getType();
@@ -63,6 +65,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         case bodyType::enemy:
             {
                 bodyDef.type = b2_dynamicBody;
+                isCircle = true;
                 auto ent_enemy = std::dynamic_pointer_cast<Enemy>(ent);
                 bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
                     &enemy_bird_image_,
@@ -71,7 +74,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
                     NULL,
                     ent_enemy->getHealthPoints()
                 };
-                dynamicBox.SetAsBox(.5f, .5f);
+                circle.m_radius = 0.5f;
                 break;
             }
         default:
@@ -83,7 +86,11 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
         b2Body* body = world_.CreateBody(&bodyDef);
 
         b2FixtureDef fixtureDef;
-        fixtureDef.shape = &dynamicBox;
+        if (isCircle) {
+            fixtureDef.shape = &circle;
+        } else {
+            fixtureDef.shape = &dynamicBox;
+        }
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 0.3f;
 
@@ -342,11 +349,14 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 
         b2Body* body = world_.CreateBody(&bodyDef);
 
-        b2PolygonShape dynamicBox;
-        dynamicBox.SetAsBox(.5f, .5f);
+        b2CircleShape circle;
+        circle.m_radius = 0.5f;
+
+        /*b2PolygonShape dynamicBox;
+        dynamicBox.SetAsBox(.5f, .5f);*/
 
         b2FixtureDef fixtureDef;
-        fixtureDef.shape = &dynamicBox;
+        fixtureDef.shape = &circle;
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 0.3f;
 
