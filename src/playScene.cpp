@@ -17,7 +17,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level)
     strcture_image_("res/wood.png"),
     explosion_image_("res/explosion.png"),
     cloud_image_("res/cloud.png"),
-    state_(gameState::playing)
+    state_(gameState::playing),
+    endSoundCalled_(false)
 {
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -195,6 +196,13 @@ void PlayScene::update(float ts)
         }
 
         for(auto& td : to_delete){
+            userDataStruct* data = (userDataStruct*)td->GetUserData().pointer;
+            if (data->type==bodyType::structure) {
+                 gui_.playSound("res/sounds/wood_smash_sound.wav", 50);
+            } else if (data->type==bodyType::enemy) {
+                 gui_.playSound("res/sounds/enemy_kill.wav", 50);
+            }
+
             world_.DestroyBody(td);
         }
     }
@@ -219,6 +227,7 @@ void PlayScene::update(float ts)
                 if (data->bird) {
                     if (data->bird->getTime().asSeconds() > 10) {
                         world_.DestroyBody(worldBody);
+                        gui_.playSound("res/sounds/bird_death.wav");
                         spawn_explosion(worldBody->GetPosition(), explosionType::cloud);
                     }
                     else {
@@ -411,12 +420,20 @@ int PlayScene::get_score() const
 
 void PlayScene::loseSequence() 
 {
+    if (!endSoundCalled_) {
+        endSoundCalled_ = true;
+        gui_.playSound("res/sounds/lose_sound.wav");
+    }
     sf::Color color(255,0,0);
     gui_.drawText(0.5,0.65,1, "Game Over", Alignment::Center, color);
 }
 
 void PlayScene::winSequence()
 {
+    if (!endSoundCalled_) {
+        endSoundCalled_ = true;
+        gui_.playSound("res/sounds/win_sound.wav");
+    }
     sf::Color color(0,255,0);
     gui_.drawText(0.5,0.65,1, "Victory", Alignment::Center, color);
 }

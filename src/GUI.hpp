@@ -124,6 +124,8 @@ public:
      * @return false otherwise
      */
     bool drawButton(const std::string& text, float x, float y, float w, float h);
+
+    void playSound(std::string path, int vol = 100);
 private:
     void update(float ts);
 private:
@@ -133,4 +135,6 @@ private:
     sf::Font font_;
     std::array<bool, (int)sf::Mouse::Button::ButtonCount> buttons_, prev_buttons_;
     int scroll_y_, prev_scroll_y_;
+    std::vector<sf::SoundBuffer*> buffers_;
+    std::map<std::string, sf::Sound*> sounds_;
 };
