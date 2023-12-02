@@ -27,11 +27,18 @@ struct userDataStruct {
     bodyType                    type;
     std::shared_ptr<Entity>     entity;
     std::shared_ptr<Bird>       bird;
+    int hp;
+};
+
+enum struct explosionType {
+    cloud,
+    fireball
 };
 
 struct ExplosionData {
     b2Vec2 position;
     float time;
+    explosionType type;
 };
 
 class PlayScene : public Scene {
@@ -43,7 +50,7 @@ public:
 private:
     void launch_bird(b2Vec2 pos, b2Vec2 vel);
     b2Vec2 screen_to_world(b2Vec2 pos);
-    void spawn_explosion(b2Vec2 pos);
+    void spawn_explosion(b2Vec2 pos, explosionType type);
     void loseSequence();
     void winSequence();
 
@@ -53,10 +60,12 @@ private:
 private:
     b2Vec2 gravity_;
     b2World world_;
-    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, strcture_image_;
+    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_;
     std::optional<b2Vec2> drag_start_;
     float cam_x, cam_y, cam_scale_x, cam_scale_y;
     gameState state_;
     std::vector<std::shared_ptr<Bird>> birds_;
     std::vector<ExplosionData> explosions_;
+    b2Body* mostRecentBird;
+    bool mostRecentAbilityUsed;
 };
