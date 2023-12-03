@@ -3,6 +3,7 @@
 #include <string>
 
 #include "test_utils.hpp"
+#include "reader_writer_test.hpp"
 
 void dummytest1() {
     verify(1+1==2, "no");
@@ -11,6 +12,7 @@ void dummytest1() {
 int main() {
     try {
         dummytest1();
+        tests_reader_writer();
 
         std::cout << "All tests passed" << std::endl;
     } catch (const TestAssertionException& e) {
