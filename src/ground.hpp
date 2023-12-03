@@ -21,6 +21,10 @@ public:
         return shape_;
     }
 
+    bool contains(double x, double y) {
+        return false;
+    } 
+
 private:
     b2PolygonShape shape_;
 };

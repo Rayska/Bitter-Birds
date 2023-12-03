@@ -25,6 +25,15 @@ public:
         return height_;
     }
 
+    bool contains(double x, double y) {
+        return ( 
+            x <= this->getX() + this->getWidth() * 0.5
+            && x >= this->getX() - this->getWidth() * 0.5
+            && y <= this->getY() + this->getHeight() * 0.5
+            && y >= this->getY() - this->getHeight() * 0.5
+        );
+    }
+
 private:
     double height_;
     double width_;

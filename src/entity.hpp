@@ -40,6 +40,8 @@ public:
         return y_;
     }
 
+    virtual bool contains(double x, double y) = 0;
+
 private:
     bool movable_;
     bool destructible_;

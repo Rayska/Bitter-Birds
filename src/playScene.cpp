@@ -142,12 +142,13 @@ void PlayScene::update(float ts)
         cam_x += 5.f * ts;
     }
     if(gui_.buttonState(sf::Mouse::Button::Left)){
+        auto[cx, cy] = gui_.cursorPosition();
+        auto p = screen_to_world({cx, cy});
+        std::cout << p.x << " " << p.y << std::endl;
         if(!drag_start_){
-            auto[cx, cy] = gui_.cursorPosition();
-            auto p = screen_to_world({cx, cy});
             if (p.x <= -4.5 && p.x >= -5.5 && p.y <= 2 && p.y >= 1) {
+                drag_start_ = b2Vec2(-5, 2);
                 gui_.playSound("res/sounds/slingshot_stretch.wav");
-                drag_start_ = screen_to_world({cx, cy});
             } else {
                 stopFollow_ = true;
             }
@@ -166,6 +167,30 @@ void PlayScene::update(float ts)
             std::cout << p.x << " " << p.y << std::endl;
             launch_bird(b2Vec2(-5, 2), {vel.x * 10.f, vel.y * 10.f});
             drag_start_ = {};
+        }
+    }
+    if(gui_.buttonState(sf::Mouse::Button::Middle)){
+        auto[cx, cy] = gui_.cursorPosition();
+        auto worldPos = screen_to_world({cx, cy});
+        //std::cout << worldPos.x << " " << worldPos.y << std::endl;
+        for (auto ent : level_.getEntities()) {
+            if (ent.get()->contains(worldPos.x, worldPos.y)) {
+                bodyType type = (*ent).getType();
+                switch (type)
+                {
+                case bodyType::structure:
+                    {
+                        auto ent_structure = std::dynamic_pointer_cast<Structure>(ent);
+                        std::cout << "Width: " << ent_structure->getWidth() << " Height: " << ent_structure->getHeight() << " x: " << ent_structure->getX() << " y: " << ent_structure->getY() << std::endl; 
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+                }
+                break;
+            }
         }
     }
 
