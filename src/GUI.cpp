@@ -13,7 +13,7 @@ GUI::GUI()
 
 	std::cout << "Created window." << std::endl;
 
-	if(!font_.loadFromFile("res/DancingScript-Regular.ttf")){
+	if(!font_.loadFromFile("res/Caracas.ttf")){
 		std::cout << "Failed to load font" << std::endl;
 	}
 
