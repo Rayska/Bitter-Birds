@@ -9,6 +9,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     :
     Scene(gui),
     current_player_(current_player),
+    next_level_(""),
+    current_score_(0),
     level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
@@ -26,7 +28,9 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     added_score_(false),
     mostRecentBird_(nullptr),
     stopFollow_(false)
-    {
+{
+    next_level_ = writer_.getNextLevel(level.getSaveName());
+
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
     groundBodyDef.userData.pointer = (uintptr_t)new userDataStruct{&grass_image_,
@@ -227,6 +231,7 @@ void PlayScene::update(float ts)
             }
 
             world_.DestroyBody(td);
+            add_score(50);
         }
     }
 
@@ -397,6 +402,12 @@ void PlayScene::update(float ts)
     }
 }
 
+void PlayScene::add_score(int amount){
+    if(state_ != gameState::playing)
+        return;
+    current_score_ += amount;
+}
+
 void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
     if (!birds_.empty() && state_ == gameState::playing) {
         b2BodyDef bodyDef;
@@ -495,11 +506,9 @@ void PlayScene::destroyBird(b2Body* birdBody) {
     }
 }
 
-int PlayScene::get_score() const
-{
-    return 1000;
+int PlayScene::get_score() const {
+    return current_score_;
 }
-
 
 void PlayScene::retry_level() {
     gui_.setScene<PlayScene>(level_, current_player_);
@@ -507,9 +516,18 @@ void PlayScene::retry_level() {
 
 void PlayScene::exit_to_menu() {
     gui_.setScene<MenuScene>(current_player_);
+    // Save scores
+    writer_.writeFile(level_, level_.getSaveName());
 }
 
 void PlayScene::next_level() {
+    // Save scores
+    writer_.writeFile(level_, level_.getSaveName());
+    // Reload scene with next level
+    auto next = writer_.readFile(*next_level_);
+    if(next){
+        gui_.setScene<PlayScene>(*next, current_player_);
+    }
 }
 
 void PlayScene::winSequence()
@@ -545,14 +563,24 @@ void PlayScene::winSequence()
         gui_.drawText(0.8f, 0.6f - i * 0.07f, 0.1f, std::to_string(e.score), Alignment::RightCenter);
     }
 
-    if(gui_.drawButton("Retry", 0.2f, 0.2f, 0.2f, 0.1f)){
-        retry_level();
+    if(next_level_.has_value()){
+        if(gui_.drawButton("Retry", 0.2f, 0.2f, 0.2f, 0.1f)){
+            retry_level();
+        }
+        if(gui_.drawButton("Menu", 0.5f, 0.2f, 0.2f, 0.1f)){
+            exit_to_menu();
+        }
+        if(gui_.drawButton("Next", 0.8f, 0.2f, 0.2f, 0.1f)){
+            next_level();
+        }
     }
-    if(gui_.drawButton("Menu", 0.5f, 0.2f, 0.2f, 0.1f)){
-        exit_to_menu();
-    }
-    if(gui_.drawButton("Next", 0.8f, 0.2f, 0.2f, 0.1f)){
-        next_level();
+    else{
+        if(gui_.drawButton("Retry", 0.4f, 0.2f, 0.2f, 0.1f)){
+            retry_level();
+        }
+        if(gui_.drawButton("Menu", 0.6f, 0.2f, 0.2f, 0.1f)){
+            exit_to_menu();
+        }
     }
 }
 

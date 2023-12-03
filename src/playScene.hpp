@@ -19,6 +19,8 @@
 
 #include <box2d/b2_timer.h>
 
+#include "ReaderWriter.hpp"
+
 enum struct gameState {
     won,
     lost,
@@ -58,6 +60,8 @@ private:
     void winSequence();
     void destroyBird(b2Body* birdBody);
 
+    void add_score(int amt);
+
     int get_bird_count() const;
     std::string get_current_bird_type() const;
     int get_score() const;
@@ -66,7 +70,10 @@ private:
     void exit_to_menu();
     void next_level();
 private:
+    ReaderWriter writer_;
+    std::optional<std::string> next_level_;
     std::string current_player_;
+    int current_score_;
     Level level_;
     b2Vec2 gravity_;
     b2World world_;
