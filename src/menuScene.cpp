@@ -100,12 +100,15 @@ void MenuScene::update(float ts) {
                 "Luukas Karihtala",
                 "Ray Sointula",
                 "Onni Komulainen",
-                "Daniel Granström"
+                "Daniel Granstrom"
             };
 
             for(int i = 0; i < help_text.size(); i++){
                 gui_.drawText(0.5f, 0.8f - i * 0.06f, 0.06f, help_text[i]);
             }
+            // ö dots for name
+            gui_.drawRect(0.574f, 0.146f, 0.002f, 0.002f, 0.f, {1.f, 1.f, 1.f});
+            gui_.drawRect(0.578f, 0.146f, 0.002f, 0.002f, 0.f, {1.f, 1.f, 1.f});
 
             if(gui_.drawButton("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
                 gui_.playSound("res/sounds/click_sound.wav");
