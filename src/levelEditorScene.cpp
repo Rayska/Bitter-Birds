@@ -135,7 +135,7 @@ void LevelEditorScene::update(float ts)
                 gui_.drawText(0.5f, 0.7f, 0.1f, "Enter structure width");
                 gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
                 if (current_input_ != "0" && current_input_ != "0." && atof(current_input_.c_str()) != 0) {
-                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter)){
                         input_++;
                         width_=atof(current_input_.c_str());
                         current_input_ = "";
@@ -148,7 +148,7 @@ void LevelEditorScene::update(float ts)
                 gui_.drawText(0.5f, 0.7f, 0.1f, "Enter structure height");
                 gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
                 if (current_input_ != "0" && current_input_ != "0." && atof(current_input_.c_str()) != 0) {
-                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter)){
                         input_++;
                         height_=atof(current_input_.c_str());
                         current_input_ = "100";
@@ -161,7 +161,7 @@ void LevelEditorScene::update(float ts)
                 gui_.drawText(0.5f, 0.7f, 0.1f, "Enter hp, 100 is default");
                 gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
                 if (current_input_ != "0" && atoi(current_input_.c_str()) != 0) {
-                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter)){
                         input_++;
                         healthpoints_=atoi(current_input_.c_str());
                         current_input_ = "0";
@@ -174,7 +174,7 @@ void LevelEditorScene::update(float ts)
                 gui_.drawText(0.5f, 0.7f, 0.1f, "Enter rotation");
                 gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
                 if (current_input_ != "") {
-                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter)){
                         input_ = 0;
                         rotation_=atof(current_input_.c_str());
                         current_input_ = "";
@@ -204,7 +204,7 @@ void LevelEditorScene::update(float ts)
             {
                 gui_.drawText(0.5f, 0.7f, 0.1f, "Enter new level name");
                 gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
-                if(current_input_ != "" && gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                if(current_input_ != "" && gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter)){
                     input_=0;
                     reader_writer_.writeFile(
                         Level(
