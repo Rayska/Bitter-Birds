@@ -166,9 +166,7 @@ std::vector<LevelInfo> ReaderWriter::getLevels() const {
     }
     std::sort(presetLevel_infos.begin(), presetLevel_infos.end(), compareLvlName);
     std::sort(level_infos.begin(), level_infos.end(), compareLvlName);
-    for (auto presetLvl : presetLevel_infos) {
-        level_infos.push_back(presetLvl);
-    }
+    level_infos.insert(level_infos.end(), presetLevel_infos.begin(), presetLevel_infos.end());
     return level_infos;
 }
 
