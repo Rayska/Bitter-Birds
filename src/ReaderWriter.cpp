@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <string>
 
 #if 0
 #define RW_LOG(msg) std::cout << (msg) << std::endl
@@ -126,20 +127,47 @@ void ReaderWriter::writeFile(Level level, std::string fileName) const {
 
 std::vector<LevelInfo> ReaderWriter::getLevels() const {
     std::string levels_path = "levels";
-    std::vector<std::string> levels;
+    std::vector<std::string> levels;    
 
     for(const auto& entry : std::filesystem::directory_iterator(levels_path)){
         levels.push_back(entry.path().string());
     }
 
+    std::vector<LevelInfo> presetLevel_infos;
     std::vector<LevelInfo> level_infos;
     for(auto& level : levels){
         if(auto lvl = readFile(level)){
-            level_infos.push_back({
+            try {
+                if (lvl->getName().find("Level ") == 0 && lvl->getName().size() > 6) {
+                    std::stoi(lvl->getName().substr(6));
+                    presetLevel_infos.push_back({
+                    lvl->getName(),
+                    lvl->getSaveName()
+                    });
+                }
+                else {
+                    level_infos.push_back({
+                        lvl->getName(),
+                        lvl->getSaveName()
+                    });
+                }
+            } catch (const std::invalid_argument& e) {
+                level_infos.push_back({
                 lvl->getName(),
                 lvl->getSaveName()
-            });
+                });
+            } catch (const std::out_of_range& e) {
+                level_infos.push_back({
+                lvl->getName(),
+                lvl->getSaveName()
+                });
+            }
         }
+    }
+    std::sort(presetLevel_infos.begin(), presetLevel_infos.end(), compareLvlName);
+    std::sort(level_infos.begin(), level_infos.end(), compareLvlName);
+    for (auto presetLvl : presetLevel_infos) {
+        level_infos.push_back(presetLvl);
     }
     return level_infos;
 }
@@ -303,4 +331,16 @@ ScoreBoardEntry ReaderWriter::formScore(std::string line) const {
 
 std::string ReaderWriter::getContent(std::string line) const {
     return line.substr(4, line.size() - 4);
+}
+
+bool ReaderWriter::compareLvlName(LevelInfo first, LevelInfo second) {
+    std::string firstName = first.name;
+    std::string secondName = second.name;
+    for (char& c : firstName) {
+        c = std::tolower(c);
+    }
+    for (char& c : secondName) {
+        c = std::tolower(c);
+    }
+    return firstName < secondName;
 }
