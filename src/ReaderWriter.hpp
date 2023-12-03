@@ -130,5 +130,9 @@ class ReaderWriter {
         *
         */
         std::string getContent(std::string line) const;
-        
+
+        /**
+         * @brief Compare level names. Return true if first < second
+        */
+        static bool compareLvlName(LevelInfo first, LevelInfo second);
 };
