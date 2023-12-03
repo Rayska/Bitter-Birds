@@ -120,7 +120,7 @@ void GUI::drawSprite(float x, float y, float w, float h, float angle, const Imag
 	auto imgSize = img.image_.getSize();
 	sp.setRotation(angle);
 	sp.setScale(w / imgSize.x, h / imgSize.y);
-	sp.setPosition(x, (1.f - y ));
+	sp.setPosition(x, -y);
 	sf::FloatRect rc = sp.getLocalBounds();
 	sp.setOrigin(rc.width / 2, rc.height / 2);
 	window_.draw(sp);
