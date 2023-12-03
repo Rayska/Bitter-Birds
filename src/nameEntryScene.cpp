@@ -17,7 +17,7 @@ void NameEntryScene::update(float ts) {
     gui_.drawText(0.5f, 0.7f, 0.2f, "Enter your name");
     gui_.drawText(0.5f, 0.5f, 0.2f, current_player_);
 
-    if(current_player_.size() != 0 && gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+    if(current_player_.size() != 0 && (gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter))){
         gui_.setScene<MenuScene>(current_player_);
     }
 }

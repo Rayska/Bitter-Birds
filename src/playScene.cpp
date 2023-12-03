@@ -231,11 +231,9 @@ void PlayScene::update(float ts)
             }
 
             world_.DestroyBody(td);
-            add_score(50);
+            add_score(((float)(get_bird_count() + 1) / level_.getBirds().size()) * 200);
         }
     }
-
-
 
     // Win/Lose condition
     auto worldBody = world_.GetBodyList();
@@ -341,6 +339,24 @@ void PlayScene::update(float ts)
 
         // Draw slingshot
         gui_.drawSprite(-5, 1.5, 2.f, 2.f, 0.f, sling_image_);
+        // Draw bird at slingshot
+        if(!birds_.empty()){
+            Image* image = birds_.front()->getImage();
+            if(drag_start_.has_value()){
+                auto[scx, scy] = gui_.cursorPosition();
+                auto[cx,cy] = screen_to_world({scx, scy});
+                b2Vec2 delta{drag_start_->x - cx, drag_start_->y - cy};
+                float maxLen = 2.f;
+                if(delta.Length() > maxLen){
+                    delta = (maxLen / delta.Length()) * delta;
+                }
+                gui_.drawSprite(-5.f - delta.x, 2.f - delta.y, 1.f, 1.f, 0.f, *image);
+            }
+            else{
+                gui_.drawSprite(-5.f, 2.f, 1.f, 1.f, 0.f, *image);
+            }
+        }
+
 
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();

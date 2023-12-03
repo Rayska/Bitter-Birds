@@ -7,7 +7,8 @@
 
 enum struct MenuState {
     MainMenu,
-    LevelSelector
+    LevelSelector,
+    Help
 };
 
 class MenuScene : public Scene {
