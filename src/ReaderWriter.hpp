@@ -15,7 +15,23 @@
 *
 */
 enum struct Header {
-    levelName, backgroundPath, soundtrackPath, soundFXStart, soundFXEnd, EntityStart, EntityEnd, BirdsStart, BirdsEnd, unknown
+    levelName, 
+    backgroundPath, 
+    soundtrackPath, 
+    soundFXStart, 
+    soundFXEnd, 
+    EntityStart, 
+    EntityEnd, 
+    BirdsStart, 
+    BirdsEnd, 
+    ScoresStart,
+    ScoresEnd,
+    unknown
+};
+
+struct LevelInfo {
+    std::string name;
+    std::string path;
 };
 
 /**
@@ -46,9 +62,9 @@ class ReaderWriter {
         /**
         * @brief Returns a list of levels that can be loaded
         * 
-        /// @todo: Implementation, define a path for savefiles
         */
-        std::vector<std::string> getLevels() const;
+        std::vector<LevelInfo> getLevels() const;
+        std::optional<std::string> getNextLevel(std::string) const;
 
     private:
         std::string versionNumber = "0";
@@ -99,6 +115,9 @@ class ReaderWriter {
         * @todo Implementation, requires implementation of Entity class, it's derived classes, and a format design
         */
         std::string toStringEntity(std::shared_ptr<Entity> e) const;
+
+        std::vector<ScoreBoardEntry> formScores(std::vector<std::string> scoreStrings) const;
+        ScoreBoardEntry formScore(std::string line) const;
 
         /**
         * @brief Extracts the first 3 characters from line and returns matching Header

@@ -15,10 +15,11 @@ class Level {
 public:
     //Create Level
     inline Level(std::vector<std::shared_ptr<Entity>> entities, std::vector<std::shared_ptr<Bird>> birds, std::string backgroundPath
-        , std::string soundtrackPath, std::vector<std::string> soundFX, std::string name, std::vector<ScoreBoardEntry> scores)
+        , std::string soundtrackPath, std::vector<std::string> soundFX, std::string name, std::vector<ScoreBoardEntry> scores, std::string save_name)
         : 
         entities_(entities), birds_(birds), backgroundPath_(backgroundPath), soundtrackPath_(soundtrackPath),
-        scores_(scores), soundFX_(soundFX), name_(name) {}
+        scores_(scores), soundFX_(soundFX), name_(name), save_name_(save_name)
+    {}
 
     //get the list of entities at the start of the level
     inline std::vector<std::shared_ptr<Entity>> getEntities() const {
@@ -60,6 +61,9 @@ public:
             return lhs.score > rhs.score;
         });
     }
+    inline std::string getSaveName() const {
+        return save_name_;
+    }
 private:
     std::vector<std::shared_ptr<Entity>> entities_; 
     std::vector<std::shared_ptr<Bird>> birds_; 
@@ -67,5 +71,5 @@ private:
     std::string soundtrackPath_;
     std::vector<std::string> soundFX_;
     std::vector<ScoreBoardEntry> scores_;
-    std::string name_;
+    std::string save_name_, name_;
 };

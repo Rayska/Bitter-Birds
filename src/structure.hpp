@@ -11,9 +11,7 @@ public:
         Entity(true, true, healthPoints, initRotation, x, y),
         width_(width), 
         height_(height)
-    {
-        std::cout << initRotation << std::endl;
-    }
+    {}
 
     bodyType getType() const override {
         return bodyType::structure;

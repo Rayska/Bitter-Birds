@@ -18,6 +18,7 @@ public:
     void update(float ts) override;
 private:
     ReaderWriter reader_writer_;
+    std::vector<LevelInfo> levels_;
     MenuState menu_state_;
     Image button_image_, bird_image_;
     float t;

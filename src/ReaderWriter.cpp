@@ -3,13 +3,20 @@
 #include <sstream>
 #include <filesystem>
 
+#if 0
+#define RW_LOG(msg) std::cout << (msg) << std::endl
+#else
+#define RW_LOG(msg)
+#endif
+
 std::vector<std::string> split_string(std::string str, char delim = ' '){
     std::vector<std::string> result;
 
     std::string tmp;
     for(char c : str){
         if(c == delim){
-            result.push_back(tmp);
+            if(tmp.size() > 0)
+                result.push_back(tmp);
             tmp = "";
         }
         else{
@@ -30,22 +37,32 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
         std::vector<std::string> soundFX;
         std::vector<std::shared_ptr<Entity>> entities;
         std::vector<std::shared_ptr<Bird>> birds;
+        std::vector<ScoreBoardEntry> scores;
         while (std::getline(is, line)) {
             Header header = this->getHeader(line);
             switch (header) {
                 case Header::soundFXStart:
                 {
-                    soundFX = this->readList(is, Header::soundFXEnd); 
+                    RW_LOG("SoundFX");
+                    soundFX = this->readList(is, Header::soundFXEnd);
                     break;
                 }
                 case Header::EntityStart:
                 {
+                    RW_LOG("Entitys");
                     entities = this->formEntities(this->readList(is, Header::EntityEnd));
                     break;     
                 }
                 case Header::BirdsStart:
                 {
+                    RW_LOG("Birds");
                     birds = this->formBirds(readList(is, Header::BirdsEnd));
+                    break;
+                }
+                case Header::ScoresStart:
+                {
+                    RW_LOG("Scores");
+                    scores = this->formScores(readList(is, Header::ScoresEnd));
                     break;
                 }
                 default:
@@ -69,57 +86,45 @@ std::optional<Level> ReaderWriter::readFile(std::string fileName) const {
                 }
             }
         }
-        return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name, {});
+        return Level(entities, birds, backgroundPath, soundtrackPath, soundFX, name, scores, fileName);
     }
     return {};
 }
 
 void ReaderWriter::writeFile(Level level, std::string fileName) const {
-    // If fileName doesn't end in ".txt", adds ".txt" to the end
-    if (fileName.substr(fileName.length() - 4) != ".txt") {
-        fileName += ".txt";
-    }
     std::ofstream os(fileName);
+
     if (os.is_open()) {
         // Game version and newline to separate it from the rest of the data
         os << "BitterBirds v." << versionNumber << std::endl;
-        os << std::endl;
+        os << std::endl << std::endl;
 
-        // Vectors: SoundFX paths, Entities, and Birds
-
-        // SoundFX paths:
-        os << "SST" << std::endl;
-        for (auto it : level.getSoundFX()) {
-            os << it << std::endl;
-        }
-        os << "SEN" << std::endl;
+        os << "NME " << level.getName() << std::endl << std::endl;
 
         // Entities:
         os << "EST" << std::endl;
         for (auto it : level.getEntities()) {
             os << this->toStringEntity(it) << std::endl;
         }
-        os << "EEN" << std::endl;
+        os << "EEN" << std::endl << std::endl;
 
         // Birds:
         os << "BST" << std::endl;
         for (auto it : level.getBirds()) {
             os << this->toStringBird(it) << std::endl;
         }
-        os << "BEN" << std::endl;
-
-        // Level name:
-        os << "NME" << level.getName() << std::endl;
-
-        // Background path:
-        os << "BGR" << level.getBackground() << std::endl;
-
-        // Soundtrack path:
-        os << "SDT" << level.getSoundtrack() << std::endl;
+        os << "BEN" << std::endl << std::endl;
+        
+        // Scores:
+        os << "SCR" << std::endl;
+        for(auto& it : level.getScores()){
+            os << it.name << " " << it.score << std::endl;
+        }
+        os << "ESC" << std::endl << std::endl;
     }
 }
 
-std::vector<std::string> ReaderWriter::getLevels() const {
+std::vector<LevelInfo> ReaderWriter::getLevels() const {
     std::string levels_path = "levels";
     std::vector<std::string> levels;
 
@@ -127,7 +132,28 @@ std::vector<std::string> ReaderWriter::getLevels() const {
         levels.push_back(entry.path().string());
     }
 
-    return levels;
+    std::vector<LevelInfo> level_infos;
+    for(auto& level : levels){
+        if(auto lvl = readFile(level)){
+            level_infos.push_back({
+                lvl->getName(),
+                lvl->getSaveName()
+            });
+        }
+    }
+    return level_infos;
+}
+
+std::optional<std::string> ReaderWriter::getNextLevel(std::string path) const {
+    auto lvls = getLevels();
+    bool next = false;
+    for(auto& lvl : lvls){
+        if(lvl.path == path && !next)
+            next = true;
+        else if(next)
+            return lvl.path;
+    }
+    return {};
 }
 
 std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) const {
@@ -146,6 +172,7 @@ std::vector<std::string> ReaderWriter::readList(std::ifstream& is, Header h) con
 std::shared_ptr<Entity> ReaderWriter::formEntity(std::string line) const {
     auto parts = split_string(line);
 
+    RW_LOG("formEntity");
     if(parts[0] == "STRUCTURE"){
         return std::make_shared<Structure>(
             ::atoi(parts[1].c_str()), 
@@ -166,6 +193,7 @@ std::shared_ptr<Entity> ReaderWriter::formEntity(std::string line) const {
         );
     }
     else{
+        RW_LOG("UNABLE TO PARSE ENTITY");
         return nullptr;
     }
 }
@@ -180,13 +208,16 @@ std::shared_ptr<Bird> ReaderWriter::formBird(std::string line) const {
     else if(line == "SPECIAL2"){
         return std::make_shared<SpecialBird2>();
     }
+    RW_LOG("UNABLE TO PARSE BIRD");
     return nullptr;
 }
 
 std::vector<std::shared_ptr<Entity>> ReaderWriter::formEntities(std::vector<std::string> entityStrings) const {
     std::vector<std::shared_ptr<Entity>> entities;
     for (auto it : entityStrings) {
-        entities.push_back(formEntity(it));
+        auto ent = formEntity(it);
+        if(ent != nullptr)
+            entities.push_back(ent);
     }
     return entities;
 }
@@ -194,73 +225,80 @@ std::vector<std::shared_ptr<Entity>> ReaderWriter::formEntities(std::vector<std:
 std::vector<std::shared_ptr<Bird>> ReaderWriter::formBirds(std::vector<std::string> birdStrings) const {
     std::vector<std::shared_ptr<Bird>> birds;
     for (auto it : birdStrings) {
-        birds.push_back(formBird(it));
+        auto brd = formBird(it);
+        if(brd != nullptr)
+            birds.push_back(brd);
     }
     return birds;
 }
 
 std::string ReaderWriter::toStringBird(std::shared_ptr<Bird> bird) const {
-    if (typeid(bird) == typeid(NormalBird())) {
-        return "0";
+    switch(bird->getBirdType()){
+        case birdType::normal: return "NORMAL";
+        case birdType::special1: return "SPECIAL1";
+        case birdType::special2: return "SPECIAL2";
     }
-    else if (typeid(bird) == typeid(NormalBird())) {
-        return "";
-    }
-    else if (typeid(bird) == typeid(NormalBird())) {
-        return "";
-    }
-    return "";
+    return "UNKNOWN";
 }
 
 std::string ReaderWriter::toStringEntity(std::shared_ptr<Entity> e) const {
-    std::stringstream line;
-    const std::type_info& type = typeid(e);
-    const std::type_info& typeEnemy = typeid(Enemy);
-    const std::type_info& typeStructure = typeid(Structure);
-    if (type == typeEnemy) {
-        line << e->getHealthPoints() << " " << e->getRotation() << " " << e->getX() << " " << e->getY(); //<< " " << e.
+    if(auto struct_ent = std::dynamic_pointer_cast<Structure>(e)){
+        return 
+            "STRUCTURE " 
+            + std::to_string(struct_ent->getHealthPoints()) + " " 
+            + std::to_string(struct_ent->getRotation()) + " " 
+            + std::to_string(struct_ent->getX()) + " " 
+            + std::to_string(struct_ent->getY()) + " " 
+            + std::to_string(struct_ent->getHeight()) + " " 
+            + std::to_string(struct_ent->getWidth());
     }
-    else if (type == typeStructure) {
-        line << e->getHealthPoints() << " " << e->getRotation() << " " << e->getX() << " " << e->getY() << " "; //<< e.getWidth();
+    else if(auto enemy_ent = std::dynamic_pointer_cast<Enemy>(e)){
+        return 
+            "ENEMY " 
+            + std::to_string(enemy_ent->getHealthPoints()) + " " 
+            + std::to_string(enemy_ent->getRotation()) + " " 
+            + std::to_string(enemy_ent->getX()) + " " 
+            + std::to_string(enemy_ent->getY()) + " "
+            + std::to_string(0);
     }
-    else {
-        line << "Entity type not recognised";
+    else{
+        return "UNKNOWN";        
     }
-    return line.str();
 }
 
 Header ReaderWriter::getHeader(std::string line) const {
     std::string headerString = line.substr(0, 3);
-    if (headerString == "NME") {
-        return Header::levelName;
+
+    std::unordered_map<std::string, Header> mapping{
+        {"NME", Header::levelName},
+        {"BGR", Header::backgroundPath},
+        {"STD", Header::soundtrackPath},
+        {"SST", Header::soundFXStart},
+        {"SEN", Header::soundFXEnd},
+        {"EST", Header::EntityStart},
+        {"EEN", Header::EntityEnd},
+        {"BST", Header::BirdsStart},
+        {"BEN", Header::BirdsEnd},
+        {"SCR", Header::ScoresStart},
+        {"ESC", Header::ScoresEnd},
+    };
+
+    return (mapping.count(headerString) == 1) ? mapping[headerString] : Header::unknown;
+}
+
+
+std::vector<ScoreBoardEntry> ReaderWriter::formScores(std::vector<std::string> scoreStrings) const {
+    std::vector<ScoreBoardEntry> scores;
+    for(auto& ln : scoreStrings){
+        scores.push_back(formScore(ln));
     }
-    else if (headerString == "BGR") {
-        return Header::backgroundPath;
-    }
-    else if (headerString == "STD") {
-        return Header::soundtrackPath;
-    }
-    else if (headerString == "SST") {
-        return Header::soundFXStart;
-    }
-    else if (headerString == "SEN") {
-        return Header::soundFXEnd;
-    }
-    else if (headerString == "EST") {
-        return Header::EntityStart;
-    }
-    else if (headerString == "EEN") {
-        return Header::EntityEnd;
-    }
-    else if (headerString == "BST") {
-        return Header::BirdsStart;
-    }
-    else if (headerString == "BEN") {
-        return Header::BirdsEnd;
-    }
-    else {
-        return Header::unknown;
-    }
+    return scores;
+}
+
+ScoreBoardEntry ReaderWriter::formScore(std::string line) const {
+    auto split = split_string(line);
+    int score = ::atoi(split[split.size() - 1].c_str());
+    return ScoreBoardEntry{ split[0], score };
 }
 
 std::string ReaderWriter::getContent(std::string line) const {

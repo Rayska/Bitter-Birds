@@ -22,7 +22,9 @@ MenuScene::MenuScene(GUI& gui, std::string current_player)
     menu_state_(MenuState::MainMenu),
     current_player_(current_player),
     menu_scroll_y_(0.f)
-{}
+{
+    levels_ = reader_writer_.getLevels();
+}
 
 MenuScene::~MenuScene() {}
 
@@ -30,7 +32,6 @@ void MenuScene::update(float ts) {
     t += ts;
     gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
-    std::vector<std::string> levels = reader_writer_.getLevels();
 
     switch(menu_state_){
         case MenuState::MainMenu:
@@ -58,10 +59,10 @@ void MenuScene::update(float ts) {
             menu_scroll_y_ += (target_menu_scroll_y_ - menu_scroll_y_) * 0.2;
 
             float y = 0.8f;
-            for(auto& level : levels){
-                if(gui_.drawButton(level, 0.5f, y + menu_scroll_y_, 0.4f, 0.1f)){
+            for(auto& level : levels_){
+                if(gui_.drawButton(level.name, 0.5f, y + menu_scroll_y_, 0.4f, 0.1f)){
                     gui_.playSound("res/sounds/click_sound.wav");
-                    auto loaded_level = reader_writer_.readFile(level);
+                    auto loaded_level = reader_writer_.readFile(level.path);
                     if(loaded_level){
                         gui_.setScene<PlayScene>(*loaded_level, current_player_);
                     }
