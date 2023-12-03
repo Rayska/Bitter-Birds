@@ -11,13 +11,8 @@ public:
         return bodyType::enemy;
     }
 
-    double getDiameter() const {
-        switch (type_) {
-            case 0:
-                return 10;
-            default:
-                return 0;
-        }
+    bool contains(double x, double y) {
+        return ( x < this->getX() + 0.5 && x > this->getX() - 0.5 && y < this->getY() + 0.5 && y > this->getY() - 0.5 );
     }
 
 private:

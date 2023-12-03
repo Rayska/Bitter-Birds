@@ -7,6 +7,8 @@
 
 enum struct MenuState {
     MainMenu,
+    PlayLevelSelector,
+    EditorLevelSelector,
     LevelSelector,
     Help
 };
