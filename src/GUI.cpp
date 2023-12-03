@@ -202,5 +202,5 @@ void GUI::playSound(std::string path, int vol) {
         sounds_[path] = new sf::Sound(*buffers_[buffers_.size() - 1]);
 		sounds_[path]->setVolume(vol);
       }
-    //sounds_[path] -> play();
+    sounds_[path] -> play();
 }

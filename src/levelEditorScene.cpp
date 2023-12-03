@@ -23,6 +23,7 @@ LevelEditorScene::LevelEditorScene(GUI& gui, Level& level, const std::string cur
     current_input_("")
 {
     entities_ = level_.getEntities();
+    birds_ = level_.getBirds();
 }
 
 LevelEditorScene::~LevelEditorScene() {}
@@ -131,61 +132,69 @@ void LevelEditorScene::update(float ts)
         {
             case 1:
             {
-                gui_.drawText(0.5f, 0.7f, 0.2f, "Enter structure width");
-                gui_.drawText(0.5f, 0.5f, 0.2f, current_input_);
-                if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
-                    input_++;
-                    width_=atof(current_input_.c_str());
-                    current_input_ = "";
+                gui_.drawText(0.5f, 0.7f, 0.1f, "Enter structure width");
+                gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
+                if (current_input_ != "0" && current_input_ != "0." && atof(current_input_.c_str()) != 0) {
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                        input_++;
+                        width_=atof(current_input_.c_str());
+                        current_input_ = "";
+                    }
                 }
                 break;
             }
             case 2:
             {
-                gui_.drawText(0.5f, 0.7f, 0.2f, "Enter structure height");
-                gui_.drawText(0.5f, 0.5f, 0.2f, current_input_);
-                if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
-                    input_++;
-                    height_=atof(current_input_.c_str());
-                    current_input_ = "";
+                gui_.drawText(0.5f, 0.7f, 0.1f, "Enter structure height");
+                gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
+                if (current_input_ != "0" && current_input_ != "0." && atof(current_input_.c_str()) != 0) {
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                        input_++;
+                        height_=atof(current_input_.c_str());
+                        current_input_ = "100";
+                    }
                 }
                 break;
             }
             case 3:
             {
-                gui_.drawText(0.5f, 0.7f, 0.2f, "Enter hp, 100 is default");
-                gui_.drawText(0.5f, 0.5f, 0.2f, current_input_);
-                if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
-                    input_++;
-                    healthpoints_=atoi(current_input_.c_str());
-                    current_input_ = "0";
+                gui_.drawText(0.5f, 0.7f, 0.1f, "Enter hp, 100 is default");
+                gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
+                if (current_input_ != "0" && atoi(current_input_.c_str()) != 0) {
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                        input_++;
+                        healthpoints_=atoi(current_input_.c_str());
+                        current_input_ = "0";
+                    }
                 }
                 break;
             }
             case 4:
             {
-                gui_.drawText(0.5f, 0.7f, 0.2f, "Enter rotation");
-                gui_.drawText(0.5f, 0.5f, 0.2f, current_input_);
-                if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
-                    input_ = 0;
-                    rotation_=atof(current_input_.c_str());
-                    current_input_ = "";
+                gui_.drawText(0.5f, 0.7f, 0.1f, "Enter rotation");
+                gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
+                if (current_input_ != "") {
+                    if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                        input_ = 0;
+                        rotation_=atof(current_input_.c_str());
+                        current_input_ = "";
 
-                    switch (created_)
-                    {
-                        case bodyType::structure:
+                        switch (created_)
                         {
-                            entities_.push_back(std::make_shared<Structure>(healthpoints_, rotation_, 0.0f, 1.5f, height_, width_));
-                            break;
-                        }
-                        case bodyType::enemy:
-                        {
-                            entities_.push_back(std::make_shared<Enemy>(healthpoints_, rotation_, 0.0f, 1.0f, 0));
-                            break;
-                        }
-                        default:
-                        {
-                            break;
+                            case bodyType::structure:
+                            {
+                                entities_.push_back(std::make_shared<Structure>(healthpoints_, rotation_, 0.0f, 1.5f, height_, width_));
+                                break;
+                            }
+                            case bodyType::enemy:
+                            {
+                                entities_.push_back(std::make_shared<Enemy>(healthpoints_, rotation_, 0.0f, 1.0f, 0));
+                                break;
+                            }
+                            default:
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -193,14 +202,14 @@ void LevelEditorScene::update(float ts)
             }
             case 5:
             {
-                gui_.drawText(0.5f, 0.7f, 0.2f, "Enter new level name");
-                gui_.drawText(0.5f, 0.5f, 0.2f, current_input_);
-                if(gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
+                gui_.drawText(0.5f, 0.7f, 0.1f, "Enter new level name");
+                gui_.drawText(0.5f, 0.5f, 0.1f, current_input_);
+                if(current_input_ != "" && gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f)){
                     input_=0;
                     reader_writer_.writeFile(
                         Level(
                             entities_,
-                            level_.getBirds(),
+                            birds_,
                             "",
                             "",
                             std::vector<std::string>(),
@@ -263,18 +272,53 @@ void LevelEditorScene::update(float ts)
         // UI 
         gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
 
-        //
+        //Buttons
         sf::Color color(0,255,0);
-        if (gui_.drawButton("Structure", 0.05f, 0.95f, 0.1f, 0.095f)) {
+        if (gui_.drawButton("Structure", 0.15f, 0.95f, 0.2f, 0.05f)) {
             input_=1;
             created_=bodyType::structure;
+            current_input_="";
         }
-        if (gui_.drawButton("Enemy", 0.15f, 0.95f, 0.1f, 0.095f)) {
+        if (gui_.drawButton("Enemy", 0.35f, 0.95f, 0.2f, 0.05f)) {
             input_=3;
             created_=bodyType::enemy;
+            current_input_="100";
         }
-        if (gui_.drawButton("Save Level", 0.85f, 0.95f, 0.2f, 0.095f)) {
+        if (gui_.drawButton("Save Level", 0.85f, 0.95f, 0.2f, 0.05f)) {
             input_=5;
+            current_input_="Level name";
+        }
+        if (gui_.drawButton("Reset Birds", 0.55f, 0.95f, 0.2f, 0.05f)) {
+            birds_.clear();
+        }
+        if (gui_.drawButton("Make normal", 0.15f, 0.88f, 0.2f, 0.05f)) {
+            birds_.push_back(std::make_shared<NormalBird>());
+        }
+        if (gui_.drawButton("Make yellow", 0.35f, 0.88f, 0.2f, 0.05f)) {
+            birds_.push_back(std::make_shared<SpecialBird1>());
+        }
+        if (gui_.drawButton("Make blue", 0.55f, 0.88f, 0.2f, 0.05f)) {
+            birds_.push_back(std::make_shared<SpecialBird2>());
+        }
+
+        gui_.drawText(0.85f, 0.88f, 0.05f, "Birds:");
+        int i = 1;
+        for (auto b : birds_) {
+            switch (b.get() -> getBirdType())
+            {
+            case birdType::normal:
+                gui_.drawText(0.85f, 0.88f - 0.03f * i, 0.05f, "Normal");
+                break;
+            case birdType::special1:
+                gui_.drawText(0.85f, 0.88f - 0.03f * i, 0.05f, "Yellow");
+                break;
+            case birdType::special2:
+                gui_.drawText(0.85f, 0.88f - 0.03f * i, 0.05f, "Blue");
+                break;
+            default:
+                break;
+            }
+            i++;
         }
     }
 }
@@ -284,7 +328,7 @@ b2Vec2 LevelEditorScene::screen_to_world(b2Vec2 pos){
 }
 
 void LevelEditorScene::on_input(char c) {
-    if(c >= '0' && c <= '9' || c == '.'){
+    if(c >= '0' && c <= '9' || c == '.' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' '){
         std::string tmp = current_input_;
         tmp.push_back(c);
         // Try convert

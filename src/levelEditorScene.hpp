@@ -35,5 +35,6 @@ private:
     std::string current_player_, current_input_;
     std::vector<std::shared_ptr<Entity>> entities_; 
     std::shared_ptr<Entity> chosenEntity_;
+    std::vector<std::shared_ptr<Bird>> birds_;
 
 };
