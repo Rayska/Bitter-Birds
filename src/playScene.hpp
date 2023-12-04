@@ -87,6 +87,7 @@ private:
     bool mostRecentAbilityUsed_;
     bool endSoundCalled_;
     bool stopFollow_;
+    bool resetCamera_;
     b2Timer* timer_;
     bool added_score_;
     int most_recent_score_;
