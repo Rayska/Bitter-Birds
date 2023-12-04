@@ -7,5 +7,3 @@ Image::Image(const std::string &path) {
         std::cout << "Failed to load image '" << path << "'" << std::endl;
     }
 }
-
-//Image::~Image() {}

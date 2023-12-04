@@ -13,24 +13,24 @@ public:
         height_(height)
     {}
 
-    bodyType getType() const override {
+    bodyType get_type() const override {
         return bodyType::structure;
     }
 
-    double getWidth() const {
+    double get_width() const {
         return width_;
     }
 
-    double getHeight() const {
+    double get_height() const {
         return height_;
     }
 
     bool contains(double x, double y) {
         return ( 
-            x <= this->getX() + this->getWidth() * 0.5
-            && x >= this->getX() - this->getWidth() * 0.5
-            && y <= this->getY() + this->getHeight() * 0.5
-            && y >= this->getY() - this->getHeight() * 0.5
+            x <= this->get_x() + this->get_width() * 0.5
+            && x >= this->get_x() - this->get_width() * 0.5
+            && y <= this->get_y() + this->get_height() * 0.5
+            && y >= this->get_y() - this->get_height() * 0.5
         );
     }
 
