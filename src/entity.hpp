@@ -14,29 +14,29 @@ public:
     movable_(movable), destructible_(destructible), healthPoints_(healthPoints),
     initRotation_(initRotation), x_(x), y_(y) {}
 
-    virtual bodyType getType() const = 0;
+    virtual bodyType get_type() const = 0;
 
-    bool isMovable() const {
+    bool is_movable() const {
         return movable_;
     }
 
-    bool isDestructible() const {
+    bool is_destructible() const {
         return destructible_;
     }
 
-    int getHealthPoints() const {
+    int get_health_points() const {
         return healthPoints_;
     }
 
-    double getRotation() const {
+    double get_rotation() const {
         return initRotation_;
     }
 
-    double getX() const {
+    double get_x() const {
         return x_;
     }
 
-    double getY() const {
+    double get_y() const {
         return y_;
     }
 

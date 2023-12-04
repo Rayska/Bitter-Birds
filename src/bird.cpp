@@ -1,17 +1,11 @@
 #include "bird.hpp"
 
 
-Bird::Bird(Image* image)
-    : image_(image) 
+Bird::Bird()
 {}
 
-Bird::~Bird() {
-    delete image_;
-}
+Bird::~Bird() {}
 
-Image* Bird::getImage() const {
-    return image_;
-}
 
 void Bird::resetTime() {
     spawnTime.restart();
@@ -23,29 +17,29 @@ sf::Time Bird::getTime() const {
 
 NormalBird::NormalBird()
     : 
-    Bird(new Image("res/test_bird.png")) 
+    Bird() 
 {}
 
-birdType NormalBird::getBirdType() const {
+birdType NormalBird::get_bird_type() const {
     return birdType::normal;
 }
 
 
 SpecialBird1::SpecialBird1()
     : 
-    Bird(new Image("res/test_specialbird1.png")) 
+    Bird() 
 {}
 
-birdType SpecialBird1::getBirdType() const {
+birdType SpecialBird1::get_bird_type() const {
     return birdType::special1;
 }
 
 
 SpecialBird2::SpecialBird2()
     : 
-    Bird(new Image("res/test_specialbird2.png")) 
+    Bird() 
 {}
 
-birdType SpecialBird2::getBirdType() const {
+birdType SpecialBird2::get_bird_type() const {
     return birdType::special2;
 }

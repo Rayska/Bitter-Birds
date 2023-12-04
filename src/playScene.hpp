@@ -5,7 +5,6 @@
 #include "image.hpp"
 #include "level.hpp"
 #include "structure.hpp"
-#include "ground.hpp"
 
 #include <optional>
 
@@ -19,7 +18,7 @@
 
 #include <box2d/b2_timer.h>
 
-#include "ReaderWriter.hpp"
+#include "readerWriter.hpp"
 
 enum struct gameState {
     won,
@@ -56,9 +55,9 @@ private:
     void launch_bird(b2Vec2 pos, b2Vec2 vel);
     b2Vec2 screen_to_world(b2Vec2 pos);
     void spawn_explosion(b2Vec2 pos, explosionType type);
-    void loseSequence();
-    void winSequence();
-    void destroyBird(b2Body* birdBody);
+    void lose_sequence();
+    void win_sequence();
+    void destroy_bird(b2Body* birdBody);
 
     void add_score(int amt);
 
@@ -69,6 +68,7 @@ private:
     void retry_level();
     void exit_to_menu();
     void next_level();
+    Image* get_bird_image(birdType type);
 private:
     ReaderWriter writer_;
     std::optional<std::string> next_level_;
@@ -77,7 +77,7 @@ private:
     Level level_;
     b2Vec2 gravity_;
     b2World world_;
-    Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
+    Image grass_image_, enemy_bird_image_, normal_bird_image_, yellow_bird_image_, blue_bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
     std::optional<b2Vec2> drag_start_;
     float cam_x_, cam_y_, cam_scale_x_, cam_scale_y_;
     gameState state_;

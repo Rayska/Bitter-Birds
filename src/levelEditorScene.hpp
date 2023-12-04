@@ -5,8 +5,7 @@
 #include "image.hpp"
 #include "level.hpp"
 #include "structure.hpp"
-#include "ground.hpp"
-#include "ReaderWriter.hpp"
+#include "readerWriter.hpp"
 
 #include <box2d/b2_world.h>
 

@@ -10,20 +10,17 @@ enum struct birdType {
 
 class Bird {
 public:
-    Bird(Image* image);
+    Bird();
 
     ~Bird();
 
-    virtual birdType getBirdType() const = 0;
-
-    Image* getImage() const;
+    virtual birdType get_bird_type() const = 0;
 
     void resetTime();
 
     sf::Time getTime() const;
 
 protected:
-    Image*  image_;
     sf::Clock spawnTime;
 };
 
@@ -31,7 +28,7 @@ class NormalBird: public Bird {
 public:
     NormalBird();
 
-    birdType getBirdType() const override;
+    birdType get_bird_type() const override;
 private:
 };
 
@@ -39,12 +36,12 @@ class SpecialBird1: public Bird {
 public:
     SpecialBird1();
 
-    birdType getBirdType() const override;
+    birdType get_bird_type() const override;
 };
 
 class SpecialBird2: public Bird {
 public:
     SpecialBird2();
 
-    birdType getBirdType() const override;
+    birdType get_bird_type() const override;
 };

@@ -3,7 +3,7 @@
 #include "GUI.hpp"
 #include "scene.hpp"
 #include "image.hpp"
-#include "ReaderWriter.hpp"
+#include "readerWriter.hpp"
 
 enum struct MenuState {
     MainMenu,

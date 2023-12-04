@@ -49,7 +49,7 @@ public:
      * @param params arguments for constructing new class of SceneType
      */
     template<typename SceneType, typename...Params>
-    void setScene(Params...params){
+    void set_scene(Params...params){
         std::cout << "Set new scene" << std::endl;
         new_scene_ = new SceneType(*this, params...);
     }
@@ -58,7 +58,7 @@ public:
      * @brief Get current cursor position
      * @return std::pair<float, float> position in [0, 1] range
      */
-    std::pair<float, float> cursorPosition() const;
+    std::pair<float, float> cursor_position() const;
 
     /**
      * @brief Return state of keyboard key
@@ -66,19 +66,19 @@ public:
      * @return true Key is pressed
      * @return false Key is released
      */
-    bool keyState(sf::Keyboard::Key key) const; 
+    bool key_state(sf::Keyboard::Key key) const; 
     /**
      * @brief Return state of mouse button
      * @param btn Button id
      * @return true Button is pressed
      * @return false Button is released
      */
-    bool buttonState(sf::Mouse::Button btn) const;
-    bool buttonReleased(sf::Mouse::Button btn) const;
-    int scrollDelta() const;
+    bool button_state(sf::Mouse::Button btn) const;
+    bool button_released(sf::Mouse::Button btn) const;
+    int scroll_delta() const;
 
-    float getAspectRatio() const;
-    void setViewport(float x, float y, float w, float h);
+    float get_aspect_ratio() const;
+    void set_viewport(float x, float y, float w, float h);
 
     /**
      * @brief Draw a rectangular sprite on screen
@@ -89,7 +89,7 @@ public:
      * @param angle 
      * @param img 
      */
-    void drawSprite(float x, float y, float w, float h, float angle, const Image& img);
+    void draw_sprite(float x, float y, float w, float h, float angle, const Image& img);
 
     /**
      * @brief Draw a rectangle with a color
@@ -100,7 +100,7 @@ public:
      * @param angle 
      * @param color 
      */
-    void drawRect(float x, float y, float w, float h, float angle, Color color);
+    void draw_rect(float x, float y, float w, float h, float angle, Color color);
 
     /**
      * @brief Draw text to screen with text centering
@@ -110,7 +110,7 @@ public:
      * @param h text scale
      * @param text text string
      */
-    void drawText(float x, float y, float h, const std::string& text, Alignment align = Alignment::Center, sf::Color color = sf::Color::White);
+    void draw_text(float x, float y, float h, const std::string& text, Alignment align = Alignment::Center, sf::Color color = sf::Color::White);
 
     /**
      * @brief Draw a button on screen. When mouse is hovered and pressed over button returns true
@@ -123,9 +123,9 @@ public:
      * @return true Button is released
      * @return false otherwise
      */
-    bool drawButton(const std::string& text, float x, float y, float w, float h);
+    bool draw_button(const std::string& text, float x, float y, float w, float h);
 
-    void playSound(std::string path, int vol = 100);
+    void play_sound(std::string path, int vol = 100);
 private:
     void update(float ts);
 private:

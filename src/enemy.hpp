@@ -7,12 +7,12 @@ public:
     Enemy(int healthPoints, double initRotation, double x, double y, int type):
     type_(type), Entity(true, true, healthPoints, initRotation, x, y) {}
 
-    bodyType getType() const override {
+    bodyType get_type() const override {
         return bodyType::enemy;
     }
 
     bool contains(double x, double y) {
-        return ( x < this->getX() + 0.5 && x > this->getX() - 0.5 && y < this->getY() + 0.5 && y > this->getY() - 0.5 );
+        return ( x < this->get_x() + 0.5 && x > this->get_x() - 0.5 && y < this->get_y() + 0.5 && y > this->get_y() - 0.5 );
     }
 
 private:
