@@ -6,58 +6,62 @@
 #include <functional>
 #include <SFML/Audio.hpp>
 
+#include "levelEditorScene.hpp"
 #include "playScene.hpp"
 #include "level.hpp"
-#include "ground.hpp"
 #include "enemy.hpp"
-
-
 
 MenuScene::MenuScene(GUI& gui, std::string current_player) 
     : 
     Scene(gui), 
     button_image_("res/button.png"), 
     bird_image_("res/test_bird.png"), 
-    t(0.f),
+    t_(0.f),
     menu_state_(MenuState::MainMenu),
     current_player_(current_player),
     menu_scroll_y_(0.f)
 {
-    levels_ = reader_writer_.getLevels();
+    levels_ = reader_writer_.get_levels();
 }
 
 MenuScene::~MenuScene() {}
 
 void MenuScene::update(float ts) {
-    t += ts;
-    gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
+    t_ += ts;
+    gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
 
     switch(menu_state_){
         case MenuState::MainMenu:
         {
-            gui_.drawText(0.5f, 0.8f, 0.25f, "Bitter Birds");
+            gui_.draw_text(0.5f, 0.8f, 0.25f, "Bitter Birds");
 
-            if(gui_.drawButton("Play", 0.5f, 0.6f, 0.5f, 0.05f)){
-                gui_.playSound("res/sounds/click_sound.wav");
-                menu_state_ = MenuState::LevelSelector;
+            if(gui_.draw_button("Play", 0.5f, 0.6f, 0.5f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
+                menu_state_ = MenuState::PlayLevelSelector;
                 target_menu_scroll_y_ = 0.f;
             }
 
-            if(gui_.drawButton("Help", 0.5f, 0.5f, 0.5f, 0.05f)){
-                gui_.playSound("res/sounds/click_sound.wav");
+            if(gui_.draw_button("Level Editor", 0.5f, 0.5f, 0.5f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
+                menu_state_ = MenuState::EditorLevelSelector;
+                target_menu_scroll_y_ = 0.f;
+            }
+
+            if(gui_.draw_button("Help", 0.5f, 0.4f, 0.5f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
                 menu_state_ = MenuState::Help;
             }    
 
-            if(gui_.drawButton("Exit", 0.5f, 0.4f, 0.5f, 0.05f)){
-                gui_.playSound("res/sounds/click_sound.wav");
+            if(gui_.draw_button("Exit", 0.5f, 0.3f, 0.5f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
                 gui_.close();
             }
 
             break;
         }
-        case MenuState::LevelSelector:
+        case MenuState::PlayLevelSelector:
         {
-            target_menu_scroll_y_ -= gui_.scrollDelta() * 0.1f;
+            target_menu_scroll_y_ -= gui_.scroll_delta() * 0.1f;
             if(target_menu_scroll_y_ < 0.f) 
                 target_menu_scroll_y_ = 0.f;
             if(target_menu_scroll_y_ > 1.f)
@@ -66,11 +70,11 @@ void MenuScene::update(float ts) {
 
             float y = 0.8f;
             for(auto& level : levels_){
-                if(gui_.drawButton(level.name, 0.5f, y + menu_scroll_y_, 0.4f, 0.1f)){
-                    gui_.playSound("res/sounds/click_sound.wav");
-                    auto loaded_level = reader_writer_.readFile(level.path);
+                if(gui_.draw_button(level.name, 0.5f, y + menu_scroll_y_, 0.4f, 0.1f)){
+                    gui_.play_sound("res/sounds/click_sound.wav");
+                    auto loaded_level = reader_writer_.read_file(level.path);
                     if(loaded_level){
-                        gui_.setScene<PlayScene>(*loaded_level, current_player_);
+                        gui_.set_scene<PlayScene>(*loaded_level, current_player_);
                     }
                     else{
                         std::cout << "Unable to load level." << std::endl;
@@ -79,8 +83,8 @@ void MenuScene::update(float ts) {
                 y -= 0.2f;
             }
 
-            if(gui_.drawButton("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
-                gui_.playSound("res/sounds/click_sound.wav");
+            if(gui_.draw_button("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
                 menu_state_ = MenuState::MainMenu;
             }
 
@@ -104,17 +108,47 @@ void MenuScene::update(float ts) {
             };
 
             for(int i = 0; i < help_text.size(); i++){
-                gui_.drawText(0.5f, 0.8f - i * 0.06f, 0.06f, help_text[i]);
+                gui_.draw_text(0.5f, 0.8f - i * 0.06f, 0.06f, help_text[i]);
             }
             // ö dots for name
-            gui_.drawRect(0.574f, 0.146f, 0.002f, 0.002f, 0.f, {1.f, 1.f, 1.f});
-            gui_.drawRect(0.578f, 0.146f, 0.002f, 0.002f, 0.f, {1.f, 1.f, 1.f});
+            gui_.draw_rect(0.574f, 0.146f, 0.002f, 0.002f, 0.f, {1.f, 1.f, 1.f});
+            gui_.draw_rect(0.578f, 0.146f, 0.002f, 0.002f, 0.f, {1.f, 1.f, 1.f});
 
-            if(gui_.drawButton("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
-                gui_.playSound("res/sounds/click_sound.wav");
+            if(gui_.draw_button("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
                 menu_state_ = MenuState::MainMenu;
             }
 
+            break;
+        }
+        case MenuState::EditorLevelSelector:
+        {
+            target_menu_scroll_y_ -= gui_.scroll_delta() * 0.1f;
+            if(target_menu_scroll_y_ < 0.f) 
+                target_menu_scroll_y_ = 0.f;
+            if(target_menu_scroll_y_ > 1.f)
+                target_menu_scroll_y_ = 1.f;
+            menu_scroll_y_ += (target_menu_scroll_y_ - menu_scroll_y_) * 0.2;
+
+            float y = 0.8f;
+            for(auto& level : levels_){
+                if(gui_.draw_button(level.name, 0.5f, y + menu_scroll_y_, 0.4f, 0.1f)){
+                    gui_.play_sound("res/sounds/click_sound.wav");
+                    auto loaded_level = reader_writer_.read_file(level.path);
+                    if(loaded_level){
+                        gui_.set_scene<LevelEditorScene>(*loaded_level, current_player_);
+                    }
+                    else{
+                        std::cout << "Unable to load level." << std::endl;
+                    }
+                }
+                y -= 0.2f;
+            }
+
+            if(gui_.draw_button("Back", 0.1f, 0.9f, 0.05f, 0.05f)){
+                gui_.play_sound("res/sounds/click_sound.wav");
+                menu_state_ = MenuState::MainMenu;
+            }
             break;
         }
     }

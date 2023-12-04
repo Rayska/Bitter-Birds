@@ -14,10 +14,12 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
-    cam_x(0.f), cam_y(-6.f), cam_scale_x(15.f), cam_scale_y(15.f),
+    cam_x_(0.f), cam_y_(-6.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
-    bird_image_("res/test_bird.png"),
+    normal_bird_image_("res/normal_bird.png"),
+    blue_bird_image_("res/blue_bird.png"),
+    yellow_bird_image_("res/yellow_bird.png"),
     strcture_image_("res/wood.png"),
     explosion_image_("res/explosion.png"),
     cloud_image_("res/cloud.png"),
@@ -27,9 +29,10 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     timer_(nullptr),
     added_score_(false),
     mostRecentBird_(nullptr),
-    stopFollow_(false)
+    stopFollow_(false),
+    resetCamera_(false)
 {
-    next_level_ = writer_.getNextLevel(level.getSaveName());
+    next_level_ = writer_.get_next_level(level.get_save_name());
 
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0, 0);
@@ -44,15 +47,15 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
 
     groundBody->CreateFixture(&groundBox, 0.0f);
     
-    for(auto& ent : level.getEntities()){
+    for(auto& ent : level.get_entities()){
         b2BodyDef bodyDef;
-        bodyDef.position.Set(ent->getX(), ent->getY());
+        bodyDef.position.Set(ent->get_x(), ent->get_y());
 
         bool isCircle = false;
         b2CircleShape circle;
         b2PolygonShape dynamicBox;
 
-        bodyType type = (*ent).getType();
+        bodyType type = (*ent).get_type();
         switch (type)
         {
         case bodyType::structure:
@@ -64,11 +67,11 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
                     bodyType::structure,
                     ent,
                     NULL,
-                    ent_structure->getHealthPoints(),
+                    ent_structure->get_health_points(),
                 };
                 
-                dynamicBox.SetAsBox(.5f * ent_structure->getWidth(), .5f * ent_structure->getHeight());
-                bodyDef.angle = ent_structure->getRotation();
+                dynamicBox.SetAsBox(.5f * ent_structure->get_width(), .5f * ent_structure->get_height());
+                bodyDef.angle = ent_structure->get_rotation();
                 break;
             }
         case bodyType::ground:
@@ -84,7 +87,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
                     bodyType::enemy,
                     ent,
                     NULL,
-                    ent_enemy->getHealthPoints()
+                    ent_enemy->get_health_points()
                 };
                 circle.m_radius = 0.5f;
                 break;
@@ -108,7 +111,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
 
         body->CreateFixture(&fixtureDef);
     }
-    birds_ = level.getBirds();
+    birds_ = level.get_birds();
 }
 
 PlayScene::~PlayScene()
@@ -126,8 +129,8 @@ PlayScene::~PlayScene()
 
 void PlayScene::update(float ts)
 {
-    if(gui_.keyState(sf::Keyboard::Escape)){
-        gui_.setScene<MenuScene>(current_player_);
+    if(gui_.key_state(sf::Keyboard::Escape)){
+        gui_.set_scene<MenuScene>(current_player_);
     }
     
     // Update
@@ -135,19 +138,25 @@ void PlayScene::update(float ts)
     int32 positionIterations = 2;
     world_.Step(ts, velocityIterations, positionIterations);
 
-    if(gui_.keyState(sf::Keyboard::A)){
-        cam_x -= 5.f * ts;
+    if(gui_.key_state(sf::Keyboard::A)){
+        stopFollow_ = true;
+        cam_x_ -= 5.f * ts;
     }
-    if(gui_.keyState(sf::Keyboard::D)){
-        cam_x += 5.f * ts;
+    if(gui_.key_state(sf::Keyboard::D)){
+        stopFollow_ = true;
+        cam_x_ += 5.f * ts;
     }
-    if(gui_.buttonState(sf::Mouse::Button::Left)){
+    if(gui_.key_state(sf::Keyboard::R)){
+        stopFollow_ = true;
+        resetCamera_ = true;
+    }
+    if(gui_.button_state(sf::Mouse::Button::Left)){
+        auto[cx, cy] = gui_.cursor_position();
+        auto p = screen_to_world({cx, cy});
         if(!drag_start_){
-            auto[cx, cy] = gui_.cursorPosition();
-            auto p = screen_to_world({cx, cy});
             if (p.x <= -4.5 && p.x >= -5.5 && p.y <= 2 && p.y >= 1) {
-                gui_.playSound("res/sounds/slingshot_stretch.wav");
-                drag_start_ = screen_to_world({cx, cy});
+                drag_start_ = b2Vec2(-5, 2);
+                gui_.play_sound("res/sounds/slingshot_stretch.wav");
             } else {
                 stopFollow_ = true;
             }
@@ -155,15 +164,14 @@ void PlayScene::update(float ts)
     }
     else{
         if(drag_start_){
-            gui_.playSound("res/sounds/slingshot_release.wav");
-            auto[cx, cy] = gui_.cursorPosition();
+            gui_.play_sound("res/sounds/slingshot_release.wav");
+            auto[cx, cy] = gui_.cursor_position();
             auto vel = *drag_start_ - screen_to_world({cx, cy});
             vel*=0.5;
             if (vel.Length() >= 1) {
                 vel.Normalize();
             }
             auto p = screen_to_world({cx, cy});
-            std::cout << p.x << " " << p.y << std::endl;
             launch_bird(b2Vec2(-5, 2), {vel.x * 10.f, vel.y * 10.f});
             drag_start_ = {};
         }
@@ -225,13 +233,13 @@ void PlayScene::update(float ts)
             spawn_explosion(td->GetPosition(), explosionType::fireball);
             userDataStruct* data = (userDataStruct*)td->GetUserData().pointer;
             if (data->type==bodyType::structure) {
-                 gui_.playSound("res/sounds/wood_smash_sound.wav", 50);
+                 gui_.play_sound("res/sounds/wood_smash_sound.wav", 50);
             } else if (data->type==bodyType::enemy) {
-                 gui_.playSound("res/sounds/enemy_kill.wav", 50);
+                 gui_.play_sound("res/sounds/enemy_kill.wav", 50);
             }
 
             world_.DestroyBody(td);
-            add_score(((float)(get_bird_count() + 1) / level_.getBirds().size()) * 200);
+            add_score(((float)(get_bird_count() + 1) / level_.get_birds().size()) * 200);
         }
     }
 
@@ -252,7 +260,7 @@ void PlayScene::update(float ts)
             case bodyType::bird:
                 if (data->bird) {
                     if (data->bird->getTime().asSeconds() > 5) {
-                        destroyBird(worldBody);
+                        destroy_bird(worldBody);
                     }
                     else {
                         birdCount++;
@@ -281,11 +289,11 @@ void PlayScene::update(float ts)
         }
     }
 
-    if(gui_.buttonReleased(sf::Mouse::Button::Right)){
+    if(gui_.button_released(sf::Mouse::Button::Right)){
         if (mostRecentBird_ && !mostRecentAbilityUsed_) {
             userDataStruct* userData = (userDataStruct*)mostRecentBird_->GetUserData().pointer;
 
-            switch (userData->bird->getBirdType())
+            switch (userData->bird->get_bird_type())
             {
             case birdType::special1: {
                 b2Vec2 vec = mostRecentBird_->GetLinearVelocity();
@@ -308,7 +316,7 @@ void PlayScene::update(float ts)
                     }
                     body = body->GetNext();
                 }
-                destroyBird(mostRecentBird_);
+                destroy_bird(mostRecentBird_);
                 break;
             }
             default:
@@ -327,33 +335,44 @@ void PlayScene::update(float ts)
     });
     explosions_.erase(to_rem, explosions_.end());
 
-    // Camera follows bird if bird still exists
-    if (mostRecentBird_ && !stopFollow_) {
-        cam_x = mostRecentBird_->GetPosition().x;
+    // Camera follows bird if bird still exists, and the bird has reached the center of the camera
+    if (mostRecentBird_ && !stopFollow_ && cam_x_ <= mostRecentBird_->GetPosition().x + 2.3f) {
+        cam_x_ = mostRecentBird_->GetPosition().x + 2.3f;
+    }
+
+    // Smooth camera reset
+    if (resetCamera_ ) {
+        if (cam_x_ > -0.1f && cam_x_ < 0.1f) {
+            cam_x_ = 0.f;
+            resetCamera_ = false;
+        }
+        else {
+            cam_x_ -= cam_x_ * 0.03f;
+        }
     }
 
     // Rendering
     {
         // Render world
-        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y * gui_.getAspectRatio());
+        gui_.set_viewport(cam_x_, cam_y_, cam_scale_x_, cam_scale_y_ * gui_.get_aspect_ratio());
 
         // Draw slingshot
-        gui_.drawSprite(-5, 1.5, 2.f, 2.f, 0.f, sling_image_);
+        gui_.draw_sprite(-5, 1.5, 2.f, 2.f, 0.f, sling_image_);
         // Draw bird at slingshot
         if(!birds_.empty()){
-            Image* image = birds_.front()->getImage();
+            Image* image = get_bird_image(birds_.front()->get_bird_type());
             if(drag_start_.has_value()){
-                auto[scx, scy] = gui_.cursorPosition();
+                auto[scx, scy] = gui_.cursor_position();
                 auto[cx,cy] = screen_to_world({scx, scy});
                 b2Vec2 delta{drag_start_->x - cx, drag_start_->y - cy};
                 float maxLen = 2.f;
                 if(delta.Length() > maxLen){
                     delta = (maxLen / delta.Length()) * delta;
                 }
-                gui_.drawSprite(-5.f - delta.x, 2.f - delta.y, 1.f, 1.f, 0.f, *image);
+                gui_.draw_sprite(-5.f - delta.x, 2.f - delta.y, 1.f, 1.f, 0.f, *image);
             }
             else{
-                gui_.drawSprite(-5.f, 2.f, 1.f, 1.f, 0.f, *image);
+                gui_.draw_sprite(-5.f, 2.f, 1.f, 1.f, 0.f, *image);
             }
         }
 
@@ -369,10 +388,10 @@ void PlayScene::update(float ts)
                 if(img != nullptr) {
                     auto ent_structure = std::dynamic_pointer_cast<Structure>(userData->entity);
                     if(userData->type == bodyType::structure && ent_structure){
-                        gui_.drawSprite(pos.x, pos.y, ent_structure->getWidth(), ent_structure->getHeight(), ang, *img);
+                        gui_.draw_sprite(pos.x, pos.y, ent_structure->get_width(), ent_structure->get_height(), ang, *img);
                     }
                     else{
-                        gui_.drawSprite(pos.x, pos.y, 1, 1, ang, *img);
+                        gui_.draw_sprite(pos.x, pos.y, 1, 1, ang, *img);
                     }
                 }
             }
@@ -380,7 +399,7 @@ void PlayScene::update(float ts)
         }
         // Draw ground as 100 sequential grass squares
         for(int i = -50; i < 50; i++){
-            gui_.drawSprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
+            gui_.draw_sprite(i, 0.f, 1.f, 1.f, 0.f, grass_image_);
         }
 
         // Draw explosions
@@ -388,30 +407,30 @@ void PlayScene::update(float ts)
             float t = 5.f * expl.time;
             float scale = -5.f * t * t * (t - 1.f);
             auto& img = expl.type == explosionType::cloud ?  cloud_image_ : explosion_image_;
-            gui_.drawSprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
+            gui_.draw_sprite(expl.position.x, expl.position.y, 0.1f + scale, 0.1f + scale, expl.time, img);
         }
 
         // UI 
-        gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
+        gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
 
         // Draw ui based on state
         
         switch(state_){
             case gameState::won:
             {
-                winSequence();
+                win_sequence();
                 break;
             }
             case gameState::lost:
             { 
-                loseSequence();
+                lose_sequence();
                 break;
             }
             case gameState::playing:
             {
-                gui_.drawText(0.05f, .95f, .1f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
-                gui_.drawText(0.05f, .85f, .1f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
-                gui_.drawText(0.95f, .95f, .1f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
+                gui_.draw_text(0.05f, .95f, .1f, "Birds left: " + std::to_string(get_bird_count()), Alignment::LeftCenter);
+                gui_.draw_text(0.05f, .85f, .1f, "Current Bird: " + get_current_bird_type(), Alignment::LeftCenter);
+                gui_.draw_text(0.95f, .95f, .1f, "Score: " + std::to_string(get_score()), Alignment::RightCenter);
                 break;
             }
         }
@@ -434,11 +453,11 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         birds_.erase(birds_.begin());
 
         bodyDef.userData.pointer = (uintptr_t)new userDataStruct{
-        bird->getImage(),
-        bodyType::bird,
-        NULL,
-        bird,
-        0
+            get_bird_image(bird->get_bird_type()),
+            bodyType::bird,
+            NULL,
+            bird,
+            0
         };
 
         stopFollow_ = false;
@@ -472,7 +491,7 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 }
 
 b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
-    return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x + cam_x, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y - cam_y};
+    return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x_ + cam_x_, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y_ - cam_y_};
 }
 
 void PlayScene::spawn_explosion(b2Vec2 pos, explosionType type){
@@ -498,7 +517,7 @@ int PlayScene::get_bird_count() const
 std::string PlayScene::get_current_bird_type() const
 {
     if (!birds_.empty()) {
-        switch (birds_.front()->getBirdType())
+        switch (birds_.front()->get_bird_type())
         {
         case birdType::normal:
             return "Red bird";
@@ -513,9 +532,9 @@ std::string PlayScene::get_current_bird_type() const
     return "None";
 }
 
-void PlayScene::destroyBird(b2Body* birdBody) {
+void PlayScene::destroy_bird(b2Body* birdBody) {
     world_.DestroyBody(birdBody);
-    gui_.playSound("res/sounds/bird_death.wav");
+    gui_.play_sound("res/sounds/bird_death.wav");
     spawn_explosion(birdBody->GetPosition(), explosionType::cloud);
     if (mostRecentBird_ == birdBody) {
         mostRecentBird_ = nullptr;
@@ -527,93 +546,107 @@ int PlayScene::get_score() const {
 }
 
 void PlayScene::retry_level() {
-    gui_.setScene<PlayScene>(level_, current_player_);
+    gui_.set_scene<PlayScene>(level_, current_player_);
 }
 
 void PlayScene::exit_to_menu() {
-    gui_.setScene<MenuScene>(current_player_);
+    gui_.set_scene<MenuScene>(current_player_);
     // Save scores
-    writer_.writeFile(level_, level_.getSaveName());
+    writer_.write_file(level_, level_.get_save_name());
 }
 
 void PlayScene::next_level() {
     // Save scores
-    writer_.writeFile(level_, level_.getSaveName());
+    writer_.write_file(level_, level_.get_save_name());
     // Reload scene with next level
-    auto next = writer_.readFile(*next_level_);
+    auto next = writer_.read_file(*next_level_);
     if(next){
-        gui_.setScene<PlayScene>(*next, current_player_);
+        gui_.set_scene<PlayScene>(*next, current_player_);
     }
 }
 
-void PlayScene::winSequence()
+void PlayScene::win_sequence()
 {   
     if(!added_score_){
         int score = get_score();
         most_recent_score_ = score;
-        level_.addScore(current_player_, score);
+        level_.add_score(current_player_, score);
         added_score_ = true;
     }
 
     if (!endSoundCalled_) {
         endSoundCalled_ = true;
-        gui_.playSound("res/sounds/win_sound.wav");
+        gui_.play_sound("res/sounds/win_sound.wav");
     }
     sf::Color color(0,255,0);
-    gui_.drawText(0.5f, 0.8f, 0.2f, "Victory", Alignment::Center, color);
+    gui_.draw_text(0.5f, 0.8f, 0.2f, "Victory", Alignment::Center, color);
 
-    std::vector<ScoreBoardEntry> scores = level_.getScores();
+    std::vector<ScoreBoardEntry> scores = level_.get_scores();
 
-    gui_.drawText(0.5f, 0.7f, 0.15f, "Scoreboard", Alignment::Center);
+    gui_.draw_text(0.5f, 0.7f, 0.15f, "Scoreboard", Alignment::Center);
     bool first_matching_highlighted = false;
     for(int i = 0; (i < 5) && (i < scores.size()); i++){
         auto& e = scores[i];
-        gui_.drawText(0.2f, 0.6f - i * 0.07f, 0.1f, std::to_string(i + 1), Alignment::LeftCenter);
+        gui_.draw_text(0.2f, 0.6f - i * 0.07f, 0.1f, std::to_string(i + 1), Alignment::LeftCenter);
         if(e.name == current_player_ && e.score == most_recent_score_ && !first_matching_highlighted) {
-            gui_.drawText(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center, sf::Color(50, 255, 50));
+            gui_.draw_text(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center, sf::Color(50, 255, 50));
             first_matching_highlighted = true;
         }
         else{
-            gui_.drawText(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center);
+            gui_.draw_text(0.5f, 0.6f - i * 0.07f, 0.1f, e.name, Alignment::Center);
         }
-        gui_.drawText(0.8f, 0.6f - i * 0.07f, 0.1f, std::to_string(e.score), Alignment::RightCenter);
+        gui_.draw_text(0.8f, 0.6f - i * 0.07f, 0.1f, std::to_string(e.score), Alignment::RightCenter);
     }
 
     if(next_level_.has_value()){
-        if(gui_.drawButton("Retry", 0.2f, 0.2f, 0.2f, 0.1f)){
+        if(gui_.draw_button("Retry", 0.2f, 0.2f, 0.2f, 0.1f)){
             retry_level();
         }
-        if(gui_.drawButton("Menu", 0.5f, 0.2f, 0.2f, 0.1f)){
+        if(gui_.draw_button("Menu", 0.5f, 0.2f, 0.2f, 0.1f)){
             exit_to_menu();
         }
-        if(gui_.drawButton("Next", 0.8f, 0.2f, 0.2f, 0.1f)){
+        if(gui_.draw_button("Next", 0.8f, 0.2f, 0.2f, 0.1f)){
             next_level();
         }
     }
     else{
-        if(gui_.drawButton("Retry", 0.4f, 0.2f, 0.2f, 0.1f)){
+        if(gui_.draw_button("Retry", 0.4f, 0.2f, 0.2f, 0.1f)){
             retry_level();
         }
-        if(gui_.drawButton("Menu", 0.6f, 0.2f, 0.2f, 0.1f)){
+        if(gui_.draw_button("Menu", 0.6f, 0.2f, 0.2f, 0.1f)){
             exit_to_menu();
         }
     }
 }
 
-void PlayScene::loseSequence() 
+void PlayScene::lose_sequence() 
 {
     if (!endSoundCalled_) {
         endSoundCalled_ = true;
-        gui_.playSound("res/sounds/lose_sound.wav");
+        gui_.play_sound("res/sounds/lose_sound.wav");
     }
 
     sf::Color color(255,0,0);
-    gui_.drawText(0.5f,0.6f,0.2f, "Game Over", Alignment::Center, color);
+    gui_.draw_text(0.5f,0.6f,0.2f, "Game Over", Alignment::Center, color);
 
-    if(gui_.drawButton("Retry", 0.4f, 0.4f, 0.2f, 0.1f)){
+    if(gui_.draw_button("Retry", 0.4f, 0.4f, 0.2f, 0.1f)){
         retry_level();
     }
-    if(gui_.drawButton("Menu", 0.6f, 0.4f, 0.2f, 0.1f)){
+    if(gui_.draw_button("Menu", 0.6f, 0.4f, 0.2f, 0.1f)){
         exit_to_menu();
+    }
+}
+
+Image* PlayScene::get_bird_image(birdType type) {
+    switch (type)
+    {
+    case birdType::normal:
+        return &normal_bird_image_;
+    case birdType::special1:
+        return &yellow_bird_image_;
+    case birdType::special2:
+        return &blue_bird_image_;
+    default:
+        return nullptr;
     }
 }

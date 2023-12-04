@@ -12,13 +12,13 @@ NameEntryScene::~NameEntryScene()
 
 void NameEntryScene::update(float ts) {
     // Rendering
-    gui_.setViewport(0.5f, 0.5f, 1.f, 1.f);
+    gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
 
-    gui_.drawText(0.5f, 0.7f, 0.2f, "Enter your name");
-    gui_.drawText(0.5f, 0.5f, 0.2f, current_player_);
+    gui_.draw_text(0.5f, 0.7f, 0.2f, "Enter your name");
+    gui_.draw_text(0.5f, 0.5f, 0.2f, current_player_);
 
-    if(current_player_.size() != 0 && (gui_.drawButton("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.keyState(sf::Keyboard::Enter))){
-        gui_.setScene<MenuScene>(current_player_);
+    if(current_player_.size() != 0 && (gui_.draw_button("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.key_state(sf::Keyboard::Enter))){
+        gui_.set_scene<MenuScene>(current_player_);
     }
 }
 

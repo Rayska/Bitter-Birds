@@ -3,10 +3,12 @@
 #include "GUI.hpp"
 #include "scene.hpp"
 #include "image.hpp"
-#include "ReaderWriter.hpp"
+#include "readerWriter.hpp"
 
 enum struct MenuState {
     MainMenu,
+    PlayLevelSelector,
+    EditorLevelSelector,
     LevelSelector,
     Help
 };
@@ -22,7 +24,7 @@ private:
     std::vector<LevelInfo> levels_;
     MenuState menu_state_;
     Image button_image_, bird_image_;
-    float t;
+    float t_;
     float target_menu_scroll_y_, menu_scroll_y_;
     std::string current_player_;
 };
