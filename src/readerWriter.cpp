@@ -165,7 +165,7 @@ std::vector<LevelInfo> ReaderWriter::get_levels() const {
             }
         }
     }
-    std::sort(presetLevel_infos.begin(), presetLevel_infos.end(), compare_lvl_name);
+    std::sort(presetLevel_infos.begin(), presetLevel_infos.end(), compare_preset_lvl_name);
     std::sort(level_infos.begin(), level_infos.end(), compare_lvl_name);
     level_infos.insert(level_infos.end(), presetLevel_infos.begin(), presetLevel_infos.end());
     return level_infos;
@@ -342,4 +342,9 @@ bool ReaderWriter::compare_lvl_name(LevelInfo first, LevelInfo second) {
         c = std::tolower(c);
     }
     return firstName < secondName;
+}
+
+bool ReaderWriter::compare_preset_lvl_name(LevelInfo first, LevelInfo second) {
+    std::cout << first.name << "   " << second.name << std::endl;
+    return std::stoi(first.name.substr(6)) < std::stoi(second.name.substr(6));
 }
