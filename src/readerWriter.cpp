@@ -345,6 +345,5 @@ bool ReaderWriter::compare_lvl_name(LevelInfo first, LevelInfo second) {
 }
 
 bool ReaderWriter::compare_preset_lvl_name(LevelInfo first, LevelInfo second) {
-    std::cout << first.name << "   " << second.name << std::endl;
     return std::stoi(first.name.substr(6)) < std::stoi(second.name.substr(6));
 }
