@@ -27,7 +27,8 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     timer_(nullptr),
     added_score_(false),
     mostRecentBird_(nullptr),
-    stopFollow_(false)
+    stopFollow_(false),
+    resetCamera_(false)
 {
     next_level_ = writer_.getNextLevel(level.getSaveName());
 
@@ -136,10 +137,16 @@ void PlayScene::update(float ts)
     world_.Step(ts, velocityIterations, positionIterations);
 
     if(gui_.keyState(sf::Keyboard::A)){
+        stopFollow_ = true;
         cam_x -= 5.f * ts;
     }
     if(gui_.keyState(sf::Keyboard::D)){
+        stopFollow_ = true;
         cam_x += 5.f * ts;
+    }
+    if(gui_.keyState(sf::Keyboard::R)){
+        stopFollow_ = true;
+        resetCamera_ = true;
     }
     if(gui_.buttonState(sf::Mouse::Button::Left)){
         auto[cx, cy] = gui_.cursorPosition();
@@ -326,9 +333,20 @@ void PlayScene::update(float ts)
     });
     explosions_.erase(to_rem, explosions_.end());
 
-    // Camera follows bird if bird still exists
-    if (mostRecentBird_ && !stopFollow_) {
-        cam_x = mostRecentBird_->GetPosition().x;
+    // Camera follows bird if bird still exists, and the bird has reached the center of the camera
+    if (mostRecentBird_ && !stopFollow_ && cam_x <= mostRecentBird_->GetPosition().x + 2.3f) {
+        cam_x = mostRecentBird_->GetPosition().x + 2.3f;
+    }
+
+    // Smooth camera reset
+    if (resetCamera_ ) {
+        if (cam_x > -0.1f && cam_x < 0.1f) {
+            cam_x = 0.f;
+            resetCamera_ = false;
+        }
+        else {
+            cam_x -= cam_x * 0.03f;
+        }
     }
 
     // Rendering
