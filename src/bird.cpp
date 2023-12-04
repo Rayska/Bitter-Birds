@@ -30,9 +30,6 @@ birdType NormalBird::getBirdType() const {
     return birdType::normal;
 }
 
-double NormalBird::getDiameter() const {
-    return 10;
-}
 
 SpecialBird1::SpecialBird1()
     : 
@@ -43,9 +40,6 @@ birdType SpecialBird1::getBirdType() const {
     return birdType::special1;
 }
 
-double SpecialBird1::getDiameter() const {
-    return 10;
-}
 
 SpecialBird2::SpecialBird2()
     : 
@@ -54,8 +48,4 @@ SpecialBird2::SpecialBird2()
 
 birdType SpecialBird2::getBirdType() const {
     return birdType::special2;
-}
-
-double SpecialBird2::getDiameter() const {
-    return 10;
 }

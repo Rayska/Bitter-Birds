@@ -79,7 +79,7 @@ private:
     b2World world_;
     Image grass_image_, enemy_bird_image_, bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
     std::optional<b2Vec2> drag_start_;
-    float cam_x, cam_y, cam_scale_x, cam_scale_y;
+    float cam_x_, cam_y_, cam_scale_x_, cam_scale_y_;
     gameState state_;
     std::vector<std::shared_ptr<Bird>> birds_;
     std::vector<ExplosionData> explosions_;

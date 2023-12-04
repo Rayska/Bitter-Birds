@@ -12,8 +12,6 @@ class Bird {
 public:
     Bird(Image* image);
 
-    virtual double getDiameter() const = 0;
-
     ~Bird();
 
     virtual birdType getBirdType() const = 0;
@@ -34,7 +32,6 @@ public:
     NormalBird();
 
     birdType getBirdType() const override;
-    double getDiameter() const override;
 private:
 };
 
@@ -43,7 +40,6 @@ public:
     SpecialBird1();
 
     birdType getBirdType() const override;
-    double getDiameter() const override;
 };
 
 class SpecialBird2: public Bird {
@@ -51,5 +47,4 @@ public:
     SpecialBird2();
 
     birdType getBirdType() const override;
-    double getDiameter() const override;
 };

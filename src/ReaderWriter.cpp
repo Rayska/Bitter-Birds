@@ -97,7 +97,7 @@ void ReaderWriter::writeFile(Level level, std::string fileName) const {
 
     if (os.is_open()) {
         // Game version and newline to separate it from the rest of the data
-        os << "BitterBirds v." << versionNumber << std::endl;
+        os << "BitterBirds v." << versionNumber_ << std::endl;
         os << std::endl << std::endl;
 
         os << "NME " << level.getName() << std::endl << std::endl;

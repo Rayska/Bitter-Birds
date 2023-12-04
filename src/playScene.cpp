@@ -14,7 +14,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
-    cam_x(0.f), cam_y(-6.f), cam_scale_x(15.f), cam_scale_y(15.f),
+    cam_x_(0.f), cam_y_(-6.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
     bird_image_("res/test_bird.png"),
@@ -138,11 +138,11 @@ void PlayScene::update(float ts)
 
     if(gui_.keyState(sf::Keyboard::A)){
         stopFollow_ = true;
-        cam_x -= 5.f * ts;
+        cam_x_ -= 5.f * ts;
     }
     if(gui_.keyState(sf::Keyboard::D)){
         stopFollow_ = true;
-        cam_x += 5.f * ts;
+        cam_x_ += 5.f * ts;
     }
     if(gui_.keyState(sf::Keyboard::R)){
         stopFollow_ = true;
@@ -334,25 +334,25 @@ void PlayScene::update(float ts)
     explosions_.erase(to_rem, explosions_.end());
 
     // Camera follows bird if bird still exists, and the bird has reached the center of the camera
-    if (mostRecentBird_ && !stopFollow_ && cam_x <= mostRecentBird_->GetPosition().x + 2.3f) {
-        cam_x = mostRecentBird_->GetPosition().x + 2.3f;
+    if (mostRecentBird_ && !stopFollow_ && cam_x_ <= mostRecentBird_->GetPosition().x + 2.3f) {
+        cam_x_ = mostRecentBird_->GetPosition().x + 2.3f;
     }
 
     // Smooth camera reset
     if (resetCamera_ ) {
-        if (cam_x > -0.1f && cam_x < 0.1f) {
-            cam_x = 0.f;
+        if (cam_x_ > -0.1f && cam_x_ < 0.1f) {
+            cam_x_ = 0.f;
             resetCamera_ = false;
         }
         else {
-            cam_x -= cam_x * 0.03f;
+            cam_x_ -= cam_x_ * 0.03f;
         }
     }
 
     // Rendering
     {
         // Render world
-        gui_.setViewport(cam_x, cam_y, cam_scale_x, cam_scale_y * gui_.getAspectRatio());
+        gui_.setViewport(cam_x_, cam_y_, cam_scale_x_, cam_scale_y_ * gui_.getAspectRatio());
 
         // Draw slingshot
         gui_.drawSprite(-5, 1.5, 2.f, 2.f, 0.f, sling_image_);
@@ -489,7 +489,7 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 }
 
 b2Vec2 PlayScene::screen_to_world(b2Vec2 pos){
-    return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x + cam_x, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y - cam_y};
+    return {0.5f * (pos.x * 2.f - 1.f) * cam_scale_x_ + cam_x_, 0.5f * (pos.y * 2.f - 1.f) * cam_scale_y_ - cam_y_};
 }
 
 void PlayScene::spawn_explosion(b2Vec2 pos, explosionType type){

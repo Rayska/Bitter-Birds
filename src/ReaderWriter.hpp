@@ -67,7 +67,7 @@ class ReaderWriter {
         std::optional<std::string> getNextLevel(std::string) const;
 
     private:
-        std::string versionNumber = "0";
+        std::string versionNumber_ = "0";
         
         /**
         * @brief Takes an ifstream and returns the elements of a vector.

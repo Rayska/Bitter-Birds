@@ -28,7 +28,7 @@ private:
     ReaderWriter reader_writer_;
     Level level_;
     Image grass_image_, enemy_bird_image_, bird_image_, strcture_image_, sling_image_;
-    float cam_x, cam_y, cam_scale_x, cam_scale_y;
+    float cam_x_, cam_y_, cam_scale_x_, cam_scale_y_;
     int input_, healthpoints_;
     float rotation_, width_, height_;
     bodyType created_;
