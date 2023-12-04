@@ -81,39 +81,39 @@ void GUI::close() {
 	window_.close();
 }
 
-std::pair<float, float> GUI::cursorPosition() const {
+std::pair<float, float> GUI::cursor_position() const {
 	auto pos = sf::Mouse::getPosition(window_);
 	auto size = window_.getSize();
     return {static_cast<float>(pos.x) / size.x, 1.f - static_cast<float>(pos.y) / size.y};
 }
 
-bool GUI::keyState(sf::Keyboard::Key key) const {
+bool GUI::key_state(sf::Keyboard::Key key) const {
     return sf::Keyboard::isKeyPressed(key);
 }
 
-bool GUI::buttonState(sf::Mouse::Button btn) const {
+bool GUI::button_state(sf::Mouse::Button btn) const {
     return buttons_[(int)btn];
 }
     
-bool GUI::buttonReleased(sf::Mouse::Button btn) const {
+bool GUI::button_released(sf::Mouse::Button btn) const {
 	return !buttons_[(int)btn] && prev_buttons_[(int)btn];
 }
 
-int GUI::scrollDelta() const {
+int GUI::scroll_delta() const {
 	return scroll_y_ - prev_scroll_y_;
 }
     
-float GUI::getAspectRatio() const {
+float GUI::get_aspect_ratio() const {
 	auto wsize = window_.getSize();
 	return wsize.x / wsize.y;
 }
 
-void GUI::setViewport(float x, float y, float w, float h) {
+void GUI::set_viewport(float x, float y, float w, float h) {
 	auto wsize = window_.getSize();
 	window_.setView(sf::View({x, y}, {w, h}));
 }
 
-void GUI::drawSprite(float x, float y, float w, float h, float angle, const Image &img) {
+void GUI::draw_sprite(float x, float y, float w, float h, float angle, const Image &img) {
 	sf::Sprite sp;
 	sp.setTexture(img.image_);
 	auto size = window_.getSize();
@@ -126,7 +126,7 @@ void GUI::drawSprite(float x, float y, float w, float h, float angle, const Imag
 	window_.draw(sp);
 }
 
-void GUI::drawRect(float x, float y, float w, float h, float angle, Color color) {
+void GUI::draw_rect(float x, float y, float w, float h, float angle, Color color) {
 	sf::RectangleShape sp;
 	sp.setFillColor({(sf::Uint8)(color.r * 255), (sf::Uint8)(color.g * 255), (sf::Uint8)(color.b * 255)});
 
@@ -137,7 +137,7 @@ void GUI::drawRect(float x, float y, float w, float h, float angle, Color color)
 	window_.draw(sp);
 }
 
-void GUI::drawText(float x, float y, float h, const std::string& text, Alignment align, sf::Color color) {
+void GUI::draw_text(float x, float y, float h, const std::string& text, Alignment align, sf::Color color) {
 	sf::Text txt(sf::String(text.c_str()), font_);
 	// auto size = window_.getSize();
 	txt.setPosition({x, 1.f - y});
@@ -167,8 +167,8 @@ void GUI::drawText(float x, float y, float h, const std::string& text, Alignment
 	window_.draw(txt);
 }
 
-bool GUI::drawButton(const std::string& text, float x, float y, float w, float h) {
-	auto[cx, cy] = cursorPosition();
+bool GUI::draw_button(const std::string& text, float x, float y, float w, float h) {
+	auto[cx, cy] = cursor_position();
 
 	Color defaultColor{0.1f, 0.1f, 0.1f}, hoverColor{0.2f, 0.2f, 0.2f};
 
@@ -176,31 +176,32 @@ bool GUI::drawButton(const std::string& text, float x, float y, float w, float h
 		((cx > x - w * 0.5f) && (cx < x + w * 0.5f)) && 
 		((cy > y - h * 0.5f) && (cy < y + h * 0.5f));
 
-	drawRect(x, y, w * 0.95, h * 0.95, 0.f, isHovered ? hoverColor : defaultColor);
-	drawText(x, y, h, text);
+	draw_rect(x, y, w * 0.95, h * 0.95, 0.f, isHovered ? hoverColor : defaultColor);
+	draw_text(x, y, h, text);
 
-	return buttonReleased(sf::Mouse::Button::Left) && isHovered;
+	return button_released(sf::Mouse::Button::Left) && isHovered;
 }
 
 void GUI::update(float ts)
 {
-    if(new_scene_ != nullptr){
+    if(new_scene_ != nullptr) {
 		std::cout << "Switching scenes now." << std::endl;
 		delete current_scene_;
 		current_scene_ = new_scene_;
 		new_scene_ = nullptr;
 	}
 
-	if(current_scene_)
+	if(current_scene_) {
 		current_scene_->update(ts);
+	}
 }
 
-void GUI::playSound(std::string path, int vol) {
-      if(sounds_.find(path) == sounds_.end()) {
-        buffers_.push_back(new sf::SoundBuffer());
-        buffers_[buffers_.size() - 1] -> loadFromFile(path);
-        sounds_[path] = new sf::Sound(*buffers_[buffers_.size() - 1]);
+void GUI::play_sound(std::string path, int vol) {
+	if(sounds_.find(path) == sounds_.end()) {
+		buffers_.push_back(new sf::SoundBuffer());
+		buffers_[buffers_.size() - 1] -> loadFromFile(path);
+		sounds_[path] = new sf::Sound(*buffers_[buffers_.size() - 1]);
 		sounds_[path]->setVolume(vol);
-      }
+	}
     sounds_[path] -> play();
 }
