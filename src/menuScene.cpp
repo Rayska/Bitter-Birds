@@ -14,8 +14,7 @@
 MenuScene::MenuScene(GUI& gui, std::string current_player) 
     : 
     Scene(gui), 
-    button_image_("res/button.png"), 
-    bird_image_("res/test_bird.png"), 
+    bird_image_("res/normal_bird.png"), 
     t_(0.f),
     menu_state_(MenuState::MainMenu),
     current_player_(current_player),
