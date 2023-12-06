@@ -89,7 +89,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
                     NULL,
                     ent_enemy->get_health_points()
                 };
-                circle.m_radius = 0.5f;
+                circle.m_radius = 0.3f;
                 break;
             }
         default:
@@ -190,15 +190,17 @@ void PlayScene::update(float ts)
                 userDataStruct* curData = (userDataStruct*)currentBody->GetUserData().pointer;
                 userDataStruct* otherData = (userDataStruct*)other->GetUserData().pointer;
 
-                if(curData && (curData->type == bodyType::enemy || curData->type == bodyType::structure) && otherData && otherData->type != bodyType::ground) {
+                if(curData && (curData->type == bodyType::enemy || curData->type == bodyType::structure) && otherData) {
                     auto manifold = currentContact -> contact -> GetManifold();
                     if (curData->type == bodyType::enemy) {
                         for (int i = 0; i < manifold->pointCount; ++i) {
                             b2ManifoldPoint point = manifold->points[i];
 
                             float normalImpulse = point.normalImpulse * 25;
-
-                            curData->hp -= int(normalImpulse);
+                            float damage = normalImpulse >= 2 ? normalImpulse : 0;
+                            
+                            curData->hp -= int(damage);
+                            std::cout << curData->hp << std::endl;
                             
                         }
 
@@ -468,14 +470,14 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
         mostRecentBird_ = body;
         mostRecentAbilityUsed_ = false;
         b2CircleShape circle;
-        circle.m_radius = 0.5f;
+        circle.m_radius = 0.3f;
 
         /*b2PolygonShape dynamicBox;
         dynamicBox.SetAsBox(.5f, .5f);*/
 
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &circle;
-        fixtureDef.density = 1.0f;
+        fixtureDef.density = 3.0f;
         fixtureDef.friction = 0.3f;
 
         body->CreateFixture(&fixtureDef);

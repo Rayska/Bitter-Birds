@@ -9,7 +9,6 @@ LevelEditorScene::LevelEditorScene(GUI& gui, Level& level, const std::string cur
     cam_x_(0.f), cam_y_(-6.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
-    bird_image_("res/test_bird.png"),
     strcture_image_("res/wood.png"),
     sling_image_("res/slingshot.png"),
     level_(level),
@@ -151,7 +150,7 @@ void LevelEditorScene::update(float ts)
                     if(gui_.draw_button("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.key_state(sf::Keyboard::Enter)){
                         input_++;
                         height_=atof(current_input_.c_str());
-                        current_input_ = "100";
+                        current_input_ = "";
                     }
                 }
                 break;
@@ -164,7 +163,7 @@ void LevelEditorScene::update(float ts)
                     if(gui_.draw_button("Ok", 0.5f, 0.4f, 0.1f, 0.05f) || gui_.key_state(sf::Keyboard::Enter)){
                         input_++;
                         healthpoints_=atoi(current_input_.c_str());
-                        current_input_ = "0";
+                        current_input_ = "";
                     }
                 }
                 break;
@@ -280,7 +279,7 @@ void LevelEditorScene::update(float ts)
         if (gui_.draw_button("Enemy", 0.35f, 0.95f, 0.2f, 0.05f)) {
             input_=3;
             created_=bodyType::enemy;
-            current_input_="100";
+            current_input_="";
         }
         if (gui_.draw_button("Save Level", 0.85f, 0.95f, 0.2f, 0.05f)) {
             input_=5;
