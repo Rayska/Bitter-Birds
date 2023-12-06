@@ -298,7 +298,7 @@ void PlayScene::update(float ts)
             case birdType::special1: {
                 b2Vec2 vec = mostRecentBird_->GetLinearVelocity();
                 vec.Normalize();
-                mostRecentBird_->SetLinearVelocity(22.f * vec);
+                mostRecentBird_->SetLinearVelocity(17.f * vec);
                 break;
             }
             case birdType::special2 :{
