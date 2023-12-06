@@ -21,12 +21,11 @@ public:
     void update(float ts) override;
 private:
     b2Vec2 screen_to_world(b2Vec2 pos);
-    void exit_to_menu();
     void on_input(char c);
 
     ReaderWriter reader_writer_;
     Level level_;
-    Image grass_image_, enemy_bird_image_, bird_image_, strcture_image_, sling_image_;
+    Image grass_image_, enemy_bird_image_, strcture_image_, sling_image_;
     float cam_x_, cam_y_, cam_scale_x_, cam_scale_y_;
     int input_, healthpoints_;
     float rotation_, width_, height_;
