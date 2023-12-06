@@ -1,4 +1,5 @@
 #include "readerWriter.hpp"
+#include "readerWriter.hpp"
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -165,8 +166,8 @@ std::vector<LevelInfo> ReaderWriter::get_levels() const {
             }
         }
     }
-    std::sort(presetLevel_infos.begin(), presetLevel_infos.end(), compare_preset_lvl_name);
-    std::sort(level_infos.begin(), level_infos.end(), compare_lvl_name);
+    std::sort(presetLevel_infos.begin(), presetLevel_infos.end(), compareLvlName);
+    std::sort(level_infos.begin(), level_infos.end(), compareLvlName);
     level_infos.insert(level_infos.end(), presetLevel_infos.begin(), presetLevel_infos.end());
     return level_infos;
 }
