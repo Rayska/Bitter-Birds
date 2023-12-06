@@ -134,4 +134,9 @@ class ReaderWriter {
          * @brief Compare level names. Return true if first < second
         */
         static bool compare_lvl_name(LevelInfo first, LevelInfo second);
+
+        /**
+         * @brief Compare preset level names. Return true if first < second
+        */
+        static bool compare_preset_lvl_name(LevelInfo first, LevelInfo second);
 };

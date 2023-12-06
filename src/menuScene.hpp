@@ -23,7 +23,7 @@ private:
     ReaderWriter reader_writer_;
     std::vector<LevelInfo> levels_;
     MenuState menu_state_;
-    Image button_image_, bird_image_;
+    Image bird_image_;
     float t_;
     float target_menu_scroll_y_, menu_scroll_y_;
     std::string current_player_;
