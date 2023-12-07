@@ -337,21 +337,19 @@ void PlayScene::update(float ts)
     });
     explosions_.erase(to_rem, explosions_.end());
 
-    // Camera follows bird if bird still exists, and the bird has reached the center of the camera
+    // Camera follows bird if bird still exists, and the bird has reached the center of the camera - 2.3f
     if (mostRecentBird_ && !stopFollow_ && cam_x_ <= mostRecentBird_->GetPosition().x + 2.3f) {
         cam_x_ = mostRecentBird_->GetPosition().x + 2.3f;
     }
 
     // Smooth camera reset
     if (resetCamera_ ) {
-        std::cout << cam_x_ << std::endl;
         if (cam_x_ > -0.005f && cam_x_ < 0.005f) {
             cam_x_ = 0.f;
             resetCamera_ = false;
-            std::cout << cam_x_ << std::endl;
         }
         else {
-            cam_x_ -= cam_x_ * 0.03f;
+            cam_x_ -= cam_x_ * 0.045f;
         }
     }
 
