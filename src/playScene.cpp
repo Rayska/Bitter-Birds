@@ -140,10 +140,12 @@ void PlayScene::update(float ts)
 
     if(gui_.key_state(sf::Keyboard::A)){
         stopFollow_ = true;
+        resetCamera_ = false;
         cam_x_ -= 5.f * ts;
     }
     if(gui_.key_state(sf::Keyboard::D)){
         stopFollow_ = true;
+        resetCamera_ = false;
         cam_x_ += 5.f * ts;
     }
     if(gui_.key_state(sf::Keyboard::R)){
@@ -200,8 +202,6 @@ void PlayScene::update(float ts)
                             float damage = normalImpulse >= 2 ? normalImpulse : 0;
                             
                             curData->hp -= int(damage);
-                            std::cout << curData->hp << std::endl;
-                            
                         }
 
                         if(!deleted && curData->hp < 0){
@@ -344,9 +344,11 @@ void PlayScene::update(float ts)
 
     // Smooth camera reset
     if (resetCamera_ ) {
-        if (cam_x_ > -0.1f && cam_x_ < 0.1f) {
+        std::cout << cam_x_ << std::endl;
+        if (cam_x_ > -0.005f && cam_x_ < 0.005f) {
             cam_x_ = 0.f;
             resetCamera_ = false;
+            std::cout << cam_x_ << std::endl;
         }
         else {
             cam_x_ -= cam_x_ * 0.03f;
