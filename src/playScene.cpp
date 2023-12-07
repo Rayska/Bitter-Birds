@@ -140,10 +140,12 @@ void PlayScene::update(float ts)
 
     if(gui_.key_state(sf::Keyboard::A)){
         stopFollow_ = true;
+        resetCamera_ = false;
         cam_x_ -= 5.f * ts;
     }
     if(gui_.key_state(sf::Keyboard::D)){
         stopFollow_ = true;
+        resetCamera_ = false;
         cam_x_ += 5.f * ts;
     }
     if(gui_.key_state(sf::Keyboard::R)){
@@ -200,8 +202,6 @@ void PlayScene::update(float ts)
                             float damage = normalImpulse >= 2 ? normalImpulse : 0;
                             
                             curData->hp -= int(damage);
-                            std::cout << curData->hp << std::endl;
-                            
                         }
 
                         if(!deleted && curData->hp < 0){
@@ -337,19 +337,19 @@ void PlayScene::update(float ts)
     });
     explosions_.erase(to_rem, explosions_.end());
 
-    // Camera follows bird if bird still exists, and the bird has reached the center of the camera
+    // Camera follows bird if bird still exists, and the bird has reached the center of the camera - 2.3f
     if (mostRecentBird_ && !stopFollow_ && cam_x_ <= mostRecentBird_->GetPosition().x + 2.3f) {
         cam_x_ = mostRecentBird_->GetPosition().x + 2.3f;
     }
 
     // Smooth camera reset
     if (resetCamera_ ) {
-        if (cam_x_ > -0.1f && cam_x_ < 0.1f) {
+        if (cam_x_ > -0.005f && cam_x_ < 0.005f) {
             cam_x_ = 0.f;
             resetCamera_ = false;
         }
         else {
-            cam_x_ -= cam_x_ * 0.03f;
+            cam_x_ -= cam_x_ * 0.045f;
         }
     }
 
