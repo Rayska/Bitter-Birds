@@ -20,12 +20,19 @@
 
 #include "readerWriter.hpp"
 
+/**
+ * @brief Different states the game can be in
+ * 
+ */
 enum struct gameState {
     won,
     lost,
     playing
 };
 
+/**
+ * @brief Physics entities hold a copy of userDataStruct they can reference
+ */
 struct userDataStruct {
     Image*                      image;
     bodyType                    type;
@@ -34,22 +41,46 @@ struct userDataStruct {
     int hp;
 };
 
+/**
+ * @brief Enumeration for different types of explosions in the game
+ */
 enum struct explosionType {
     cloud,
     fireball
 };
 
+/**
+ * @brief Structure to store data for each explosion instance 
+ */
 struct ExplosionData {
     b2Vec2 position;
     float time;
     explosionType type;
 };
 
+/**
+ * @brief The game play scene to play the levels in the game.
+ */
 class PlayScene : public Scene {
 public:
+    /**
+     * @brief Construct a new Play Scene object
+     * 
+     * @param gui Reference to GUI
+     * @param level Level object to play
+     * @param current_player Name of current player
+     */
     PlayScene(GUI& gui, const Level& level, std::string current_player);
+    /**
+     * @brief Destroy the Play Scene object
+     */
     ~PlayScene();
 
+    /**
+     * @brief Update and render everything required by the PlayScene
+     * 
+     * @param ts Timestep
+     */
     void update(float ts) override;
 private:
     void launch_bird(b2Vec2 pos, b2Vec2 vel);

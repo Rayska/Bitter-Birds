@@ -10,10 +10,19 @@
 
 class Scene;
 
+/**
+ * @brief Color object 
+ * r is red in range 0 to 1
+ * g is green in range 0 to 1
+ * b is blue in range 0 to 1
+ */
 struct Color {
     float r, g, b;
 };
 
+/**
+ * @brief Enumeration for alignment types 
+ */
 enum struct Alignment {
     LeftCenter,
     Center,
@@ -125,6 +134,12 @@ public:
      */
     bool draw_button(const std::string& text, float x, float y, float w, float h);
 
+    /**
+     * @brief Play sound from given path. Caches sound file inside class
+     * 
+     * @param path Path to file
+     * @param vol Volume to play at
+     */
     void play_sound(std::string path, int vol = 100);
 private:
     void update(float ts);

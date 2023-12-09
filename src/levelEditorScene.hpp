@@ -12,16 +12,33 @@
 #include <optional>
 #include <vector>
 
+/**
+ * @brief A scene for editing the playable levels in the game
+ */
 class LevelEditorScene : public Scene {
 public:
+    /**
+     * @brief Construct a new Level Editor Scene
+     * 
+     * @param gui Reference to GUI
+     * @param level Path to level to edit
+     * @param current_player Current player name
+     */
     LevelEditorScene(GUI& gui, Level& level, const std::string current_player);
 
+    /**
+     * @brief Destroy the Level Editor Scene object
+     */
     ~LevelEditorScene();
 
+    /**
+     * @brief Update function to update everything required in level editor
+     * 
+     * @param ts Timestep
+     */
     void update(float ts) override;
 private:
     b2Vec2 screen_to_world(b2Vec2 pos);
-    void exit_to_menu();
     void on_input(char c);
 
     ReaderWriter reader_writer_;
