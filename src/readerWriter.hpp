@@ -10,8 +10,7 @@
 #include "structure.hpp"
 
 /**
-* @brief Allows us to use switch case with headers
-*
+* @brief Different types of Headers, Allows us to use switch case with headers
 */
 enum struct Header {
     levelName, 
@@ -28,6 +27,9 @@ enum struct Header {
     unknown
 };
 
+/**
+ * @brief Information about levels
+ */
 struct LevelInfo {
     std::string name;
     std::string path;
@@ -35,36 +37,37 @@ struct LevelInfo {
 
 /**
 * @brief A class for loading/reading and saving/writing levels in forms of Level objects and .txt files
-*
-* 
 */
 class ReaderWriter {
     public:
         /**
-        * @brief Constructor defined
-        *
+        * @brief Constructor 
         */
         ReaderWriter() {}
 
         /**
-        * @brief Given the file name as the parameter returns std::optional<Level>
-        *
+        * @brief Given the file name as the parameter loads the level
+        * 
+        * @return std::optional<Level> Loaded level 
         */
         std::optional<Level> read_file(std::string fileName) const;
 
         /**
-        * @brief Saves the provided level into a .txt file named fileName
-        *
+        * @brief Saves the provided level into a file named fileName
         */
         void write_file(Level level, std::string fileName) const;
 
         /**
         * @brief Returns a list of levels that can be loaded
-        * 
         */
         std::vector<LevelInfo> get_levels() const;
-        std::optional<std::string> get_next_level(std::string) const;
 
+        /**
+         * @brief Get the name of the next level in sequence
+         * 
+         * @return std::optional<std::string> Name of level if there is a next level
+         */
+        std::optional<std::string> get_next_level(std::string) const;
     private:
         std::string versionNumber_ = "0";
         
