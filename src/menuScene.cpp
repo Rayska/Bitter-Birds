@@ -15,7 +15,6 @@ MenuScene::MenuScene(GUI& gui, std::string current_player)
     : 
     Scene(gui), 
     bird_image_("res/normal_bird.png"), 
-    t_(0.f),
     menu_state_(MenuState::MainMenu),
     current_player_(current_player),
     menu_scroll_y_(0.f)
@@ -25,8 +24,10 @@ MenuScene::MenuScene(GUI& gui, std::string current_player)
 
 MenuScene::~MenuScene() {}
 
-void MenuScene::update(float ts) {
-    t_ += ts;
+void MenuScene::update(float ts) 
+{}
+
+void MenuScene::render() {
     gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
 
     switch(menu_state_){
