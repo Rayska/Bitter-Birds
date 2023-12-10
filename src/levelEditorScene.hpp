@@ -37,6 +37,11 @@ public:
      * @param ts Timestep
      */
     void update(float ts) override;
+
+    /**
+     * @brief Render the level editor
+     */
+    void render() override;
 private:
     b2Vec2 screen_to_world(b2Vec2 pos);
     void on_input(char c);

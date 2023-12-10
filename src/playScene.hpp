@@ -77,11 +77,16 @@ public:
     ~PlayScene();
 
     /**
-     * @brief Update and render everything required by the PlayScene
+     * @brief Update everything required by the PlayScene
      * 
      * @param ts Timestep
      */
     void update(float ts) override;
+
+    /**
+     * @brief Render everything in the PlayScene
+     */
+    void render() override;
 private:
     /**
      * @brief Launches a single bird from the slingshot and removes it from the vector of remaining birds

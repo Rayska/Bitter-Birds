@@ -27,8 +27,7 @@ LevelEditorScene::LevelEditorScene(GUI& gui, Level& level, const std::string cur
 
 LevelEditorScene::~LevelEditorScene() {}
 
-void LevelEditorScene::update(float ts)
-{
+void LevelEditorScene::update(float ts) {
     if(gui_.key_state(sf::Keyboard::Escape)){
         gui_.set_scene<MenuScene>(current_player_);
     }
@@ -45,6 +44,10 @@ void LevelEditorScene::update(float ts)
     if(gui_.key_state(sf::Keyboard::S)){
         cam_y_ += 5.f * ts;
     }
+}
+
+void LevelEditorScene::render() {
+    
 
     if(gui_.button_state(sf::Mouse::Button::Left)){
         if (!chosenEntity_) {

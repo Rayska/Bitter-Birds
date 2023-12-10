@@ -30,6 +30,11 @@ public:
     void update(float ts) override;
     
     /**
+     * @brief Function to render scene
+     */
+    void render() override; 
+
+    /**
      * @brief Handle input events 
      * 
      * @param c Character entered

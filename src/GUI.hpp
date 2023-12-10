@@ -145,6 +145,7 @@ public:
     void play_sound(std::string path, int vol = 100);
 private:
     void update(float ts);
+    void render();
 private:
     sf::RenderWindow window_;
     Scene* current_scene_;
