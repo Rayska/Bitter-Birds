@@ -204,12 +204,15 @@ void PlayScene::update(float ts) {
 
                 if(curData && (curData->type == bodyType::enemy || curData->type == bodyType::structure) && otherData) {
                     auto manifold = currentContact -> contact -> GetManifold();
+
+                    float minimum_damage = 12;
+
                     if (curData->type == bodyType::enemy) {
                         for (int i = 0; i < manifold->pointCount; ++i) {
                             b2ManifoldPoint point = manifold->points[i];
 
-                            float normalImpulse = point.normalImpulse * 25;
-                            float damage = normalImpulse >= 2 ? normalImpulse : 0;
+                            float normalImpulse = point.normalImpulse * 15;
+                            float damage = normalImpulse >= minimum_damage ? normalImpulse : 0;
                             
                             curData->hp -= int(damage);
                         }
@@ -222,8 +225,11 @@ void PlayScene::update(float ts) {
                         for (int i = 0; i < manifold->pointCount; ++i) {
                             b2ManifoldPoint point = manifold->points[i];
 
-                            float normalImpulse = point.normalImpulse * 8;
-                            float damage = normalImpulse >= 2 ? normalImpulse : 0;
+                            float normalImpulse = point.normalImpulse * 15;
+                            float damage = normalImpulse >= minimum_damage ? normalImpulse : 0;
+
+                            // if(damage > 0)
+                            //    std::cout << "dmg = " << damage << "\n";
 
                             curData->hp -= int(damage);
                         }
@@ -487,7 +493,7 @@ void PlayScene::launch_bird(b2Vec2 pos, b2Vec2 velocity) {
 
         body->CreateFixture(&fixtureDef);
 
-        body->SetLinearVelocity({velocity.x, velocity.y});
+        body->SetLinearVelocity({velocity.x * 1.15f, velocity.y * 1.15f});
     }
     else if (state_ != gameState::playing) {
         std::cout << "Game is no longer in progress!" << std::endl;        
