@@ -183,6 +183,13 @@ bool GUI::draw_button(const std::string& text, float x, float y, float w, float 
 	return button_released(sf::Mouse::Button::Left) && isHovered;
 }
 
+void GUI::draw_background(const Image& img) {
+	sf::Sprite backgroundSprite;
+	backgroundSprite.setTexture(img.image_);
+	backgroundSprite.setScale(0.0008, 0.0008);
+	window_.draw(backgroundSprite);
+}
+
 void GUI::update(float ts)
 {
     if(new_scene_ != nullptr) {
