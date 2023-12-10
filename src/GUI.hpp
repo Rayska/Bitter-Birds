@@ -137,6 +137,12 @@ public:
     bool draw_button(const std::string& text, float x, float y, float w, float h);
 
     /**
+     * @brief Draw the background
+     * 
+     */
+    void draw_background(const Image& img);
+
+    /**
      * @brief Play sound from given path. Caches sound file inside class
      * 
      * @param path Path to file

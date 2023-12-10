@@ -195,7 +195,7 @@ private:
     Level level_;
     b2Vec2 gravity_;
     b2World world_;
-    Image grass_image_, enemy_bird_image_, normal_bird_image_, yellow_bird_image_, blue_bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_;
+    Image grass_image_, enemy_bird_image_, normal_bird_image_, yellow_bird_image_, blue_bird_image_, explosion_image_, cloud_image_, strcture_image_, sling_image_, background_image;
     std::optional<b2Vec2> drag_start_;
     float cam_x_, cam_y_, cam_scale_x_, cam_scale_y_;
     gameState state_;

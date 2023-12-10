@@ -14,7 +14,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     level_(level),
     gravity_(0.0f, -10.0f),
     world_(gravity_),
-    cam_x_(0.f), cam_y_(-6.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
+    cam_x_(0.f), cam_y_(-7.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
     normal_bird_image_("res/normal_bird.png"),
@@ -24,6 +24,7 @@ PlayScene::PlayScene(GUI &gui, const Level& level, std::string current_player)
     explosion_image_("res/explosion.png"),
     cloud_image_("res/cloud.png"),
     sling_image_("res/slingshot.png"),
+    background_image("res/background.png"),
     state_(gameState::playing),
     endSoundCalled_(false),
     timer_(nullptr),
@@ -363,6 +364,10 @@ void PlayScene::update(float ts) {
 void PlayScene::render() {
     // Rendering
     {
+        // Draw background
+        gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
+        gui_.draw_background(background_image);
+
         // Render world
         gui_.set_viewport(cam_x_, cam_y_, cam_scale_x_, cam_scale_y_ * gui_.get_aspect_ratio());
 
@@ -385,7 +390,6 @@ void PlayScene::render() {
                 gui_.draw_sprite(-5.f, 2.f, 1.f, 1.f, 0.f, *image);
             }
         }
-
 
         // Draw entities by iterating over body list in b2World
         auto body = world_.GetBodyList();
