@@ -26,9 +26,7 @@ public:
      * @param y 
      */
     Entity(bool movable, bool destructible, int healthPoints,
-    double initRotation, double x, double y) : 
-    movable_(movable), destructible_(destructible), healthPoints_(healthPoints),
-    initRotation_(initRotation), x_(x), y_(y) {}
+    double initRotation, double x, double y);
 
     /**
      * @brief Get the type object
@@ -42,9 +40,7 @@ public:
      * @return true 
      * @return false 
      */
-    bool is_movable() const {
-        return movable_;
-    }
+    bool is_movable() const;
 
     /**
      * @brief Is entity destructible
@@ -52,45 +48,35 @@ public:
      * @return true 
      * @return false 
      */
-    bool is_destructible() const {
-        return destructible_;
-    }
+    bool is_destructible() const;
 
     /**
      * @brief Get the initial health points
      * 
      * @return int 
      */
-    int get_health_points() const {
-        return healthPoints_;
-    }
+    int get_health_points() const;
 
     /**
      * @brief Get the initial rotation
      * 
      * @return double 
      */
-    double get_rotation() const {
-        return initRotation_;
-    }
+    double get_rotation() const;
 
     /**
      * @brief Get the initial x pos
      * 
      * @return double 
      */
-    double get_x() const {
-        return x_;
-    }
+    double get_x() const;
 
     /**
      * @brief Get the initial y pos
      * 
      * @return double 
      */
-    double get_y() const {
-        return y_;
-    }
+    double get_y() const;
 
     /**
      * @brief Is a point contained inside the entity

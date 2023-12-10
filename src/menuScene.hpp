@@ -29,6 +29,7 @@ public:
      * @param current_player Name of current player
      */
     MenuScene(GUI& gui, std::string current_player);
+    
     /**
      * @brief Destroy the Menu Scene object
      */

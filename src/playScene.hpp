@@ -83,23 +83,105 @@ public:
      */
     void update(float ts) override;
 private:
+    /**
+     * @brief Launches a single bird from the slingshot and removes it from the vector of remaining birds
+     * 
+     * @param pos Position where the bird is to be launched from
+     * @param vel Initial velocity of the launched bird
+     */
     void launch_bird(b2Vec2 pos, b2Vec2 vel);
+
+    /**
+     * @brief Helper function to translate screen position into a b2World position
+     * 
+     * @param pos Position on screen
+     * @return b2Vec2 
+     */
     b2Vec2 screen_to_world(b2Vec2 pos);
+
+    /**
+     * @brief Spawns an explosion animation at the given position
+     * 
+     * @param pos Position of the explosion
+     * @param type Type of the explosion
+     */
     void spawn_explosion(b2Vec2 pos, explosionType type);
+
+    /**
+     * @brief Handles the situation where the player loses the game
+     * 
+     * Plays the lose_sound, draws "Game Over" text, "Retry" and "Menu" buttons on screen
+     */
     void lose_sequence();
+
+    /**
+     * @brief Handles the situtation where the player wins the game
+     * 
+     * Plays the win_sound, displays the scoreboard, and draws "Victory" text, "Retry", "Menu", and possibly "Next" buttons
+     */
     void win_sequence();
+
+    /**
+     * @brief Destroys the bird, spawning a cloud_explosion
+     * 
+     * @param birdBody b2Body of the bird
+     */
     void destroy_bird(b2Body* birdBody);
 
+    /**
+     * @brief Adds the given amount to the player's score
+     * 
+     * @param amt Amount to be added
+     */
     void add_score(int amt);
 
+    /**
+     * @brief Get the bird count
+     * 
+     * @return int 
+     */
     int get_bird_count() const;
+
+    /**
+     * @brief Get the string matching the current bird type
+     * 
+     * @return std::string 
+     */
     std::string get_current_bird_type() const;
+
+    /**
+     * @brief Get the current score
+     * 
+     * @return int 
+     */
     int get_score() const;
 
+    /**
+     * @brief Resets the level
+     *
+     */
     void retry_level();
+    
+    /**
+     * @brief Exits the level and saves the new scores
+     * 
+     */
     void exit_to_menu();
+
+    /**
+     * @brief Switches to the next level and saves the new scores
+     * 
+     */
     void next_level();
+
+    /**
+     * @brief Get the bird image
+     * 
+     * @param type 
+     * @return Image* 
+     */
     Image* get_bird_image(birdType type);
+
 private:
     ReaderWriter writer_;
     std::optional<std::string> next_level_;
