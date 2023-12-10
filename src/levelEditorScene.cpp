@@ -85,7 +85,7 @@ void LevelEditorScene::render() {
                 case bodyType::enemy: 
                 {
                     auto ent_structure = std::dynamic_pointer_cast<Enemy>(chosenEntity_);
-                    auto newEnt = std::make_shared<Enemy>(ent_structure->get_health_points(),ent_structure->get_rotation(), worldPos.x, worldPos.y, 0);
+                    auto newEnt = std::make_shared<Enemy>(ent_structure->get_health_points(),ent_structure->get_rotation(), worldPos.x, worldPos.y);
                     
                     entities_.erase(
                     std::remove_if(entities_.begin(), entities_.end(),
@@ -190,7 +190,7 @@ void LevelEditorScene::render() {
                             }
                             case bodyType::enemy:
                             {
-                                entities_.push_back(std::make_shared<Enemy>(healthpoints_, rotation_, 0.0f, 1.0f, 0));
+                                entities_.push_back(std::make_shared<Enemy>(healthpoints_, rotation_, 0.0f, 1.0f));
                                 break;
                             }
                             default:

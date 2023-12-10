@@ -38,11 +38,13 @@ public:
      */
     void update(float ts) override;
 
+    /**
+     * @brief Render the level editor
+     */
     void render() override;
 private:
     b2Vec2 screen_to_world(b2Vec2 pos);
     void on_input(char c);
-
     ReaderWriter reader_writer_;
     Level level_;
     Image grass_image_, enemy_bird_image_, strcture_image_, sling_image_;
@@ -54,5 +56,4 @@ private:
     std::vector<std::shared_ptr<Entity>> entities_; 
     std::shared_ptr<Entity> chosenEntity_;
     std::vector<std::shared_ptr<Bird>> birds_;
-
 };

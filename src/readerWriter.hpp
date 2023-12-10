@@ -68,9 +68,8 @@ class ReaderWriter {
          * @return std::optional<std::string> Name of level if there is a next level
          */
         std::optional<std::string> get_next_level(std::string) const;
-    private:
-        std::string versionNumber_ = "0";
-        
+
+    private:    
         /**
         * @brief Takes an ifstream and returns the elements of a vector.
         * 
@@ -81,14 +80,12 @@ class ReaderWriter {
         /**
         * @brief Takes a single line of text and construct an instance of Entity
         * 
-        * @todo Implementation, requires implementation of Entity class, it's derived classes, and a format design
         */
         std::shared_ptr<Entity> form_entity(std::string line) const;
 
         /**
         * @brief Takes a single line of text and construct an instance of the matching Bird type
         * 
-        * @todo Implementation, requires implementation of Bird class, it's derived classes, and a format design
         */
         std::shared_ptr<Bird> form_bird(std::string line) const;
 
@@ -107,18 +104,29 @@ class ReaderWriter {
         /**
         * @brief Forms a string that represents the Bird object's state
         * 
-        * @todo Implementation, requires implementation of Bird class, it's derived classes, and a format design
         */
         std::string to_string_bird(std::shared_ptr<Bird> bird) const;
 
         /**
         * @brief Forms a string that represents the Bird object's state
         * 
-        * @todo Implementation, requires implementation of Entity class, it's derived classes, and a format design
         */
         std::string to_string_entity(std::shared_ptr<Entity> e) const;
 
+        /**
+         * @brief Forms a vector of ScoreBoardEntrys
+         * 
+         * @param scoreStrings 
+         * @return std::vector<ScoreBoardEntry> 
+         */
         std::vector<ScoreBoardEntry> form_scores(std::vector<std::string> scoreStrings) const;
+
+        /**
+         * @brief Form a single ScoreBoardEntry from a given string
+         * 
+         * @param line 
+         * @return ScoreBoardEntry 
+         */
         ScoreBoardEntry form_score(std::string line) const;
 
         /**
@@ -134,12 +142,24 @@ class ReaderWriter {
         std::string get_content(std::string line) const;
 
         /**
-         * @brief Compare level names. Return true if first < second
-        */
+         * @brief Compare level names
+         * 
+         * @param first 
+         * @param second 
+         * @return true if first < second
+         * @return false if first >= second
+         */
         static bool compare_lvl_name(LevelInfo first, LevelInfo second);
 
-        /**
-         * @brief Compare preset level names. Return true if first < second
+       /**
+        * @brief Compare preset level names of form "Level x"
+        * 
+        * @param first 
+        * @param second 
+        * @return true if first < second
+        * @return false if first >= second
         */
         static bool compare_preset_lvl_name(LevelInfo first, LevelInfo second);
+    private:
+        std::string versionNumber_ = "0";
 };

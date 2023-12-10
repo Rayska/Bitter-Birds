@@ -39,6 +39,7 @@ public:
      * @brief Construct a new GUI object
      */
 	GUI();
+
     /**
      * @brief Destroy the GUI object
      */
@@ -76,6 +77,7 @@ public:
      * @return false Key is released
      */
     bool key_state(sf::Keyboard::Key key) const; 
+    
     /**
      * @brief Return state of mouse button
      * @param btn Button id

@@ -29,6 +29,7 @@ public:
      * @param current_player Name of current player
      */
     MenuScene(GUI& gui, std::string current_player);
+    
     /**
      * @brief Destroy the Menu Scene object
      */
@@ -40,6 +41,10 @@ public:
      * @param ts Timestep
      */
     void update(float ts) override;
+
+    /**
+     * @brief Render the MenuScene
+     */
     void render() override;
 private:
     ReaderWriter reader_writer_;
