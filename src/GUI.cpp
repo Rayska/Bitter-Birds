@@ -42,39 +42,33 @@ void GUI::run() {
 	float current_time = 0.f;
 	float timestep = 1.f / 100.f;
 	while (window_.isOpen()) {
-		while(current_time <= timer.getElapsedTime().asSeconds()) {
-			prev_buttons_ = buttons_;
+		prev_buttons_ = buttons_;
+		prev_scroll_y_ = scroll_y_;
 
-			// Poll for events and handle them
-			sf::Event event;
-			while (window_.pollEvent(event)) {
-				if(event.type == sf::Event::MouseWheelScrolled){
-					scroll_y_ += (int)event.mouseWheelScroll.delta;
-				}
-				else if(event.type == sf::Event::MouseButtonPressed){
-					buttons_[event.mouseButton.button] = true;
-				}
-				else if(event.type == sf::Event::MouseButtonReleased){
-					buttons_[event.mouseButton.button] = false;
-				}
-				else if(event.type == sf::Event::TextEntered){
-					if(current_scene_){
-						current_scene_->on_input((char)event.text.unicode);
-					}
-				}
-				else if (event.type == sf::Event::Closed)
-					window_.close();
+		// Poll for events and handle them
+		sf::Event event;
+		while (window_.pollEvent(event)) {
+			if(event.type == sf::Event::MouseWheelScrolled){
+				scroll_y_ += (int)event.mouseWheelScroll.delta;
 			}
+			else if(event.type == sf::Event::MouseButtonPressed){
+				buttons_[event.mouseButton.button] = true;
+			}
+			else if(event.type == sf::Event::MouseButtonReleased){
+				buttons_[event.mouseButton.button] = false;
+			}
+			else if(event.type == sf::Event::TextEntered){
+				if(current_scene_){
+					current_scene_->on_input((char)event.text.unicode);
+				}
+			}
+			else if (event.type == sf::Event::Closed)
+				window_.close();
+		}
 
-			// Get delta time
-			// float ts = timer.getElapsedTime().asSeconds();
-			// timer.restart();
-
+		while(current_time <= timer.getElapsedTime().asSeconds()) {
 			// Update
 			update(timestep);
-		
-			prev_scroll_y_ = scroll_y_;
-
 			current_time += timestep;
 		}
 		

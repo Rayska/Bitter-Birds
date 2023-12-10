@@ -228,9 +228,6 @@ void PlayScene::update(float ts) {
                             float normalImpulse = point.normalImpulse * 15;
                             float damage = normalImpulse >= minimum_damage ? normalImpulse : 0;
 
-                            // if(damage > 0)
-                            //    std::cout << "dmg = " << damage << "\n";
-
                             curData->hp -= int(damage);
                         }
 
