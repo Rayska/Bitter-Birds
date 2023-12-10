@@ -19,39 +19,28 @@ public:
      * @param height Height of structure
      * @param width Width of structure
      */
-    inline Structure(int healthPoints, double initRotation, double x, double y, double height, double width)
-        :
-        Entity(true, true, healthPoints, initRotation, x, y),
-        width_(width), 
-        height_(height)
-    {}
+    Structure(int healthPoints, double initRotation, double x, double y, double height, double width);
 
     /**
      * @brief Get the type object
      * 
      * @return bodyType::structure
      */
-    inline bodyType get_type() const override {
-        return bodyType::structure;
-    }
+    bodyType get_type() const override;
 
     /**
      * @brief Get the width of structure
      * 
      * @return double Width
      */
-    inline double get_width() const {
-        return width_;
-    }
+    double get_width() const;
 
     /**
      * @brief Get the height the strucutre
      * 
      * @return double Height
      */
-    inline double get_height() const {
-        return height_;
-    }
+    double get_height() const;
 
     /**
      * @brief Returns true if contains the coordinate passed
@@ -61,14 +50,7 @@ public:
      * @return true Contained
      * @return false Not contained
      */
-    inline bool contains(double x, double y) {
-        return ( 
-            x <= this->get_x() + this->get_width() * 0.5
-            && x >= this->get_x() - this->get_width() * 0.5
-            && y <= this->get_y() + this->get_height() * 0.5
-            && y >= this->get_y() - this->get_height() * 0.5
-        );
-    }
+    bool contains(double x, double y);
 
 private:
     double height_;

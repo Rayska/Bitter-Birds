@@ -16,6 +16,7 @@ public:
      * @param gui Reference to GUI
      */
     NameEntryScene(GUI& gui);
+
     /**
      * @brief Destroy the Name Entry Scene object
      */
@@ -27,7 +28,10 @@ public:
      * @param ts Timestep
      */
     void update(float ts) override;
-
+    
+    /**
+     * @brief Function to render scene
+     */
     void render() override; 
 
     /**

@@ -216,8 +216,7 @@ std::shared_ptr<Entity> ReaderWriter::form_entity(std::string line) const {
             ::atoi(parts[1].c_str()), 
             ::atof(parts[2].c_str()), 
             ::atof(parts[3].c_str()), 
-            ::atof(parts[4].c_str()), 
-            ::atoi(parts[5].c_str())
+            ::atof(parts[4].c_str())
         );
     }
     else{
@@ -286,8 +285,7 @@ std::string ReaderWriter::to_string_entity(std::shared_ptr<Entity> e) const {
             + std::to_string(enemy_ent->get_health_points()) + " " 
             + std::to_string(enemy_ent->get_rotation()) + " " 
             + std::to_string(enemy_ent->get_x()) + " " 
-            + std::to_string(enemy_ent->get_y()) + " "
-            + std::to_string(0);
+            + std::to_string(enemy_ent->get_y());
     }
     else{
         return "UNKNOWN";        
