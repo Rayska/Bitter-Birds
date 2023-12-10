@@ -131,7 +131,10 @@ std::vector<LevelInfo> ReaderWriter::get_levels() const {
     std::vector<std::string> levels;    
 
     for(const auto& entry : std::filesystem::directory_iterator(levels_path)){
-        levels.push_back(entry.path().string());
+        auto path = entry.path().string();
+        if (path.find(".bblvl") != path.npos) {
+            levels.push_back(entry.path().string());
+        }
     }
 
     std::vector<LevelInfo> presetLevel_infos;
