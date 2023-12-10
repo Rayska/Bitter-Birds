@@ -96,3 +96,25 @@ Scheduling and communication has been challenging/lacking.
 Start of playScene, mainMenu and physics.
 ### TODOs
 1. Continue work on GitLab issues.
+
+# Meeting 10.12.2023 14:30
+
+**Participants**: 
+1. Luukas Karihtala
+2. Ray Sointula
+
+## Summary of works
+Doxygen setup/tweaking and commenting code
+Camera animations, better textures
+
+## Challenges
+-
+
+## Actions
+-
+
+## Project status 
+Unaccounting for some finishing touches, the project is done.
+
+### TODOs
+Finishing touches, documentation etc.
