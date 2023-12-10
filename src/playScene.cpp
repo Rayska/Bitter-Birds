@@ -213,9 +213,9 @@ void PlayScene::update(float ts)
                             b2ManifoldPoint point = manifold->points[i];
 
                             float normalImpulse = point.normalImpulse * 8;
+                            float damage = normalImpulse >= 2 ? normalImpulse : 0;
 
-                            curData->hp -= int(normalImpulse);
-                            
+                            curData->hp -= int(damage);
                         }
 
                         if(!deleted && curData->hp < 0){
