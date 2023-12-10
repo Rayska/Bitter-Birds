@@ -82,6 +82,7 @@ public:
      * @param ts Timestep
      */
     void update(float ts) override;
+    void render() override;
 private:
     void launch_bird(b2Vec2 pos, b2Vec2 vel);
     b2Vec2 screen_to_world(b2Vec2 pos);

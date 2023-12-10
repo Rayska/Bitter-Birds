@@ -27,6 +27,9 @@ public:
      * @param ts Timestep
      */
     void update(float ts) override;
+
+    void render() override; 
+
     /**
      * @brief Handle input events 
      * 

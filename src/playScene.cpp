@@ -127,8 +127,7 @@ PlayScene::~PlayScene()
     }
 }
 
-void PlayScene::update(float ts)
-{
+void PlayScene::update(float ts) {
     if(gui_.key_state(sf::Keyboard::Escape)){
         gui_.set_scene<MenuScene>(current_player_);
     }
@@ -138,6 +137,7 @@ void PlayScene::update(float ts)
     int32 positionIterations = 2;
     world_.Step(ts, velocityIterations, positionIterations);
 
+    // Camera movements
     if(gui_.key_state(sf::Keyboard::A)){
         stopFollow_ = true;
         resetCamera_ = false;
@@ -152,6 +152,16 @@ void PlayScene::update(float ts)
         stopFollow_ = true;
         resetCamera_ = true;
     }
+
+    // Update explosions
+    for(auto& expl : explosions_){
+        expl.time += ts;
+    }
+    auto to_rem = std::remove_if(explosions_.begin(), explosions_.end(), [](auto& expl){
+        return expl.time > 1.f / 5.f;
+    });
+    explosions_.erase(to_rem, explosions_.end());
+
     if(gui_.button_state(sf::Mouse::Button::Left)){
         auto[cx, cy] = gui_.cursor_position();
         auto p = screen_to_world({cx, cy});
@@ -328,14 +338,7 @@ void PlayScene::update(float ts)
         }
     }
 
-    // Update explosions
-    for(auto& expl : explosions_){
-        expl.time += ts;
-    }
-    auto to_rem = std::remove_if(explosions_.begin(), explosions_.end(), [](auto& expl){
-        return expl.time > 1.f / 5.f;
-    });
-    explosions_.erase(to_rem, explosions_.end());
+    
 
     // Camera follows bird if bird still exists, and the bird has reached the center of the camera - 2.3f
     if (mostRecentBird_ && !stopFollow_ && cam_x_ <= mostRecentBird_->GetPosition().x + 2.3f) {
@@ -352,7 +355,9 @@ void PlayScene::update(float ts)
             cam_x_ -= cam_x_ * 0.045f;
         }
     }
+}
 
+void PlayScene::render() {
     // Rendering
     {
         // Render world

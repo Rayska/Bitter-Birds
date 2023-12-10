@@ -10,7 +10,10 @@ NameEntryScene::NameEntryScene(GUI& gui)
 NameEntryScene::~NameEntryScene()
 {}
 
-void NameEntryScene::update(float ts) {
+void NameEntryScene::update(float ts) 
+{}
+
+void NameEntryScene::render() {
     // Rendering
     gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
 

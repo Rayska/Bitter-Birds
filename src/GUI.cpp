@@ -38,42 +38,49 @@ GUI::~GUI() {
 
 void GUI::run() {
 	sf::Clock timer;
-	while (window_.isOpen())
-    {
-		prev_buttons_ = buttons_;
 
-		// Poll for events and handle them
-        sf::Event event;
-        while (window_.pollEvent(event))
-        {
-			if(event.type == sf::Event::MouseWheelScrolled){
-				scroll_y_ += (int)event.mouseWheelScroll.delta;
-			}
-			else if(event.type == sf::Event::MouseButtonPressed){
-				buttons_[event.mouseButton.button] = true;
-			}
-			else if(event.type == sf::Event::MouseButtonReleased){
-				buttons_[event.mouseButton.button] = false;
-			}
-			else if(event.type == sf::Event::TextEntered){
-				if(current_scene_){
-					current_scene_->on_input((char)event.text.unicode);
+	float current_time = 0.f;
+	float timestep = 1.f / 100.f;
+	while (window_.isOpen()) {
+		while(current_time <= timer.getElapsedTime().asSeconds()) {
+			prev_buttons_ = buttons_;
+
+			// Poll for events and handle them
+			sf::Event event;
+			while (window_.pollEvent(event)) {
+				if(event.type == sf::Event::MouseWheelScrolled){
+					scroll_y_ += (int)event.mouseWheelScroll.delta;
 				}
+				else if(event.type == sf::Event::MouseButtonPressed){
+					buttons_[event.mouseButton.button] = true;
+				}
+				else if(event.type == sf::Event::MouseButtonReleased){
+					buttons_[event.mouseButton.button] = false;
+				}
+				else if(event.type == sf::Event::TextEntered){
+					if(current_scene_){
+						current_scene_->on_input((char)event.text.unicode);
+					}
+				}
+				else if (event.type == sf::Event::Closed)
+					window_.close();
 			}
-            else if (event.type == sf::Event::Closed)
-                window_.close();
-        }
 
-		// Get delta time
-		float ts = timer.getElapsedTime().asSeconds();
-		timer.restart();
+			// Get delta time
+			// float ts = timer.getElapsedTime().asSeconds();
+			// timer.restart();
 
-		// Update
-        window_.clear();
-		update(ts);
-        window_.display();
+			// Update
+			update(timestep);
 		
-		prev_scroll_y_ = scroll_y_;
+			prev_scroll_y_ = scroll_y_;
+
+			current_time += timestep;
+		}
+		
+		window_.clear();
+		render();
+		window_.display();
     }
 }
 
@@ -193,6 +200,12 @@ void GUI::update(float ts)
 
 	if(current_scene_) {
 		current_scene_->update(ts);
+	}
+}
+
+void GUI::render(){
+	if(current_scene_){
+		current_scene_->render();
 	}
 }
 

@@ -26,6 +26,9 @@ public:
      * @param ts Timestep since last update
      */
     virtual void update(float ts) = 0;
+
+    virtual void render() = 0; 
+
     /**
      * @brief Called when input has been entered and should be passed to scene
      * 
