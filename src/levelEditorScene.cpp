@@ -6,11 +6,12 @@
 LevelEditorScene::LevelEditorScene(GUI& gui, Level& level, const std::string current_player)
     :
     Scene(gui),
-    cam_x_(0.f), cam_y_(-6.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
+    cam_x_(0.f), cam_y_(-7.f), cam_scale_x_(15.f), cam_scale_y_(15.f),
     grass_image_("res/grass.png"),
     enemy_bird_image_("res/enemy_bird.png"),
     strcture_image_("res/wood.png"),
     sling_image_("res/slingshot.png"),
+    background_image("res/background.png"),
     level_(level),
     current_player_(current_player),
     chosenEntity_(nullptr),
@@ -228,6 +229,10 @@ void LevelEditorScene::render() {
                 break;
         }
     } else {
+        // Draw background
+        gui_.set_viewport(0.5f, 0.5f, 1.f, 1.f);
+        gui_.draw_background(background_image);
+
         // Render world
         gui_.set_viewport(cam_x_, cam_y_, cam_scale_x_, cam_scale_y_ * gui_.get_aspect_ratio());
 
