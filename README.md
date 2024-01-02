@@ -1,79 +1,91 @@
-# Angry Birds
+# Bitter Birds
 
-# Group
+## Introduction
+An Angry Birds-like game with additional features based on C++, Box2D, and SFML.
+
+This project was developed as a group project of Aalto University ELEC-A7151 Object-oriented Programming with C++ course in 2023. The responsible teacher for the course was Yusein Ali, and the project advisor was Tuan Nguyen Cong.
+
+## Developed by
 - Luukas Karihtala
 - Ray Sointula
 - Onni Komulainen
 - Daniel Granström
 
-# Repository organization
-Your project implementation should follow the skelaton organization in this repository.
-See readme.md files in each folder.
+## Project Implementation
+Originally this project was developed on GitLab, and it was imported to GitHub after completion. Libraries used include SMFL, Box2D, and tools used include CMake, Make, Doxygen, and GCC.
 
-# Project Implementation 
-You must use git repository for the work on the project, making frequent enough commits so 
-that the project group (and course staff) can follow the progress.
+## Documentation
+The source code documentation can be found in the doc folder as [software_documentation.pdf](https://github.com/Rayska/Bitter-Birds/blob/master/doc/software_documentation.pdf).
+This pdf was created using Doxygen.
 
-The completed project work will be demonstrated to the group's advisor at a demo session. 
-The final demonstrations are arranged on week 50. After the final demonstrations project group 
-evaluates another project, and self-evaluates own project. In addition, project members will 
-give a confidential individual assessment of each group member
+Project documentation can also be found in the doc folder as [report.pdf](https://github.com/Rayska/Bitter-Birds/blob/master/doc/report.pdf).
 
-The course staff should be able to easily compile the project work using makefile and related 
-instructions provided in the git repository. The final output should be in the **master branch** of the git repository.
+## User's Manual
 
-# Working practices
-Each project group is assigned an advisor from the project teaching personnel. 
-There will be a dedicated Teams channel for each project topic to facilitate discussion between 
-the groups in the same topic and the advisor. 
+ ### How to use
+After running the executable (instructions further down) you will be greeted by a request to enter your name.
+After clicking “OK”, a menu screen will be shown. This menu allows you to start
+playing the game, edit and make your own levels, or exit the game.
 
-**The group should meet weekly.** The weekly meeting does not need to be long if there are no special issues 
-to discuss, and can be taken remotely as voice/video chat on the group Teams channel (or Zoom or other similar tool), 
-preferably at a regular weekly time. In the meeting the group updates:
+#### Playing:
+The game is played by clicking and dragging on the slingshot on the left side of your
+screen. This will shoot a bird in the opposite direction of your drag. The objective of
+the game is to destroy all the enemies present in the level with as few of your birds
+as possible. Some birds (Yellow and Blue) have special abilities, which can be
+activated after launching by right-clicking. Yellow bird gains a speed boost and Blue
+bird explodes. Keep in mind that you cannot activate a special ability of a bird if you
+have already launched another bird, i.e. only the ability of the most recently launched
+bird can be activated.
 
-- What each member has done during the week
-- Are there challenges or problems? Discuss the possible solutions
-- Plan for the next week for everyone
-- Deviations and changes to the project plan, if any
-- After the meetings, the meeting notes will be committed to the project repository in the `Meeting-notes.md` file. 
-    * The commits within the week should have some commit messages referring to the meeting notes so 
-      that the project advisor can follow the progress.  
-    * **The meeting notes should be in English.**
 
-> Everyone may not be able to participate to all meetings, but at least a couple of members should be present in each meeting. 
-> Regular absence from meetings will affect in individual evaluation.
 
-# Source code documentation
-The source code is documented using doxygen style comments. 
-If you do not have doxygen yet installed it can be installed using the following command.
+Indicators in the top left corner will display the number of birds you have left, and
+which bird you will be launching next. In the top right corner of your screen you can
+see your score. This score can be increased by destroying enemies and structures.
+The more birds you use, the less score you will get for destroying enemies and
+structures.
+
+You can use the AD keys to move the camera when needed. You can exit into the
+main menu by pressing esc whenever you like.
+
+#### Editing levels:
+Pre-existing levels can be edited by selecting them from the level selector, or a new
+one can be created. Structures and enemies can be deleted by right-clicking them,
+new ones can be created by selecting the corresponding button from the top of your
+screen. Structures and enemies can be moved by left-clicking and dragging. The
+slingshot can not be moved, deleted and new ones can not be created.
+
+The number of birds and the type of these birds can be altered using the “Make
+normal”, “Make yellow”, “Make blue”, and “Reset Birds” buttons.
+
+
+### How to build the game
+These instructions are applicable to only Linux/WSL.
+1. Install cmake
 ```
-apt-get install doxygen
-apt-get install graphviz
-apt-get install texlive-latex-base
-apt-get install texlive-fonts-recommended
-apt-get install texlive-fonts-extra
-apt-get install texlive-latex-extra
-```
-
-Generating the documentation can be done by running
-```
-doxygen Doxyfile
-```
-Open the html document ```html/index.html``` generated by doxygen in your browser to view the documentation.
-
-To generate a PDF file
-```
-cd latex
-make
+sudo apt-get install cmake
 ```
 
-Now there is a PDF ```latex/refman.pdf```
+2. Install make
+```
+sudo apt-get install make
+```
 
-# TODOs (updated 27.10.2023)
+3. Install libraries
+```
+sudo apt-get install libsfml-dev
+```
 
-List of todo tasks in the following format
-- [TASK]. Assigned to \<Member name\>
+4. Generate makefile with cmake
+```
+cmake .
+```
 
-### Tasks
-
-- ...
+5. Build project using cmake
+```
+make BitterBirds
+```
+ 6. Run executable
+ ```
+ ./BitterBirds
+ ```

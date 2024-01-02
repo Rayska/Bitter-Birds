@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6...3.5)
 
-project (AngryBirds)
+project (BitterBirds)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 17)
@@ -10,7 +10,7 @@ include_directories("src")
 include_directories("tests")
 
 # Set the name of the executable to be produced
-set(EXECUTABLE_NAME AngryBirds)
+set(EXECUTABLE_NAME BitterBirds)
 
 # Add all .cpp - files under src/ directory
 file(GLOB SOURCES src/*.cpp)
