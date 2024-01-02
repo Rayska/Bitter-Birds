@@ -27,6 +27,8 @@ After running the executable (instructions further down) you will be greeted by 
 After clicking “OK”, a menu screen will be shown. This menu allows you to start
 playing the game, edit and make your own levels, or exit the game.
 
+![](gifs/NameEntry.gif)
+
 #### Playing:
 The game is played by clicking and dragging on the slingshot on the left side of your
 screen. This will shoot a bird in the opposite direction of your drag. The objective of
@@ -37,7 +39,7 @@ bird explodes. Keep in mind that you cannot activate a special ability of a bird
 have already launched another bird, i.e. only the ability of the most recently launched
 bird can be activated.
 
-
+![](gifs/PlayDemo.gif)
 
 Indicators in the top left corner will display the number of birds you have left, and
 which bird you will be launching next. In the top right corner of your screen you can
@@ -58,6 +60,7 @@ slingshot can not be moved, deleted and new ones can not be created.
 The number of birds and the type of these birds can be altered using the “Make
 normal”, “Make yellow”, “Make blue”, and “Reset Birds” buttons.
 
+![](gifs/LevelEditorDemo.gif)
 
 ### How to build the game
 These instructions are applicable to only Linux/WSL.
