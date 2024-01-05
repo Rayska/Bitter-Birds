@@ -1,6 +1,6 @@
-cmake_minimum_required (VERSION 2.6...3.5)
+cmake_minimum_required(VERSION 3.5)
 
-project (BitterBirds)
+project(BitterBirds)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 17)
@@ -29,22 +29,16 @@ if(SFML_FOUND)
     target_link_libraries(${EXECUTABLE_NAME} sfml-window sfml-graphics sfml-audio sfml-system)
 endif()
 
-
 # For installing targets (not mandatory)
-install (TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
-project(unittests)
+install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
 
+# Unit tests
 file(GLOB SOURCES2 src/*.cpp)
 list(REMOVE_ITEM SOURCES2 ${CMAKE_SOURCE_DIR}/src/main.cpp)
 file(GLOB SOURCES3 tests/*.cpp)
 
-add_executable(unittests
-    ${SOURCES2}
-    ${SOURCES3}
-)
+add_executable(unittests ${SOURCES2} ${SOURCES3})
 
+# Link libraries for unit tests
 target_link_libraries(unittests sfml-window sfml-graphics sfml-audio sfml-system)
-
-
-# Find Box2D for unit tests
 target_link_libraries(unittests box2d)
